@@ -1,23 +1,17 @@
 <template>
   <div id="app">
-    <router-view/>
+    <router-view />
   </div>
 </template>
 
 <script>
 export default {
   name: "App",
-  data(){
-    return{
-
-    }
+  data() {
+    return {};
   },
-  mounted(){
-  },
-  methods: {
-
-  },
-
+  mounted() {},
+  methods: {},
 };
 </script>
 
@@ -26,9 +20,11 @@ export default {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   height: 100%;
   font-size: 12px;
+}
+.el-drawer {
+  overflow-y: scroll;
 }
 // .el-dialog__wrapper .el-dialog {
 //   // width:20%!important;

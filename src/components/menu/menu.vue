@@ -66,7 +66,7 @@ export default {
         {
           name: "站点管理",
           icon: "fa-search",
-          route: "/zd",
+          route: "/siteManage",
           userRoleType: [0, 1, 2, 3],
           child: [],
         },
@@ -80,7 +80,7 @@ export default {
         {
           name: "个人中心",
           icon: "fa-search",
-          route: "/center",
+          route: "/personalCenter",
           userRoleType: [0, 1, 2, 3],
           child: [],
         },

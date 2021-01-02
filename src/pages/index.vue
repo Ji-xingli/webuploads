@@ -45,7 +45,6 @@ export default {
   },
   data() {
     return {
-      
       loginName: localStorage.getItem("loginName"),
 
       userRoleType: localStorage.getItem("userRoleType"),
@@ -73,7 +72,7 @@ export default {
 #app {
   overflow: hidden;
   .main {
-    height:100%;
+    height: 100%;
     min-height: 600px;
     background-color: #e6edf5;
     .el-main {
