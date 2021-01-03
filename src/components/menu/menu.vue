@@ -73,7 +73,7 @@ export default {
         {
           name: "节目管理",
           icon: "fa-search",
-          route: "/gl",
+          route: "/programManage",
           userRoleType: [0, 1, 2, 3],
           child: [],
         },

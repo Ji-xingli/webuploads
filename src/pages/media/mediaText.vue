@@ -29,12 +29,10 @@
     </div>
     <!-- 列表 -->
     <el-table :data="tableData" style="width: 100%" max-height="500">
-      <el-table-column fixed prop="img" label="图片" width="150">
+      <el-table-column fixed prop="img" label="图片" width="230">
         <template slot-scope="scope">
           <img
-            src="https://c-ssl.duitang.com/uploads/item/202001/10/20200110192530_EjxRV.jpeg"
-            min-width="70"
-            height="40"
+            src="@/assets/img/media/03.png"
             class="head_pic"
           />
           　　</template
@@ -48,7 +46,7 @@
           </dl>
         </template>
       </el-table-column>
-      <el-table-column prop="materialTotalTime" label="时间" width="180">
+      <el-table-column prop="materialCreateTime" label="时间" width="180">
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="120">
         <template slot-scope="scope">
@@ -292,6 +290,10 @@ export default {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  .head_pic{
+      width:184px;
+      height:104px;
+  }
 }
 .up_video_box {
   width: 200px;

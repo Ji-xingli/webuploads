@@ -7,6 +7,7 @@ const media = r => require.ensure([], () => r(require('../pages/media/index.vue'
 const siteManage = r => require.ensure([], () => r(require('../pages/siteManage/index.vue')), 'siteManage');
 const personalCenter = r => require.ensure([], () => r(require('../pages/personalCenter/index.vue')), 'personalCenter');
 const personalCenterEdit = r => require.ensure([], () => r(require('../pages/personalCenter/edit.vue')), 'personalCenterEdit');
+const programManage = r => require.ensure([], () => r(require('../pages/programManage/index.vue')), 'programManage');
 
 
 Vue.use(Router)
@@ -65,6 +66,14 @@ const routes = [
                 name: "personalCenterEdit",
                 meta: {
                     title: '修改个人信息'
+                },
+            },
+            {
+                path: '/programManage',
+                component: programManage,
+                name: "programManage",
+                meta: {
+                    title: '节目管理'
                 },
             },
 

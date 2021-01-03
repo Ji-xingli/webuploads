@@ -24,12 +24,10 @@
     </div>
     <!-- 列表 -->
     <el-table :data="tableData" style="width: 100%" max-height="500">
-      <el-table-column fixed prop="img" label="图片" width="150">
+      <el-table-column fixed prop="materialUrl" label="图片" width="230">
         <template slot-scope="scope">
           　<img
-            src="https://c-ssl.duitang.com/uploads/item/202001/10/20200110192530_EjxRV.jpeg"
-            min-width="70"
-            height="40"
+            :src="scope.row.materialUrl"
             class="head_pic"
           />
         </template>
@@ -346,6 +344,10 @@ export default {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  .head_pic{
+      width:184px;
+      height:104px;
+  }
 }
 .title {
   font-weight: bold;
