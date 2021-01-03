@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { reqlogOut } from "@/api/api";
+// import { reqlogOut } from "@/api/api";
 import Header from "@/components/header/header.vue";
 import Menu from "@/components/menu/menu.vue";
 

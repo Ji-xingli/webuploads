@@ -12,7 +12,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api':{
-        target:'http://192.168.1.152',
+        target:'http://118.31.122.133:9090/',
         changeOrigin: true,
         pathRewrite: {
           '^/api': '' 
@@ -47,10 +47,10 @@ module.exports = {
 
   build: {
     // Template for index.html
-    index: path.resolve(__dirname, '../chudan_web/index.html'),
+    index: path.resolve(__dirname, '../sqfc/index.html'),
 
     // Paths
-    assetsRoot: path.resolve(__dirname, '../chudan_web'),
+    assetsRoot: path.resolve(__dirname, '../sqfc'),
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
 

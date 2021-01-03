@@ -26,6 +26,10 @@ export default {
 .el-drawer {
   overflow-y: scroll;
 }
+.el-pagination {
+  margin-top:10px;
+  text-align: center;
+}
 // .el-dialog__wrapper .el-dialog {
 //   // width:20%!important;
 //   height: 550px;

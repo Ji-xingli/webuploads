@@ -110,8 +110,8 @@
             </el-upload>
           </el-form-item>
           <el-form-item>
-             <el-button type="primary" @click="goEdit">取消</el-button>
-            <el-button type="primary" @click="goEdit">保存</el-button>
+             <el-button type="primary" @click="editCancle">取消</el-button>
+            <el-button type="primary" @click="save">保存</el-button>
           </el-form-item>
         </el-form>
       </el-drawer>
@@ -170,6 +170,15 @@ export default {
     },
     handlePicRemove() {},
     beforePicUpload() {},
+    editCancle(){
+      // 取消保存
+      this.$router.push({
+        name:"personalCenter"
+      })
+    },
+    save(){
+      //保存
+    }
   },
 };
 </script>
@@ -205,7 +214,7 @@ export default {
         padding: 0 10px 0 0;
         line-height: 40px;
         width: 200px;
-        margin: 0 20px 0 0;
+        margin: 0 20px 10px 0;
         position: relative;
         .del {
           font-size: 20px;

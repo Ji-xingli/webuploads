@@ -121,7 +121,7 @@
   </div>
 </template>
 <script>
-import { reqGetSaleData } from "@/api/api";
+// import { reqGetSaleData } from "@/api/api";
 import echarts from "echarts";
 export default {
   data() {
@@ -148,9 +148,9 @@ export default {
         tooltip: {
           trigger: 'axis'
         },
-        legend: {
-              data: ['A区', 'B区', 'C区']
-          },
+        // legend: {
+        //       data: ['A区', 'B区', 'C区']
+        //   },
         xAxis: {
           type: "category",
           data: [
@@ -200,14 +200,8 @@ export default {
           {
             name: 'A区',
             data: [820, 932, 901, 934, 1290, 1330, 1320],
-            type: "line",
-            itemStyle : { normal: {label : {show: true}}}
-          },
-          {
-            name: 'B区',
-            data: [11, 12, 122, 555, 114, 200, 300],
-            type: "line",
-             itemStyle : { normal: {label : {show: true}}}
+            type: "bar",
+            // itemStyle : { normal: {label : {show: true}}}
           },
         ],
       });
