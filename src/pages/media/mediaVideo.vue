@@ -274,12 +274,12 @@ export default {
         this.fileList = file;
 
         //获取视频的长度
-        console.log(file);
         //获取到视频的时长,高度,宽度
         this.getVideoMsg(file.raw).then((videoinfo) => {
           const { duration, height, width } = videoinfo;
           //视频总时长
-          this.duration = duration;
+          this.duration = Math.round(duration * 100) / 100;//保留两位小数
+          console.log("视频时长：",this.duration)
         });
 
         fileList.splice(-1, 1);
