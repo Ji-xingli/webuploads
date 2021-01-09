@@ -1,138 +1,138 @@
 <template>
   <div class="wrap">
-    <dl class="no_template">
-      <dt><img src="@/assets/img/media/01.png" alt="" /></dt>
-      <dd>请前往<span>模板管理</span>页，选择需要使用的模板</dd>
-    </dl>
     <div class="manage_box">
-      <el-row :gutter="20">
-        <el-col :span="16">
-          <div class="block_title">
-            <el-row :gutter="20" class="title_box">
-              <el-col :span="6">
-                <div class="title">A区节目播放</div>
-              </el-col>
-              <el-col :span="12" :offset="6">
-                <div class="search">
-                  <el-button type="primary" @click="gotoEdit"
-                    >编辑节目单</el-button
+      <div class="block_title">
+        <el-row :gutter="20" class="title_box">
+          <el-col :span="6">
+            <div class="title">
+              <el-breadcrumb separator-class="el-icon-arrow-right">
+                <el-breadcrumb-item :to="{ path: '/programManage' }"
+                  >节目管理</el-breadcrumb-item
+                >
+                <el-breadcrumb-item>编辑节目单</el-breadcrumb-item>
+              </el-breadcrumb>
+            </div>
+          </el-col>
+          <el-col :span="12" :offset="6">
+            <div class="search">
+              <el-input
+                placeholder="请输入名称搜索"
+                prefix-icon="el-icon-search"
+                v-model="searchVal"
+              >
+                <el-button slot="append" icon="el-icon-search"></el-button
+              ></el-input>
+            </div>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="6" :offset="8">
+            <div class="step">
+              <el-steps :active="active" finish-status="success">
+                <el-step></el-step>
+                <el-step></el-step>
+              </el-steps>
+            </div>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col>
+            <div class="top_label">
+              <span class="label">播放形式</span>
+              <el-radio-group v-model="isLoop">
+                <el-radio :label="1">循环播放</el-radio>
+                <el-radio :label="2">不重复播放</el-radio>
+              </el-radio-group>
+            </div>
+          </el-col>
+          <el-col>
+            <div class="top_label">
+              <span class="label">已选择文件</span>
+            </div>
+          </el-col>
+        </el-row>
+        <div class="row_box">
+          <dl
+            class="dl flip-list-move"
+            v-for="(item, index) in listData"
+            :key="index"
+          >
+            <dt>
+              <div class="img">
+                <img src="@/assets/img/media/01.png" alt />
+              </div>
+              <div class="text">
+                <p class="play_title">
+                  <span>设置播放时长：</span>
+                  <el-popover
+                    :ref="'refNamePopover' + item.id"
+                    placement="left"
+                    trigger="click"
                   >
+                    <ul class="layer_box">
+                      <li
+                        v-for="(i, ind) in eidtLayerList"
+                        :key="ind"
+                        @click="swapItems(i.id, index, item.id)"
+                      >
+                        <span
+                          :class="{
+                            box_hidden:
+                              (index == 0 && ind == 0) ||
+                              (index == 0 && ind == 1),
+                            box_hidden1:
+                              (index == listData.length - 1 && ind == 2) ||
+                              (index == listData.length - 1 && ind == 3),
+                          }"
+                          >{{ i.name }}</span
+                        >
+                      </li>
+                    </ul>
+                    <span
+                      slot="reference"
+                      class="setting el-icon-setting"
+                    ></span>
+                  </el-popover>
+                </p>
+                <div class="play_times">
                   <el-input
-                    placeholder="请输入名称搜索"
-                    prefix-icon="el-icon-search"
-                    v-model="searchVal"
-                  >
-                    <el-button slot="append" icon="el-icon-search"></el-button
+                    :readonly="readonly"
+                    v-model="item.houre"
+                    placeholder="时"
+                  ></el-input
+                  >:
+                  <el-input
+                    :readonly="readonly"
+                    v-model="item.minute"
+                    placeholder="分"
+                  ></el-input
+                  >:
+                  <el-input
+                    :readonly="readonly"
+                    v-model="item.second"
+                    placeholder="秒"
                   ></el-input>
                 </div>
-              </el-col>
-            </el-row>
-            <div class="row_box">
-              <dl
-                class="dl flip-list-move"
-                v-for="(item, index) in listData"
-                :key="index"
-              >
-                <dt>
-                  <div class="img">
-                    <img src="@/assets/img/media/01.png" alt />
-                  </div>
-                  <div class="text">
-                    <p class="play_title">
-                      <span>设置播放时长：</span>
-                      <el-popover
-                        :ref="'refNamePopover' + item.id"
-                        placement="left"
-                        trigger="click"
-                      >
-                        <ul class="layer_box">
-                          <li
-                            v-for="(i, ind) in eidtLayerList"
-                            :key="ind"
-                            @click="swapItems(i.id, index, item.id)"
-                          >
-                            <span
-                              :class="{
-                                box_hidden:
-                                  (index == 0 && ind == 0) ||
-                                  (index == 0 && ind == 1),
-                                box_hidden1:
-                                  (index == listData.length - 1 && ind == 2) ||
-                                  (index == listData.length - 1 && ind == 3),
-                              }"
-                              >{{ i.name }}</span
-                            >
-                          </li>
-                        </ul>
-                        <span
-                          slot="reference"
-                          class="setting el-icon-setting"
-                        ></span>
-                      </el-popover>
-                    </p>
-                    <div class="play_times">
-                      <el-input
-                        :readonly="readonly"
-                        v-model="item.houre"
-                        placeholder="时"
-                      ></el-input
-                      >:
-                      <el-input
-                        :readonly="readonly"
-                        v-model="item.minute"
-                        placeholder="分"
-                      ></el-input
-                      >:
-                      <el-input
-                        :readonly="readonly"
-                        v-model="item.second"
-                        placeholder="秒"
-                      ></el-input>
-                    </div>
-                  </div>
-                </dt>
-                   <dd class="total_times">
-              <span class="a_title">{{ item.title }}</span>
-              <span>总时长：50:00</span>
-            </dd>
-                <dd class="dd">
-                  <textarea
-                    class="textarea"
-                    maxlength="100"
-                    v-model="item.desc"
-                  ></textarea>
-                </dd>
-              </dl>
-            </div>
-          </div>
-        </el-col>
-        <el-col :span="8">
-          <div class="right">
-            <div class="date_title">
-              <ul class="ul">
-                <li v-for="(item, index) in titleDate" :key="index">
-                  {{ item }}
-                </li>
-              </ul>
-              <el-button
-                class="button"
-                type="primary"
-                icon="el-icon-download"
-                circle
-              ></el-button>
-            </div>
-            <div class="data_list">
-              <div class="item" v-for="(item, index) in listData" :key="index">
-                <div class="icon">
-                  <span class="el-icon-picture-outline-round"></span>
-                </div>
-                <div class="item_text">{{ item.title }}</div>
-                <div class="item_times">{{ item.times }}</div>
               </div>
-            </div>
-          </div>
-        </el-col>
-      </el-row>
+            </dt>
+            <dd class="total_times">
+              <span class="a_title">{{ item.title }}</span>
+              <span>已设时长：50:00</span>
+            </dd>
+            <dd class="dd">
+              <textarea
+                class="textarea"
+                maxlength="100"
+                v-model="item.title"
+              ></textarea>
+            </dd>
+          </dl>
+        </div>
+      </div>
+      <div class="bottom_btn">
+        <el-button @click="goBack">上一步</el-button>
+        <el-button type="primary" @click="gotoSel">完成</el-button>
+      </div>
     </div>
   </div>
 </template>
@@ -140,35 +140,10 @@
 export default {
   data() {
     return {
-      searchVal: "",
-      i_hour: "",
-      i_minute: "",
-      i_second: "",
-      readonly: false,
-      titleDate: [
-        "01-01",
-        "01-02",
-        "01-03",
-        "01-04",
-        "01-05",
-        "01-06",
-        "01-07",
-        "01-08",
-        "01-09",
-        "01-10",
-        "01-11",
-        "01-12",
-        "01-13",
-        "01-14",
-        "01-15",
-        "01-16",
-        "01-17",
-        "01-18",
-        "01-19",
-        "01-20",
-        "01-21",
-        "01-22",
-      ],
+      active: 1, //步骤1
+      isPopover: true, //弹出窗显示隐藏
+      isLoop: 1, //设置是否循环播放
+      playStartEnd: "", //播放起始时间设置
       eidtLayerList: [
         {
           id: "1",
@@ -191,6 +166,12 @@ export default {
           name: "删除",
         },
       ],
+      addSel: "", //选择添加的内容
+      searchVal: "",
+      i_hour: "",
+      i_minute: "",
+      i_second: "",
+      readonly: false,
       listData: [
         {
           id: 1,
@@ -335,15 +316,47 @@ export default {
           //   console.log(err)
         });
     },
-    gotoEdit() {
+    gotoSel() {
+      //完成--去保存
       this.$router.push({
-        name: "progranEdit",
+        name: "programManage",
+      });
+    },
+    goBack() {
+      //返回上-层
+      this.$router.go(-1)
+    },
+    handleAddSel(type) {
+      // todo type:1 添加视频   2：添加内容
+      // 跳转至添加
+      this.$router.push({
+        name: "addProgram",
+        query: {
+          type: type,
+        },
       });
     },
   },
 };
 </script>
 <style lang="scss" scoped>
+/deep/ .el-popover {
+  padding: 0 !important;
+}
+.flip-list-move {
+  animation: bounce-in 0.5s;
+}
+@keyframes bounce-in {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.5);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
 .layer_box {
   line-height: 30px;
   li {
@@ -367,6 +380,7 @@ export default {
   margin-top: 10px;
   background: #f1f1f1;
   overflow: hidden;
+
   .no_template {
     width: 300px;
     margin: 40px auto 0;
@@ -378,7 +392,7 @@ export default {
     }
   }
   .manage_box {
-     overflow-y: scroll;
+    overflow-y: scroll;
     width: 100%;
     height: 100%;
     .block_title {
@@ -388,11 +402,16 @@ export default {
           font-size: 14px;
           padding-left: 10px;
           line-height: 40px;
+          padding-top: 10px;
         }
         .search {
           display: flex;
           justify-content: space-between;
         }
+      }
+      .step {
+        padding: 20px 0 0;
+        color: #f00;
       }
       .row_box {
         width: 100%;
@@ -402,14 +421,14 @@ export default {
         flex-flow: row wrap;
         .dl {
           // width: calc((100% - 60px)/4);
-          width: 30.1%;
+          width: 22.8%;
           margin-right: 10px;
           background: #fff;
           min-height: 280px;
           overflow: hidden;
           padding: 10px;
           margin-bottom: 10px;
-          &:nth-child(3n) {
+          &:nth-child(4n) {
             margin-right: 0;
           }
           dt {
@@ -472,6 +491,17 @@ export default {
           }
         }
       }
+      .top_label {
+        .label {
+          line-height: 40px;
+          display: inline-block;
+          width: 150px;
+          font-size: 14px;
+        }
+        .t_input {
+          width: 100px;
+        }
+      }
     }
     .right {
       background: #fff;
@@ -517,6 +547,10 @@ export default {
           }
         }
       }
+    }
+    .bottom_btn {
+      text-align: center;
+      padding: 20px 0 30px;
     }
   }
 }

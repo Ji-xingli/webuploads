@@ -8,6 +8,9 @@ const siteManage = r => require.ensure([], () => r(require('../pages/siteManage/
 const personalCenter = r => require.ensure([], () => r(require('../pages/personalCenter/index.vue')), 'personalCenter');
 const personalCenterEdit = r => require.ensure([], () => r(require('../pages/personalCenter/edit.vue')), 'personalCenterEdit');
 const programManage = r => require.ensure([], () => r(require('../pages/programManage/index.vue')), 'programManage');
+const progranEdit = r => require.ensure([], () => r(require('../pages/programManage/progranEdit.vue')), 'progranEdit');
+const addProgram = r => require.ensure([], () => r(require('../pages/programManage/addProgram.vue')), 'addProgram');
+const progranView = r => require.ensure([], () => r(require('../pages/programManage/progranView.vue')), 'progranView');
 
 
 Vue.use(Router)
@@ -74,6 +77,30 @@ const routes = [
                 name: "programManage",
                 meta: {
                     title: '节目管理'
+                },
+            },
+            {
+                path: '/progranEdit',
+                component: progranEdit,
+                name: "progranEdit",
+                meta: {
+                    title: '编辑'
+                },
+            },
+            {
+                path: '/progranAdd',
+                component: addProgram,
+                name: "addProgram",
+                meta: {
+                    title: '添加'
+                },
+            },
+            {
+                path: '/progranView',
+                component: progranView,
+                name: "progranView",
+                meta: {
+                    title: '预览'
                 },
             },
 

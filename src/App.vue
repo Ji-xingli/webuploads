@@ -30,6 +30,13 @@ export default {
   margin-top:10px;
   text-align: center;
 }
+.el-step__head.is-process{
+  color:#fff;
+  border-color: #f00;
+}
+.is-process .is-text{
+  background:#f00;
+}
 // .el-dialog__wrapper .el-dialog {
 //   // width:20%!important;
 //   height: 550px;
