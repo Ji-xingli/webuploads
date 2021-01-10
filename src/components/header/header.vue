@@ -2,56 +2,80 @@
   <div id="header" class="headers">
     <ul>
       <li class="title">
-        <el-select v-model="groupVal" placeholder="请选择">
+        <el-select
+          v-model="groupVal"
+          :disabled="this.$store.state.isSel"
+          @change="changeVal"
+          placeholder="请选择"
+        >
           <el-option
-            v-for="item in groups"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+            v-for="(item, index) in groups[0]"
+            :key="index"
+            :label="item.group.groupName"
+            :value="item.group.groupId"
           >
           </el-option>
         </el-select>
       </li>
       <li class="user-li">
-        <span class="el-icon-s-check admin"></span>
-        <span>admin，欢迎您回来</span>
-        <span class="loout" @click="outlogin">退出</span>
+        <el-dropdown>
+          <span class="el-dropdown-link">
+            <span class="el-icon-user-solid"></span>
+            admin<i class="el-icon-arrow-down el-icon--right"></i>
+          </span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item @click.native="gotoCenter">个人中心</el-dropdown-item>
+            <el-dropdown-item @click.native="outlogin">退出</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
       </li>
     </ul>
   </div>
 </template>
 <script>
+import { queryGroup } from "@/api/personalCenter/index.js";
 export default {
   data() {
     return {
-      groupVal: "0",
-      groups: [
-        {
-          label: "总组",
-          value: "0",
-        },
-        {
-          label: "A组",
-          value: "1",
-        },
-        {
-          label: "B组",
-          value: "2",
-        },
-      ],
+      groupVal: 999,
+      groups: [],
     };
   },
+  mounted() {
+    this.getGroup();
+    //
+  },
   methods: {
-    outlogin(){
-
-    }
+    changeVal(selVal) {
+      this.$store.commit("setGroupId", selVal);
+    },
+    getGroup() {
+      var odata = {
+        name: "",
+      };
+      queryGroup(odata).then((res) => {
+        if (res.data.code == 200) {
+          this.groups.push(res.data.data);
+          var arr = { group: { groupId: 999, groupName: "总组" }, total: 2 };
+          this.groups[0].unshift(arr);
+          console.log(this.groups);
+        }
+      });
+    },
+    gotoCenter(){
+      // 跳转个人中心
+      this.$router.push({
+        name:"personalCenter"
+      })
+    },
+    outlogin() {},
   },
 };
 </script>
 
 <style lang="scss" scoped>
 .headers {
-  background-color: #409eff;
+  background-color: #fff;
   height: 65px;
   ul {
     border-bottom: none;
@@ -71,7 +95,7 @@ export default {
       .loout {
         color: #ecd63c;
         font-size: 16px;
-        margin-left:15px;
+        margin-left: 15px;
       }
       .user-headpic {
         display: inline-block;

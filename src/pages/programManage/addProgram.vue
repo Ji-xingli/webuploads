@@ -28,10 +28,10 @@
         <el-row>
           <el-col :span="6" :offset="8">
             <div class="step">
-            <el-steps :active="active" finish-status="success">
-              <el-step></el-step>
-              <el-step></el-step>
-            </el-steps>
+              <el-steps :active="active" finish-status="success">
+                <el-step></el-step>
+                <el-step></el-step>
+              </el-steps>
             </div>
           </el-col>
         </el-row>
@@ -64,18 +64,20 @@
           >
             <dt>
               <div class="img">
-                <img src="@/assets/img/media/01.png" alt />
+                <img v-if="type==2"  :src="item.materialUrl" alt="">
+                <img v-if="type==1" src="@/assets/img/media/01.png" alt />
+                 <img v-if="type==3" src="@/assets/img/media/03.png" alt />
               </div>
               <div class="text">
                 <div class="play_title">
-                  <span>设置播放时长：</span>
+                  <span v-if="type!=1">设置播放时长：</span>
                   <div
                     class="sel"
                     @click="itemChecked(index)"
                     :class="item.checked ? 'checked' : ''"
                   ></div>
                 </div>
-                <div class="play_times">
+                <div class="play_times" v-if="type!=1">
                   <el-input
                     :readonly="readonly"
                     v-model="item.houre"
@@ -94,15 +96,14 @@
                     placeholder="秒"
                   ></el-input>
                 </div>
-                
               </div>
             </dt>
             <dd class="total_times">
-              <span class="a_title">{{item.title}}</span>
-              <span>总时长：50:00</span>
+              <span class="a_title">{{ item.materialTitle }}</span>
+              <span>总时长：{{item.materialTotalTime}}</span>
             </dd>
             <dd class="dd">
-              {{item.desc}}
+              {{ item.materialBrief }}
               <!-- <textarea
                 class="textarea"
                 maxlength="100"
@@ -112,6 +113,10 @@
           </dl>
         </div>
       </div>
+      <!-- 点击加载更多 -->
+      <div class="load_more" v-if="currentPage < totalPage" @click="loadMore">
+        点击加载更多
+      </div>
       <div class="bottom_btn">
         <el-button @click="goBack">取消</el-button>
         <el-button type="primary" @click="handleNext">下一步</el-button>
@@ -120,155 +125,179 @@
   </div>
 </template>
 <script>
+import {
+  queryProgram, //查询节目
+} from "@/api/program/index.js";
+import { getVideoList } from "@/api/media/index.js";
+import { getList } from "@/api/media/mediaText.js";
+import { getPList } from "@/api/media/mediaPic.js";
 export default {
   data() {
     return {
-      active:0,//步骤1
+      currentPage: 1, //-分页
+      pageSize: 10, //-分页
+      totalNo: 0, //-分页,总条数
+      totalPage: 0, //分页-总页数
+      type: this.$route.query.type, //1:视频  2：图片  3：文字
+      active: 0, //步骤1
       selNum: 0, //选中了几项
       searchVal: "",
       readonly: true,
+      selList:[],//选中的添加列表
       listData: [
-        {
-          id: 1,
-          desc:"标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          title: "11一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
-        {
-          id: 2,
-          title: "22一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          desc:"标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
-        {
-          id: 3,
-          title: "33一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          desc:"标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
-        {
-          id: 4,
-          title: "44一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          desc:"标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
-        {
-          id: 5,
-          title: "55一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          desc:"标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
-        {
-          id: 6,
-          title: "66一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          desc:"标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
-        {
-          id: 7,
-          title: "77一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          desc:"标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
-        {
-          id: 8,
-          title: "88一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          desc:"标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
-        {
-          id: 9,
-          title: "99一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          desc:"标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
-        {
-          id: 8,
-          title: "88一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          desc:"标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
-        {
-          id: 9,
-          title: "99一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          desc:"标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
+        // {
+        //   id: 1,
+        //   desc:"标题标题标题标题标题标题级标题表发达范德萨范德萨",
+        //   title: "11一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
+        //   houre: 1,
+        //   minute: 10,
+        //   second: 10,
+        //   checked: false,
+        // }
       ],
     };
   },
   computed: {
     types() {
-      if (this.$route.type == 1) {
+      if (this.$route.query.type == 1) {
         return "视频";
-      } else {
+      } else if (this.$route.query.type == 2) {
         return "图片";
+      } else {
+        return "文字";
       }
     },
   },
+  mounted() {
+    if (this.type == 1) {
+      this.getVList(this.currentPage, this.pageSize);
+    } else if (this.type == 2) {
+      this.getPList(this.currentPage, this.pageSize);
+    } else {
+      this.getTList(this.currentPage, this.pageSize);
+    }
+  },
   methods: {
+    loadMore() {
+      // 点击加载更多
+      this.currentPage += 1; //页数++
+      //请求数据
+      if (this.type == 1) {
+        this.getVList(this.currentPage, this.pageSize);
+      } else if (this.type == 2) {
+        this.getPList(this.currentPage, this.pageSize);
+      } else {
+        this.getTList(this.currentPage, this.pageSize);
+      }
+    },
+    getVList(pageNo,pageSize) {
+      this.currentPage = pageNo;
+      var odata = {
+        pageNum: pageNo,
+        pageSize: pageSize,
+        title: "",
+      };
+      getVideoList(odata)
+        .then((res) => {
+          if (res.data.code == 200) {
+            this.listData = res.data.data.list;
+            this.totalNo = res.data.data.total;
+            //总页数
+            this.totalPage = Math.ceil(this.totalNo / this.pageSize);
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          //   this.$message.error(err.head.msg);
+          console.log(err);
+        });
+    },
+    getPList(pageNo,pageSize) {
+      this.currentPage = pageNo;
+      var odata = {
+        pageNum: pageNo,
+        pageSize: pageSize,
+        title: "",
+      };
+      getPList(odata)
+        .then((res) => {
+          if (res.data.code == 200) {
+            this.listData = res.data.data.list;
+            this.totalNo = res.data.data.total;
+            //总页数
+            this.totalPage = Math.ceil(this.totalNo / this.pageSize);
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          //   this.$message.error(err.head.msg);
+          console.log(err);
+        });
+    },
+    getTList(pageNo,pageSize) {
+      this.currentPage = pageNo;
+      var odata = {
+        pageNum: pageNo,
+        pageSize: pageSize,
+        title: "",
+      };
+      getList(odata)
+        .then((res) => {
+          if (res.data.code == 200) {
+            this.listData = res.data.data.list;
+            this.totalNo = res.data.data.total;
+            //总页数
+            this.totalPage = Math.ceil(this.totalNo / this.pageSize);
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          //   this.$message.error(err.head.msg);
+          console.log(err);
+        });
+    },
     handleNext() {
-      if(this.selNum==0){
+      if (this.selNum == 0) {
         this.$message.error("选择添加的文件");
         return false;
       }
-
+      this.listData.forEach((item, index) => {
+        if (item.checked) {
+          this.selList.push(item);
+        }
+      });
+      // console.log(this.selList)
+      //  return false;
+      // localStorage保存选中的数据，带入下一步
+      localStorage.setItem("addSelList", JSON.stringify(this.selList)); 
       this.$router.push({
-        name:"progranView"
-      })
+        name: "progranView",
+        query: {
+          type: this.type
+        }
+      });
     },
     goBack() {
       //返回上-层
-      this.$router.go(-1)
+      this.$router.go(-1);
     },
     itemChecked(index) {
       this.listData[index].checked = !this.listData[index].checked;
       var num = 0;
       this.listData.forEach((item, index) => {
-        if(item.checked) {
+        if (item.checked) {
           num += 1;
         }
       });
       if (num > 10) {
-         this.listData[index].checked = false;
+        this.listData[index].checked = false;
         this.$message.error("选择已达上限");
         return false;
       }
       this.selNum = num;
-      
     },
   },
 };
@@ -344,10 +373,10 @@ export default {
           justify-content: space-between;
         }
       }
-        .step{
-          padding:20px 0 0;
-          color:#f00;
-        }
+      .step {
+        padding: 20px 0 0;
+        color: #f00;
+      }
       .row_box {
         width: 100%;
         overflow: hidden;
@@ -370,7 +399,7 @@ export default {
             display: flex;
             justify-content: space-between;
             .img {
-              width: 250px;
+              width: 150px!important;
               height: 80px;
               margin-right: 10px;
               img {
@@ -381,6 +410,7 @@ export default {
             }
             .text {
               overflow: hidden;
+              flex:1;
               .play_title {
                 line-height: 40px;
                 display: flex;
@@ -403,20 +433,21 @@ export default {
               }
             }
           }
-              .total_times {
-                display:flex;
-                justify-content: space-between;
-                line-height: 30px;
-                text-align: right;
-                margin-top:10px;
-                .a_title{
-                  width:55%;
-                  height:30px;
-                  overflow: hidden;
-                  text-overflow:ellipsis;
-                  white-space: nowrap;
-                }
-              }
+          .total_times {
+            display: flex;
+            justify-content: space-between;
+            line-height: 30px;
+            text-align: right;
+            margin-top: 10px;
+            .a_title {
+              width: 55%;
+              height: 30px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              text-align:left;
+            }
+          }
           .dd {
             font-size: 14px;
             height: 100%;
@@ -489,6 +520,12 @@ export default {
           }
         }
       }
+    }
+    .load_more {
+      line-height: 100px;
+      text-align: center;
+      font-size: 18px;
+      color: #999;
     }
     .bottom_btn {
       text-align: center;

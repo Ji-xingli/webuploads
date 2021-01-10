@@ -7,7 +7,9 @@ import ElementUI from 'element-ui'
 import '../static/css/reset.css'
 import 'element-ui/lib/theme-chalk/index.css'
 import axios from 'axios'
-import VueCookies from 'vue-cookies'
+import store from './store/index.js';
+
+import './assets/iconfont/iconfont.css'
 // import { post, put, fetch, patch, del } from './api/http'
 // import 'font-awesome/css/font-awesome.min.css'
 import util from './assets/util/util'
@@ -17,23 +19,21 @@ Vue.prototype.util= util;
 Vue.config.productionTip = false
 Vue.use(ElementUI);
 
+
+router.afterEach((to, from) => {
+    // 设置-除首页-其他页面都不能选择分组
+    if(to.meta.isDisabled){
+        store.commit('setSelGroupStatus', false);
+    }else{
+        store.commit('setSelGroupStatus', true);
+    }
+})
+
 axios.defaults.headers.post['Access-Control-Allow-Origin']="*"
-// Vue.prototype.$http = axios
-// Vue.prototype.$cookies = VueCookies
-// Vue.prototype.$get = fetch;
-// Vue.prototype.$post = post;
-// Vue.prototype.$put = put;
-// Vue.prototype.$patch = patch;
-// Vue.prototype.$del = del;
-// Vue.config.devtools = true;
-// Vue.$post = post
-// Vue.$get = fetch
-// Vue.$put = put
-// Vue.$del = del
-    /* eslint-disable no-new */
 new Vue({
     el: '#app',
     router,
+    store,
     components: { App },
     template: '<App/>'
 })

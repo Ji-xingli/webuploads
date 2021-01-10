@@ -2,7 +2,7 @@
 import request from '@/api/http';
 
 // 视频列表
-export const getList = (row) => {
+export const getPList = (row) => {
     return request({
         url: '/sqfc/material/queryImage',
         method: 'get',

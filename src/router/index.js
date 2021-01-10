@@ -11,6 +11,8 @@ const programManage = r => require.ensure([], () => r(require('../pages/programM
 const progranEdit = r => require.ensure([], () => r(require('../pages/programManage/progranEdit.vue')), 'progranEdit');
 const addProgram = r => require.ensure([], () => r(require('../pages/programManage/addProgram.vue')), 'addProgram');
 const progranView = r => require.ensure([], () => r(require('../pages/programManage/progranView.vue')), 'progranView');
+const templateCenter = r => require.ensure([], () => r(require('../pages/templateCenter.vue')), 'templateCenter');
+
 
 
 Vue.use(Router)
@@ -36,7 +38,8 @@ const routes = [
                 component: allindex,
                 name: "allindex",
                 meta: {
-                    title: '首页'
+                    title: '首页',
+                    isDisabled:true
                 },
             },
             {
@@ -53,6 +56,14 @@ const routes = [
                 name: "siteManage",
                 meta: {
                     title: '站点管理'
+                },
+            },
+            {
+                path: '/templateCenter',
+                component: templateCenter,
+                name: "templateCenter",
+                meta: {
+                    title: '模板中心'
                 },
             },
             {
@@ -127,7 +138,6 @@ router.beforeEach((to, from, next) => {
 router.afterEach((to, from) => {
     if (to.meta.title) {
         document.title = to.meta.title
-
     }
 })
 export default router

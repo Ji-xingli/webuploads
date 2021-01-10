@@ -60,14 +60,15 @@
               placeholder="可输入分组进行搜索"
               v-model="searchVal"
               class="input-with-select"
+              clearable
             >
-              <el-button slot="append" icon="el-icon-search"></el-button>
+              <el-button @click="searchGroup" slot="append" icon="el-icon-search"></el-button>
             </el-input>
           </div>
           <div class="groupList">
             <div class="item" v-for="(item, index) in groupList" :key="index">
-              <el-input v-model="item.name"></el-input>
-              <span class="del el-icon-remove"></span>
+              <el-input v-model="item.group.groupName"></el-input>
+              <span class="del el-icon-remove" @click="delGroup(index)"></span>
             </div>
           </div>
           <el-form-item>
@@ -119,15 +120,14 @@
   </div>
 </template>
 <script>
+import {addGroup,queryGroup} from '@/api/personalCenter/index.js'
 export default {
   data() {
     return {
+      
       picMasterVisible: false, //是否编辑
-      groupList: [
-        { name: "a组", id: 1 },
-        { name: "bdsfdfsf组", id: 2 },
-        { name: "c组", id: 3 },
-      ],
+      groupList: [],
+      delList:[],//删除的组列表
       mygroup: "", //添加的分组名称
       searchVal: "", //搜索分组
       form: {
@@ -155,18 +155,75 @@ export default {
       },
     };
   },
+  mounted(){
+    this.getGroup();
+  },
   methods: {
     changePack() {
       this.picMasterVisible = true;
     },
+    submitPicForm(formName){
+       this.$refs[formName].validate((valid) => {
+        if (valid) {
+          var groupName=""
+          this.groupList.forEach((item)=>{
+            groupName+=item.name+","
+          })
+            // 添加分组
+          var p_group=groupName.substr(0, groupName.length - 1)
+          
+          addGroup(p_group).then(res=>{
+            if (res.data.code == 200) {
+              this.$message({
+                type: "success",
+                message: "操作成功!",
+              });
+
+              this.$router.push({
+                name:"personalCenter"
+              })
+
+            }
+          })
+        }
+       })
+    },
+    getGroup(){
+      // 获取组列表
+      var odata={
+        name:this.searchVal
+      }
+      queryGroup(odata).then(res=>{
+        if (res.data.code == 200) {
+          this.groupList=res.data.data;
+        }
+      })
+    },
+    searchGroup(){
+      // 组查询
+      this.getGroup();
+    },
     addGroup() {
-      console.log("djil");
       if (this.mygroup) {
-        this.groupList.push({ name: this.mygroup });
+        this.groupList.push({ group:{groupName: this.mygroup }});
         this.mygroup = "";
       } else {
         this.$message.warning("请输入需要添加的分组");
       }
+
+      console.log(this.groupList)
+    },
+    delGroup(index){
+      // 删除分组
+      this.delList.push(this.groupList[index]);
+      this.groupList.splice(index,1);
+
+
+      this.mygroupId = "";
+
+      // deleteGroup(){
+
+      // }
     },
     handlePicRemove() {},
     beforePicUpload() {},
@@ -193,7 +250,7 @@ export default {
   height: 100%;
   margin-top: 10px;
   background: #fff;
-  overflow: hidden;
+  overflow-y: scroll;
   .table_box {
     padding: 10px;
     .title {

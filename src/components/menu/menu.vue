@@ -8,7 +8,7 @@
     >
       <div v-for="(item, index) in list" :key="index">
         <el-menu-item :index="item.route">
-          <i class="el-icon-house" ></i>
+          <i class="iconfont" :class="item.icon"></i>
           <span slot="title">{{ item.name }}</span>
         </el-menu-item>
       </div>
@@ -42,7 +42,7 @@ export default {
       list: [
         {
           name: "首页",
-          icon: "fa-home",
+          icon: "icon-shouye",
           route: "/",
           userRoleType: [0, 1, 2, 3],
           child: [],
@@ -58,32 +58,39 @@ export default {
         // },
         {
           name: "多媒体素材",
-          icon: "fa-search",
+          icon: "icon-sucaiku",
           route: "/media",
           userRoleType: [0, 1, 2, 3],
           child: [],
         },
         {
           name: "站点管理",
-          icon: "fa-search",
+          icon: "icon-zhandian",
           route: "/siteManage",
           userRoleType: [0, 1, 2, 3],
           child: [],
         },
         {
           name: "节目管理",
-          icon: "fa-search",
+          icon: "icon-caidan",
           route: "/programManage",
           userRoleType: [0, 1, 2, 3],
           child: [],
         },
         {
-          name: "个人中心",
-          icon: "fa-search",
-          route: "/personalCenter",
+          name: "模板中心",
+          icon: "icon-mobanguanli",
+          route: "/templateCenter",
           userRoleType: [0, 1, 2, 3],
           child: [],
         },
+        // {
+        //   name: "个人中心",
+        //   icon: "fa-search",
+        //   route: "/personalCenter",
+        //   userRoleType: [0, 1, 2, 3],
+        //   child: [],
+        // },
       ],
     };
   },

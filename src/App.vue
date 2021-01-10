@@ -37,6 +37,24 @@ export default {
 .is-process .is-text{
   background:#f00;
 }
+.el-menu-item.is-active {
+  background-image:url('./assets/img/bg.png') !important;
+  background-repeat: no-repeat;
+  background-size:140px 30px;
+  background-position: center center;
+  background-color: none!important;
+  color: #fff;
+  i,span {
+    color: #fff !important;
+  }
+}
+.el-menu-item:focus, .el-menu-item:hover{
+  background-color: #fff!important;
+}
+.el-step__head.is-success{
+  color: #f00;
+    border-color: #f00;
+}
 // .el-dialog__wrapper .el-dialog {
 //   // width:20%!important;
 //   height: 550px;

@@ -110,7 +110,7 @@
   </div>
 </template>
 <script>
-import { getList, upLoad, upDate, getRemove } from "@/api/media/mediaPic.js";
+import { getPList, upLoad, upDate, getRemove } from "@/api/media/mediaPic.js";
 import { getEditBefore } from "@/api/media/index.js";
 export default {
   data() {
@@ -177,7 +177,7 @@ export default {
         pageSize: pageSize,
         title: this.searchVal,
       };
-      getList(odata)
+      getPList(odata)
         .then((res) => {
           console.log(res);
           if (res.data.code == 200) {

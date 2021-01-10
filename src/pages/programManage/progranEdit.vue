@@ -20,8 +20,15 @@
                   选择添加内容<i class="el-icon-arrow-down el-icon--right"></i>
                 </el-button>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item @click.native="handleAddSel(1)">添加视频</el-dropdown-item>
-                  <el-dropdown-item @click.native="handleAddSel(2)">添加图片</el-dropdown-item>
+                  <el-dropdown-item @click.native="handleAddSel(1)"
+                    >添加视频</el-dropdown-item
+                  >
+                  <el-dropdown-item @click.native="handleAddSel(2)"
+                    >添加图片</el-dropdown-item
+                  >
+                  <el-dropdown-item @click.native="handleAddSel(3)"
+                    >添加文字</el-dropdown-item
+                  >
                   <el-dropdown-item>插入直播</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -29,7 +36,9 @@
                 placeholder="请输入名称搜索"
                 prefix-icon="el-icon-search"
                 v-model="searchVal"
-              > <el-button slot="append" icon="el-icon-search"></el-button></el-input>
+              >
+                <el-button slot="append" icon="el-icon-search"></el-button
+              ></el-input>
             </div>
           </el-col>
         </el-row>
@@ -76,7 +85,7 @@
                     placement="left"
                     trigger="click"
                   >
-                    <ul class="layer_box">
+                    <ul class="layer_box" v-if="listData">
                       <li
                         v-for="(i, ind) in eidtLayerList"
                         :key="ind"
@@ -122,7 +131,7 @@
                 </div>
               </div>
             </dt>
-                <dd class="total_times">
+            <dd class="total_times">
               <span class="a_title">{{ item.title }}</span>
               <span>已设时长：50:00</span>
             </dd>
@@ -134,7 +143,12 @@
               ></textarea>
             </dd>
           </dl>
+          <div class="no_list" v-if="listData.length == 0">暂无数据</div>
         </div>
+      </div>
+      <!-- 点击加载更多 -->
+      <div class="load_more" v-if="currentPage < totalPage" @click="loadMore">
+        点击加载更多
       </div>
       <div class="bottom_btn">
         <el-button type="primary" @click="gotoSel">完成</el-button>
@@ -144,9 +158,17 @@
   </div>
 </template>
 <script>
+import {
+  queryProgramList, //查询节目
+} from "@/api/program/index.js";
 export default {
   data() {
     return {
+      groupId: 1, //当前编辑的分组的id
+      currentPage: 1, //-分页
+      pageSize: 10, //-分页
+      totalNo: 0, //-分页,总条数
+      totalPage: 0, //分页-总页数
       isPopover: true, //弹出窗显示隐藏
       isLoop: 1, //设置是否循环播放
       playStartEnd: "", //播放起始时间设置
@@ -179,109 +201,53 @@ export default {
       i_second: "",
       readonly: false,
       listData: [
-        {
-          id: 1,
-          desc: "标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          title: "11一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
-        {
-          id: 2,
-          title: "22一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          desc: "标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
-        {
-          id: 3,
-          title: "33一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          desc: "标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
-        {
-          id: 4,
-          title: "44一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          desc: "标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
-        {
-          id: 5,
-          title: "55一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          desc: "标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
-        {
-          id: 6,
-          title: "66一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          desc: "标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
-        {
-          id: 7,
-          title: "77一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          desc: "标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
-        {
-          id: 8,
-          title: "88一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          desc: "标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
-        {
-          id: 9,
-          title: "99一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          desc: "标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
-        {
-          id: 8,
-          title: "88一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          desc: "标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
-        {
-          id: 9,
-          title: "99一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          desc: "标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
+        // {
+        //   id: 1,
+        //   desc: "标题标题标题标题标题标题级标题表发达范德萨范德萨",
+        //   title: "11一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
+        //   houre: 1,
+        //   minute: 10,
+        //   second: 10,
+        //   checked: false,
+        // }
       ],
     };
   },
+  mounted() {
+    // 获取编辑组的列表
+    this.getList(this.currentPage, this.pageSize);
+  },
   methods: {
+    loadMore() {
+      // 点击加载更多
+      this.currentPage += 1; //页数++
+      //请求数据
+      this.getList(this.currentPage, this.pageSize);
+    },
+    getList(pageNo, pageSize) {
+      //获取分组列表
+      this.currentPage = pageNo;
+      var odata = {
+        pageNum: pageNo,
+        pageSize: pageSize,
+        groupId: this.groupId,
+      };
+      queryProgramList(odata)
+        .then((res) => {
+          if (res.data.code == 200) {
+            this.listData = res.data.data;
+            this.totalNo = res.data.data.total;
+            //总页数
+            this.totalPage = Math.ceil(this.totalNo / this.pageSize);
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          //   this.$message.error(err.head.msg);
+          console.log(err);
+        });
+    },
     swapItems(id, index, fid) {
       //移动操作操作 id:1 置顶  4:置地 对应相应的操作id
       //    todo  index:对应列表数组的index 用于数组移位
@@ -322,27 +288,27 @@ export default {
           //   console.log(err)
         });
     },
-    gotoSel(){
-        //完成--去保存
-        this.$router.push({
-            name:"programManage"
-        })
+    gotoSel() {
+      //完成--去保存
+      this.$router.push({
+        name: "programManage",
+      });
     },
-    goBack(){
-        //返回上-层
-       this.$router.push({
-            name:"programManage"
-        }) 
+    goBack() {
+      //返回上-层
+      this.$router.push({
+        name: "programManage",
+      });
     },
-    handleAddSel(type){
-        // todo type:1 添加视频   2：添加内容
-        // 跳转至添加
-        this.$router.push({
-            name:"addProgram",
-            query:{
-                type:type
-            }
-        })
+    handleAddSel(type) {
+      // todo type:1 添加视频   2：添加内容
+      // 跳转至添加
+      this.$router.push({
+        name: "addProgram",
+        query: {
+          type: type,
+        },
+      });
     },
   },
 };
@@ -494,6 +460,13 @@ export default {
             }
           }
         }
+        .no_list {
+          font-size: 18px;
+          text-align: center;
+          line-height: 200px;
+          width: 100%;
+          color: palevioletred;
+        }
       }
       .top_label {
         .label {
@@ -552,9 +525,15 @@ export default {
         }
       }
     }
-    .bottom_btn{
-        text-align:center;
-        padding:20px 0 30px;
+    .load_more {
+      line-height: 100px;
+      text-align: center;
+      font-size: 18px;
+      color: #999;
+    }
+    .bottom_btn {
+      text-align: center;
+      padding: 20px 0 30px;
     }
   }
 }

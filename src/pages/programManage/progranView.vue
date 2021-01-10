@@ -59,13 +59,15 @@
           >
             <dt>
               <div class="img">
-                <img src="@/assets/img/media/01.png" alt />
+                <img v-if="type==2"  :src="item.materialUrl" alt="">
+                <img v-if="type==1" src="@/assets/img/media/01.png" alt />
+                 <img v-if="type==3" src="@/assets/img/media/03.png" alt />
               </div>
               <div class="text">
                 <p class="play_title">
-                  <span>设置播放时长：</span>
+                  <span v-if="type != 1">设置播放时长：</span>
                   <el-popover
-                    :ref="'refNamePopover' + item.id"
+                    :ref="'refNamePopover' + item.materialId"
                     placement="left"
                     trigger="click"
                   >
@@ -73,7 +75,7 @@
                       <li
                         v-for="(i, ind) in eidtLayerList"
                         :key="ind"
-                        @click="swapItems(i.id, index, item.id)"
+                        @click="swapItems(i.id, index, item.materialId)"
                       >
                         <span
                           :class="{
@@ -94,7 +96,7 @@
                     ></span>
                   </el-popover>
                 </p>
-                <div class="play_times">
+                <div class="play_times" v-if="type != 1">
                   <el-input
                     :readonly="readonly"
                     v-model="item.houre"
@@ -116,15 +118,16 @@
               </div>
             </dt>
             <dd class="total_times">
-              <span class="a_title">{{ item.title }}</span>
-              <span>已设时长：50:00</span>
+              <span class="a_title">{{ item.materialTitle }}</span>
+              <span>已设时长：{{ item.materialTotalTime }}</span>
             </dd>
             <dd class="dd">
-              <textarea
+              {{ item.materialBrief }}
+              <!-- <textarea
                 class="textarea"
                 maxlength="100"
                 v-model="item.title"
-              ></textarea>
+              ></textarea> -->
             </dd>
           </dl>
         </div>
@@ -137,9 +140,13 @@
   </div>
 </template>
 <script>
+import {
+  updateProgram, //添加
+} from "@/api/program/index.js";
 export default {
   data() {
     return {
+      type: this.$route.query.type, //获取添加的类型 1：视频  2：图片  3：文字
       active: 1, //步骤1
       isPopover: true, //弹出窗显示隐藏
       isLoop: 1, //设置是否循环播放
@@ -172,108 +179,15 @@ export default {
       i_minute: "",
       i_second: "",
       readonly: false,
-      listData: [
-        {
-          id: 1,
-          desc: "标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          title: "11一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
-        {
-          id: 2,
-          title: "22一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          desc: "标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
-        {
-          id: 3,
-          title: "33一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          desc: "标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
-        {
-          id: 4,
-          title: "44一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          desc: "标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
-        {
-          id: 5,
-          title: "55一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          desc: "标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
-        {
-          id: 6,
-          title: "66一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          desc: "标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
-        {
-          id: 7,
-          title: "77一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          desc: "标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
-        {
-          id: 8,
-          title: "88一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          desc: "标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
-        {
-          id: 9,
-          title: "99一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          desc: "标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
-        {
-          id: 8,
-          title: "88一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          desc: "标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
-        {
-          id: 9,
-          title: "99一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-          desc: "标题标题标题标题标题标题级标题表发达范德萨范德萨",
-          houre: 1,
-          minute: 10,
-          second: 10,
-          checked: false,
-        },
-      ],
+      listData: [],
     };
+  },
+  mounted() {
+    // 获取选中的数据并赋值
+    if (localStorage.getItem("addSelList")) {
+      console.log();
+      this.listData = JSON.parse(localStorage.getItem("addSelList"));
+    }
   },
   methods: {
     swapItems(id, index, fid) {
@@ -318,13 +232,47 @@ export default {
     },
     gotoSel() {
       //完成--去保存
-      this.$router.push({
-        name: "programManage",
+      var selArr=[];
+      //处理选中的列表
+      this.listData.forEach(item=>{
+        selArr.push({
+          materialId:item.materialId,
+          totalTime:item.materialTotalTime
+        })
+       
+      })
+
+      var odata = {
+        program: {
+          modelId: 0,
+          programBroadcast: "",
+          programBroastStartTime: "",
+          programBroastStatus: "",
+          programBroastUrl: "",
+          programCreateTime: "",
+          programGroupId: 0,
+          programId: 0,
+          programStartTime: "",
+          programUpdateTime: "",
+        },
+        programMaterialList: selArr
+      };
+      console.log(selArr)
+      console.log(odata);
+      // return false;
+      updateProgram(odata).then((res) => {
+        if (res.data.code == 200) {
+          this.$router.push({
+            name: "programManage",
+          });
+        }
       });
     },
     goBack() {
       //返回上-层
-      this.$router.go(-1)
+      //移除选择的内容
+      localStorage.removeItem(addSelList);
+      this.$router.go(-1);
     },
     handleAddSel(type) {
       // todo type:1 添加视频   2：添加内容
@@ -435,7 +383,7 @@ export default {
             display: flex;
             justify-content: space-between;
             .img {
-              width: 250px;
+              width: 150px !important;
               height: 80px;
               margin-right: 10px;
               img {
@@ -446,6 +394,7 @@ export default {
             }
             .text {
               overflow: hidden;
+              flex:1;
               .play_title {
                 line-height: 40px;
                 display: flex;
@@ -472,6 +421,7 @@ export default {
               overflow: hidden;
               text-overflow: ellipsis;
               white-space: nowrap;
+              text-align: left;
             }
           }
           .dd {
