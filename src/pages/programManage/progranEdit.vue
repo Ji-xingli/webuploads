@@ -63,7 +63,7 @@
                 end-placeholder="结束日期"
               >
               </el-date-picker>
-              <el-button type="primary">停止播放</el-button>
+              <el-button type="primary" v-if="liveBroadcast">停止播放</el-button>
             </div>
           </el-col>
         </el-row>
@@ -75,13 +75,15 @@
           >
             <dt>
               <div class="img">
-                <img src="@/assets/img/media/01.png" alt />
+                <img v-if="item.materialType==0" src="@/assets/img/media/01.png" alt />
+                <img v-if="item.materialType==1" :src="item.materialUrl" alt />
+                <img v-if="item.materialType==2" src="@/assets/img/media/03.png" alt />
               </div>
               <div class="text">
                 <p class="play_title">
                   <span>设置播放时长：</span>
                   <el-popover
-                    :ref="'refNamePopover' + item.id"
+                    :ref="'refNamePopover' + item.materialId"
                     placement="left"
                     trigger="click"
                   >
@@ -89,7 +91,7 @@
                       <li
                         v-for="(i, ind) in eidtLayerList"
                         :key="ind"
-                        @click="swapItems(i.id, index, item.id)"
+                        @click="swapItems(i.id, index, item.materialId)"
                       >
                         <span
                           :class="{
@@ -132,14 +134,14 @@
               </div>
             </dt>
             <dd class="total_times">
-              <span class="a_title">{{ item.title }}</span>
+              <span class="a_title">{{ item.materialTitle }}</span>
               <span>已设时长：50:00</span>
             </dd>
             <dd class="dd">
               <textarea
                 class="textarea"
                 maxlength="100"
-                v-model="item.desc"
+                v-model="item.materialBrief"
               ></textarea>
             </dd>
           </dl>
@@ -160,11 +162,12 @@
 <script>
 import {
   queryProgramList, //查询节目
+  updateBroadcastStatus
 } from "@/api/program/index.js";
 export default {
   data() {
     return {
-      groupId: 1, //当前编辑的分组的id
+      programId:this.$route.query.programId,//当前编辑的节目组
       currentPage: 1, //-分页
       pageSize: 10, //-分页
       totalNo: 0, //-分页,总条数
@@ -200,6 +203,7 @@ export default {
       i_minute: "",
       i_second: "",
       readonly: false,
+      liveBroadcast:{},//直播内容/判断是否可以插入直播，有内容：无法插入   无内容：可以插入直播
       listData: [
         // {
         //   id: 1,
@@ -216,8 +220,19 @@ export default {
   mounted() {
     // 获取编辑组的列表
     this.getList(this.currentPage, this.pageSize);
+    // 查询模板状态
+    this.getStatus();
   },
   methods: {
+    getStatus(){
+      updateBroadcastStatus(this.programId).then(res=>{
+        if(res.data.code==200){
+          if(res.data.data){
+            this.liveBroadcast=res.data.data;
+          }
+        }
+      })
+    },
     loadMore() {
       // 点击加载更多
       this.currentPage += 1; //页数++
@@ -225,12 +240,12 @@ export default {
       this.getList(this.currentPage, this.pageSize);
     },
     getList(pageNo, pageSize) {
-      //获取分组列表
+      // 编辑前调用--获取分组列表
       this.currentPage = pageNo;
       var odata = {
         pageNum: pageNo,
         pageSize: pageSize,
-        groupId: this.groupId,
+        groupId: this.$store.state.groupId,
       };
       queryProgramList(odata)
         .then((res) => {
@@ -307,6 +322,7 @@ export default {
         name: "addProgram",
         query: {
           type: type,
+          programId:this.programId
         },
       });
     },
@@ -405,7 +421,7 @@ export default {
             display: flex;
             justify-content: space-between;
             .img {
-              width: 250px;
+              width: 150px!important;
               height: 80px;
               margin-right: 10px;
               img {
@@ -415,6 +431,7 @@ export default {
               }
             }
             .text {
+              flex:1;
               overflow: hidden;
               .play_title {
                 line-height: 40px;
@@ -442,6 +459,7 @@ export default {
               overflow: hidden;
               text-overflow: ellipsis;
               white-space: nowrap;
+              text-align:left;
             }
           }
           .dd {

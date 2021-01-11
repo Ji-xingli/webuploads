@@ -146,6 +146,7 @@ import {
 export default {
   data() {
     return {
+      programId:this.$route.query.programId,
       type: this.$route.query.type, //获取添加的类型 1：视频  2：图片  3：文字
       active: 1, //步骤1
       isPopover: true, //弹出窗显示隐藏
@@ -244,14 +245,14 @@ export default {
 
       var odata = {
         program: {
-          modelId: 0,
+          modelId: this.programId,
           programBroadcast: "",
           programBroastStartTime: "",
           programBroastStatus: "",
           programBroastUrl: "",
           programCreateTime: "",
-          programGroupId: 0,
-          programId: 0,
+          programGroupId: this.$store.state.groupId,
+          programId: this.programId,
           programStartTime: "",
           programUpdateTime: "",
         },

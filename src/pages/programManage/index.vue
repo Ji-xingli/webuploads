@@ -1,10 +1,7 @@
 <template>
   <div class="wrap">
-    <dl class="no_template">
-      <dt><img src="@/assets/img/media/01.png" alt="" /></dt>
-      <dd>请前往<span>模板管理</span>页，选择需要使用的模板</dd>
-    </dl>
-    <div class="manage_box">
+    
+    <div class="manage_box" v-if="isTemplate">
       <!-- A区 -->
       <el-row :gutter="20">
         <el-col :span="16">
@@ -36,7 +33,9 @@
               >
                 <dt>
                   <div class="img">
-                    <img src="@/assets/img/media/01.png" alt />
+                    <img v-if="item.materialType==1" :src="item.materialUrl" alt="">
+                    <img v-if="item.materialType==0" src="@/assets/img/media/01.png" alt />
+                    <img v-if="item.materialType==2" src="@/assets/img/media/03.png" alt />
                   </div>
                   <div class="text">
                     <p class="play_title">
@@ -64,11 +63,12 @@
                   </div>
                 </dt>
                 <dd class="total_times">
-                  <span class="a_title">{{ item.title }}</span>
-                  <span>总时长：50:00</span>
+                  <span class="a_title">{{ item.materialTitle }}</span>
+                  <span v-if="item.materialType!=0">已设时长：{{item.programMaterialTotalTime}}</span>
+                  <span v-else>总时长：{{item.programMaterialTotalTime}}</span>
                 </dd>
                 <dd class="dd">
-                  {{ item.desc }}
+                  {{ item.materialBrief }}
                 </dd>
               </dl>
               <div class="no_list" v-if="listDataA.length==0">暂无节目</div>
@@ -103,199 +103,9 @@
         </el-col>
       </el-row>
       <!-- B区 -->
-      <el-row :gutter="20">
-        <el-col :span="16">
-          <div class="block_title">
-            <el-row :gutter="20" class="title_box">
-              <el-col :span="6">
-                <div class="title">B区节目播放</div>
-              </el-col>
-              <el-col :span="12" :offset="6">
-                <div class="search">
-                  <el-button type="primary" @click="gotoEdit"
-                    >编辑节目单</el-button
-                  >
-                  <el-input
-                    placeholder="请输入名称搜索"
-                    prefix-icon="el-icon-search"
-                    v-model="searchVal"
-                  >
-                    <el-button slot="append" icon="el-icon-search"></el-button
-                  ></el-input>
-                </div>
-              </el-col>
-            </el-row>
-            <div class="row_box">
-              <dl
-                class="dl flip-list-move"
-                v-for="(item, index) in listDataB"
-                :key="index"
-              >
-                <dt>
-                  <div class="img">
-                    <img src="@/assets/img/media/01.png" alt />
-                  </div>
-                  <div class="text">
-                    <p class="play_title">
-                      <span>设置播放时长：</span>
-                    </p>
-                    <div class="play_times">
-                      <el-input
-                        :readonly="readonly"
-                        v-model="item.houre"
-                        placeholder="时"
-                      ></el-input
-                      >:
-                      <el-input
-                        :readonly="readonly"
-                        v-model="item.minute"
-                        placeholder="分"
-                      ></el-input
-                      >:
-                      <el-input
-                        :readonly="readonly"
-                        v-model="item.second"
-                        placeholder="秒"
-                      ></el-input>
-                    </div>
-                  </div>
-                </dt>
-                <dd class="total_times">
-                  <span class="a_title">{{ item.title }}</span>
-                  <span>总时长：50:00</span>
-                </dd>
-                <dd class="dd">
-                  {{ item.desc }}
-                </dd>
-              </dl>
-              <div class="no_list" v-if="listDataB.length==0">暂无节目</div>
-            </div>
-          </div>
-        </el-col>
-        <el-col :span="8">
-          <div class="right">
-            <div class="date_title">
-              <ul class="ul">
-                <li v-for="(item, index) in titleDate" :key="index">
-                  {{ item }}
-                </li>
-              </ul>
-              <el-button
-                class="button"
-                type="primary"
-                icon="el-icon-download"
-                circle
-              ></el-button>
-            </div>
-            <div class="data_list">
-              <div class="item" v-for="(item, index) in listDataA" :key="index">
-                <div class="icon">
-                  <span class="el-icon-picture-outline-round"></span>
-                </div>
-                <div class="item_text">{{ item.title }}</div>
-                <div class="item_times">{{ item.times }}</div>
-              </div>
-            </div>
-          </div>
-        </el-col>
-      </el-row>
+      
       <!-- c区域 -->
-      <el-row :gutter="20">
-        <el-col :span="16">
-          <div class="block_title">
-            <el-row :gutter="20" class="title_box">
-              <el-col :span="6">
-                <div class="title">C区节目播放</div>
-              </el-col>
-              <el-col :span="12" :offset="6">
-                <div class="search">
-                  <el-button type="primary" @click="gotoEdit"
-                    >编辑节目单</el-button
-                  >
-                  <el-input
-                    placeholder="请输入名称搜索"
-                    prefix-icon="el-icon-search"
-                    v-model="searchVal"
-                  >
-                    <el-button slot="append" icon="el-icon-search"></el-button
-                  ></el-input>
-                </div>
-              </el-col>
-            </el-row>
-            <div class="row_box">
-              <dl
-                class="dl flip-list-move"
-                v-for="(item, index) in listDataC"
-                :key="index"
-              >
-                <dt>
-                  <div class="img">
-                    <img src="@/assets/img/media/01.png" alt />
-                  </div>
-                  <div class="text">
-                    <p class="play_title">
-                      <span>设置播放时长：</span>
-                    </p>
-                    <div class="play_times">
-                      <el-input
-                        :readonly="readonly"
-                        v-model="item.houre"
-                        placeholder="时"
-                      ></el-input
-                      >:
-                      <el-input
-                        :readonly="readonly"
-                        v-model="item.minute"
-                        placeholder="分"
-                      ></el-input
-                      >:
-                      <el-input
-                        :readonly="readonly"
-                        v-model="item.second"
-                        placeholder="秒"
-                      ></el-input>
-                    </div>
-                  </div>
-                </dt>
-                <dd class="total_times">
-                  <span class="a_title">{{ item.title }}</span>
-                  <span>总时长：50:00</span>
-                </dd>
-                <dd class="dd">
-                  {{ item.desc }}
-                </dd>
-              </dl>
-              <div class="no_list" v-if="listDataC.length==0">暂无节目</div>
-            </div>
-          </div>
-        </el-col>
-        <el-col :span="8">
-          <div class="right">
-            <div class="date_title">
-              <ul class="ul">
-                <li v-for="(item, index) in titleDate" :key="index">
-                  {{ item }}
-                </li>
-              </ul>
-              <el-button
-                class="button"
-                type="primary"
-                icon="el-icon-download"
-                circle
-              ></el-button>
-            </div>
-            <div class="data_list">
-              <div class="item" v-for="(item, index) in listDataC" :key="index">
-                <div class="icon">
-                  <span class="el-icon-picture-outline-round"></span>
-                </div>
-                <div class="item_text">{{ item.title }}</div>
-                <div class="item_times">{{ item.times }}</div>
-              </div>
-            </div>
-          </div>
-        </el-col>
-      </el-row>
+
       <!-- 文字专区--无论选择哪屏模板都有此区 -->
       <el-row :gutter="20">
         <el-col :span="16">
@@ -355,11 +165,12 @@
                   </div>
                 </dt>
                 <dd class="total_times">
-                  <span class="a_title">{{ item.title }}</span>
-                  <span>总时长：50:00</span>
+                  <span class="a_title">{{ item.title }} {{item.materialType}}</span>
+                  <span v-if="item.materialType==0">总时长22：50:00</span>
+                  <span v-if="item.materialType==1">已设时长：{{item.programMaterialTotalTime}}</span>
                 </dd>
                 <dd class="dd">
-                  {{ item.desc }}
+                  {{ item.materialBrief}}
                 </dd>
               </dl>
               <div class="no_list" v-if="listDataText.length==0">暂无节目</div>
@@ -394,19 +205,22 @@
         </el-col>
       </el-row>
     </div>
-    
+    <dl class="no_template" v-else>
+      <dt><img src="@/assets/img/media/01.png" alt="" /></dt>
+      <dd>请前往<span>模板管理</span>页，选择需要使用的模板</dd>
+    </dl>
   </div>
 </template>
 <script>
 import {
   queryProgram,//查询是否有分组
-
+  queryProgramList,//查询组列表数据
 } from '@/api/program/index.js'
 
 export default {
   data() {
     return {
-
+      isTemplate:false,//true :有模板
       searchVal: "",
       i_hour: "",
       i_minute: "",
@@ -450,6 +264,8 @@ export default {
       listDataB:[],
       listDataC:[],
       listDataText:[],
+      pageNo:1,//当前页
+      pageSize:3//每页显示多少条
     };
   },
   mounted(){
@@ -460,21 +276,41 @@ export default {
     searchProgram(){
       // 查询分组是否有模板
       var odata={
-        groupId:1
+        groupId:this.$store.state.groupId
       }
       queryProgram(odata).then(res=>{
         if (res.data.code == 200) {
           if(res.data.data.length==0){
-            // 选择分组
+            // 选择分组--没有选择模板--展示无内容
+            this.isTemplate=false;
           }else{
-            this.listDataA=res.data.data;
+            // 有模板，查询当前组节目模板列表
+            this.isTemplate=true;
+            this.getTemplateList();
           }
+        }
+      })
+    },
+    getTemplateList(){
+      var odata={
+        groupId:this.$store.state.groupId,
+        pageNum:this.pageNo,
+        pageSize:this.pageSize
+      }
+      //获取模板列表
+      queryProgramList(odata).then(res=>{
+        if (res.data.code == 200) {
+          this.listDataA=res.data.data;
+          this.programId=res.data.data[0].programId
         }
       })
     },
     gotoEdit() {
       this.$router.push({
         name: "progranEdit",
+        query:{
+          programId:this.programId
+        }
       });
     },
   },
@@ -540,7 +376,7 @@ export default {
             display: flex;
             justify-content: space-between;
             .img {
-              width: 500px;
+              width: 150px!important;
               height: 80px;
               margin-right: 10px;
               img {
@@ -578,6 +414,7 @@ export default {
               overflow: hidden;
               text-overflow: ellipsis;
               white-space: nowrap;
+              text-align:left;
             }
           }
           .dd {
