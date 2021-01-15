@@ -207,7 +207,7 @@
     </div>
     <dl class="no_template" v-else>
       <dt><img src="@/assets/img/media/01.png" alt="" /></dt>
-      <dd>请前往<span>模板管理</span>页，选择需要使用的模板</dd>
+      <dd>请前往<span @click="gotoTemplate">模板管理</span>页，选择需要使用的模板</dd>
     </dl>
   </div>
 </template>
@@ -283,9 +283,11 @@ export default {
           if(res.data.data.length==0){
             // 选择分组--没有选择模板--展示无内容
             this.isTemplate=false;
+            
           }else{
             // 有模板，查询当前组节目模板列表
             this.isTemplate=true;
+            this.info=res.data.data;
             this.getTemplateList();
           }
         }
@@ -295,7 +297,9 @@ export default {
       var odata={
         groupId:this.$store.state.groupId,
         pageNum:this.pageNo,
-        pageSize:this.pageSize
+        pageSize:this.pageSize,
+        modelId:this.info[0].modelId,
+        partionId:''
       }
       //获取模板列表
       queryProgramList(odata).then(res=>{
@@ -313,6 +317,12 @@ export default {
         }
       });
     },
+    gotoTemplate(){
+      // 跳转到模板中心
+      this.$router.push({
+        name:"templateCenter"
+      })
+    }
   },
 };
 </script>
@@ -332,9 +342,12 @@ export default {
     margin: 40px auto 0;
     font-size: 16px;
     text-align: center;
-    display: none;
     dd {
       line-height: 40px;
+    }
+    span{
+      color:blue;
+      cursor: pointer;
     }
   }
   .manage_box {

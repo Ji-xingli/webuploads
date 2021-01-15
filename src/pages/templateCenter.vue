@@ -4,7 +4,7 @@
       <dl
         v-for="(item, index) in templateList"
         :key="index"
-        :class="active == index ? 'cur' : ''"
+        :class="active=== item.modelId ? 'cur' : ''"
         @click="handleClickItem(item.modelId)"
       >
         <dt>
@@ -14,7 +14,7 @@
         </dt>
         <dd>
           {{ item.text
-          }}<span class="nowTemplate" v-if="active == index"
+          }}<span class="nowTemplate" v-if="active === item.modelId"
             >--当前选用模板</span
           >
         </dd>
@@ -29,6 +29,7 @@
 <script>
 import {
   queryProgram, //查询是否有分组
+  addProgram
 } from "@/api/program/index.js";
 export default {
   data() {
@@ -37,15 +38,15 @@ export default {
       list: [],
       templateList: [
         {
-          modelId: 0,
+          modelId: 1,
           text: "模板1",
         },
         {
-          modelId: 1,
+          modelId: 2,
           text: "模板2",
         },
         {
-          modelId: 2,
+          modelId: 3,
           text: "模板3",
         },
       ],
@@ -66,13 +67,33 @@ export default {
       };
       queryProgram(odata).then((res) => {
         if (res.data.code == 200) {
-          this.list = res.data.data;
-          this.active = this.list.length;
+          if(res.data.data.length!==0){
+            this.list = res.data.data;
+            this.active = this.list[0].modelId ;
+          }
         }
       });
     },
     selTemplate() {
       // 选择模板
+      var odata={
+        "modelId": this.active,
+        "programBroadcast": "",
+        "programBroastStartTime": "",
+        "programBroastStatus": "",
+        "programBroastUrl": "",
+        "programCreateTime": "",
+        "programGroupId": this.$store.state.groupId,
+        "programId": "",
+        "programStartTime": "",
+        "programType": "",
+        "programUpdateTime": ""
+      }
+      addProgram(odata).then(res=>{
+        if (res.data.code == 200) {
+          this.$router.gok(-1)
+        }
+      })
     },
   },
 };
