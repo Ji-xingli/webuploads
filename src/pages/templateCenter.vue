@@ -37,15 +37,15 @@ export default {
       list: [],
       templateList: [
         {
-          modelId: 0,
+          modelId: 1,
           text: "模板1",
         },
         {
-          modelId: 1,
+          modelId: 2,
           text: "模板2",
         },
         {
-          modelId: 2,
+          modelId: 3,
           text: "模板3",
         },
       ],
