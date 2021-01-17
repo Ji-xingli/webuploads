@@ -19,6 +19,7 @@
                 placeholder="请输入名称搜索"
                 prefix-icon="el-icon-search"
                 v-model="searchVal"
+                clearable
               >
                 <el-button slot="append" icon="el-icon-search"></el-button
               ></el-input>
@@ -38,7 +39,7 @@
         <el-row>
           <el-col>
             <div class="top_label">
-              <span class="label">{{ types }}({{ selNum }}/10)</span>
+              <span class="label">{{ types }}({{ selNum }}/{{totalNo}})</span>
             </div>
           </el-col>
           <!-- <el-col>
@@ -78,7 +79,7 @@
                   ></div>
                 </div>
                 <div class="play_times" v-if="type!=1">
-                  <el-input
+                  <!-- <el-input
                     :readonly="readonly"
                     v-model="item.houre"
                     placeholder="时"
@@ -89,10 +90,10 @@
                     v-model="item.minute"
                     placeholder="分"
                   ></el-input
-                  >:
+                  >: -->
                   <el-input
                     :readonly="readonly"
-                    v-model="item.second"
+                    v-model="item.materialTotalTime"
                     placeholder="秒"
                   ></el-input>
                 </div>
@@ -100,7 +101,7 @@
             </dt>
             <dd class="total_times">
               <span class="a_title">{{ item.materialTitle }}</span>
-              <span>总时长：{{item.materialTotalTime}}</span>
+              <span v-if="type==1">总时长：{{item.materialTotalTime}}</span>
             </dd>
             <dd class="dd">
               {{ item.materialBrief }}
@@ -139,6 +140,7 @@ export default {
       totalNo: 0, //-分页,总条数
       totalPage: 0, //分页-总页数
       type: this.$route.query.type, //1:视频  2：图片  3：文字
+      areaType:this.$route.query.areaType,//添加区域  A B  C  D
       active: 0, //步骤1
       selNum: 0, //选中了几项
       searchVal: "",
@@ -169,6 +171,8 @@ export default {
     },
   },
   mounted() {
+    console.log("area",this.areaType)
+
     if (this.type == 1) {
       this.getVList(this.currentPage, this.pageSize);
     } else if (this.type == 2) {
@@ -195,7 +199,7 @@ export default {
       var odata = {
         pageNum: pageNo,
         pageSize: pageSize,
-        title: "",
+        title: this.searchVal,
       };
       getVideoList(odata)
         .then((res) => {
@@ -218,7 +222,7 @@ export default {
       var odata = {
         pageNum: pageNo,
         pageSize: pageSize,
-        title: "",
+        title: this.searchVal,
       };
       getPList(odata)
         .then((res) => {
@@ -241,7 +245,7 @@ export default {
       var odata = {
         pageNum: pageNo,
         pageSize: pageSize,
-        title: "",
+        title: this.searchVal,
       };
       getList(odata)
         .then((res) => {
@@ -276,7 +280,11 @@ export default {
       this.$router.push({
         name: "progranView",
         query: {
-          type: this.type
+          type: this.type,//添加内容类型
+          programId:this.$route.query.programId,//节目id
+          modelId:this.$route.query.modelId,//选用的模板
+          startTimes:this.$route.query.startTimes,//开始时间
+          areaType:this.areaType//内容添加的区域
         }
       });
     },
@@ -285,6 +293,7 @@ export default {
       this.$router.go(-1);
     },
     itemChecked(index) {
+      console.log(index)
       this.listData[index].checked = !this.listData[index].checked;
       var num = 0;
       this.listData.forEach((item, index) => {
@@ -292,11 +301,11 @@ export default {
           num += 1;
         }
       });
-      if (num > 10) {
-        this.listData[index].checked = false;
-        this.$message.error("选择已达上限");
-        return false;
-      }
+      // if (num > 10) {
+      //   this.listData[index].checked = false;
+      //   this.$message.error("选择已达上限");
+      //   return false;
+      // }
       this.selNum = num;
     },
   },

@@ -20,22 +20,33 @@
                   选择添加内容<i class="el-icon-arrow-down el-icon--right"></i>
                 </el-button>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item @click.native="handleAddSel(1)"
+                  <el-dropdown-item
+                    v-if="areaType != 'D'"
+                    @click.native="handleAddSel(1)"
                     >添加视频</el-dropdown-item
                   >
-                  <el-dropdown-item @click.native="handleAddSel(2)"
+                  <el-dropdown-item
+                    v-if="areaType != 'D'"
+                    @click.native="handleAddSel(2)"
                     >添加图片</el-dropdown-item
                   >
-                  <el-dropdown-item @click.native="handleAddSel(3)"
+                  <el-dropdown-item
+                    v-if="areaType == 'D'"
+                    @click.native="handleAddSel(3)"
                     >添加文字</el-dropdown-item
                   >
-                  <el-dropdown-item>插入直播</el-dropdown-item>
+                  <el-dropdown-item
+                    v-if="areaType != 'D'"
+                    @click.native="handleLiveBroadcast"
+                    >插入直播</el-dropdown-item
+                  >
                 </el-dropdown-menu>
               </el-dropdown>
               <el-input
                 placeholder="请输入名称搜索"
                 prefix-icon="el-icon-search"
                 v-model="searchVal"
+                clearable
               >
                 <el-button slot="append" icon="el-icon-search"></el-button
               ></el-input>
@@ -48,7 +59,7 @@
               <span class="label">播放形式</span>
               <el-radio-group v-model="isLoop">
                 <el-radio :label="1">循环播放</el-radio>
-                <el-radio :label="2">不重复播放</el-radio>
+                <el-radio :label="0">不重复播放</el-radio>
               </el-radio-group>
             </div>
           </el-col>
@@ -56,14 +67,19 @@
             <div class="top_label">
               <span class="label">播放起始时间</span>
               <el-date-picker
+                format="HH:mm"
+                value-format="HH:mm"
                 v-model="playStartEnd"
-                type="datetimerange"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
+                placeholder="请选择开始时间"
+                type="datetime"
               >
+                <!-- range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期" -->
               </el-date-picker>
-              <el-button type="primary" v-if="liveBroadcast">停止播放</el-button>
+              <el-button type="primary" v-if="liveBroadcast"
+                >停止播放</el-button
+              >
             </div>
           </el-col>
         </el-row>
@@ -75,13 +91,25 @@
           >
             <dt>
               <div class="img">
-                <img v-if="item.materialType==0" src="@/assets/img/media/01.png" alt />
-                <img v-if="item.materialType==1" :src="item.materialUrl" alt />
-                <img v-if="item.materialType==2" src="@/assets/img/media/03.png" alt />
+                <img
+                  v-if="item.materialType == 0"
+                  src="@/assets/img/media/01.png"
+                  alt
+                />
+                <img
+                  v-if="item.materialType == 1"
+                  :src="item.materialUrl"
+                  alt
+                />
+                <img
+                  v-if="item.materialType == 2"
+                  src="@/assets/img/media/03.png"
+                  alt
+                />
               </div>
               <div class="text">
                 <p class="play_title">
-                  <span>设置播放时长：</span>
+                  <span v-if="item.materialType != 0">设置播放时长：</span>
                   <el-popover
                     :ref="'refNamePopover' + item.materialId"
                     placement="left"
@@ -112,8 +140,8 @@
                     ></span>
                   </el-popover>
                 </p>
-                <div class="play_times">
-                  <el-input
+                <div class="play_times" v-if="item.materialType != 0">
+                  <!-- <el-input
                     :readonly="readonly"
                     v-model="item.houre"
                     placeholder="时"
@@ -124,10 +152,10 @@
                     v-model="item.minute"
                     placeholder="分"
                   ></el-input
-                  >:
+                  >: -->
                   <el-input
                     :readonly="readonly"
-                    v-model="item.second"
+                    v-model="item.materialTotalTime"
                     placeholder="秒"
                   ></el-input>
                 </div>
@@ -135,7 +163,9 @@
             </dt>
             <dd class="total_times">
               <span class="a_title">{{ item.materialTitle }}</span>
-              <span>已设时长：50:00</span>
+              <span v-if="item.materialType == 0"
+                >总设时长：{{ item.materialTotalTime }}</span
+              >
             </dd>
             <dd class="dd">
               <textarea
@@ -152,28 +182,52 @@
       <div class="load_more" v-if="currentPage < totalPage" @click="loadMore">
         点击加载更多
       </div>
-      <div class="bottom_btn">
+      <div class="bottom_btn" v-if="listData.length != 0" > 
         <el-button type="primary" @click="gotoSel">完成</el-button>
         <el-button @click="goBack">取消</el-button>
       </div>
     </div>
+
+    <!-- 插入直播 -->
+    <el-dialog title="插入直播" :visible.sync="dialogTableVisible">
+      <el-form ref="form1" :model="form" label-width="120px">
+        <el-form-item label="直播链接">
+          <el-input v-model="form.url" placeholder="请输入直播链接"></el-input>
+        </el-form-item>
+        <el-form-item label="播放起始时间">
+          <el-input v-model="form.startTimes" type="number" placeholder="请输入播放起始时间"></el-input>
+        </el-form-item>
+        <div class="bottom_btn" v-if="listData.length != 0" style="text-align:center;">
+          <el-button @click.native="handleLiveBroadcast">取消</el-button>
+          <el-button type="primary" @click="liveSure">确定</el-button>
+        </div>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 <script>
 import {
   queryProgramList, //查询节目
-  updateBroadcastStatus
+  updateBroadcastStatus,
+  updateProgram, //保存
 } from "@/api/program/index.js";
 export default {
   data() {
     return {
-      programId:this.$route.query.programId,//当前编辑的节目组
+      form:{
+        url:"",
+        startTimes:""
+      },
+      dialogTableVisible:false,//直播弹窗
+      areaType: this.$route.query.areaType, //编辑的区域 A,B,C,D
+      modelId: this.$route.query.modelId, //模板
+      programId: this.$route.query.programId, //当前编辑的节目组
       currentPage: 1, //-分页
       pageSize: 10, //-分页
       totalNo: 0, //-分页,总条数
       totalPage: 0, //分页-总页数
       isPopover: true, //弹出窗显示隐藏
-      isLoop: 1, //设置是否循环播放
+      isLoop: 1, //设置是否循环播放  1:循环   0：非循环
       playStartEnd: "", //播放起始时间设置
       eidtLayerList: [
         {
@@ -203,35 +257,49 @@ export default {
       i_minute: "",
       i_second: "",
       readonly: false,
-      liveBroadcast:{},//直播内容/判断是否可以插入直播，有内容：无法插入   无内容：可以插入直播
-      listData: [
-        // {
-        //   id: 1,
-        //   desc: "标题标题标题标题标题标题级标题表发达范德萨范德萨",
-        //   title: "11一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-        //   houre: 1,
-        //   minute: 10,
-        //   second: 10,
-        //   checked: false,
-        // }
-      ],
+      liveBroadcast: "", //直播内容/判断是否可以插入直播，有内容：无法插入   无内容：可以插入直播
+      listData: [], //列表
+      pickerBeginDateBefore: {
+        //今日以前的日期都不能选择
+        disabledDate(time) {
+          return time.getTime() < Date.now() - 8.64e7; //如果当天可选，就不用减8.64e7
+        },
+      },
     };
   },
   mounted() {
+    console.log("area", this.areaType);
     // 获取编辑组的列表
     this.getList(this.currentPage, this.pageSize);
     // 查询模板状态
     this.getStatus();
   },
   methods: {
-    getStatus(){
-      updateBroadcastStatus(this.programId).then(res=>{
-        if(res.data.code==200){
-          if(res.data.data){
-            this.liveBroadcast=res.data.data;
+    handleLiveBroadcast() {
+      this.dialogTableVisible=!this.dialogTableVisible;
+    },
+    liveSure(){
+      console.log(this.form.url)
+      // 插入直播确定
+      if(this.form.url==""|| typeof this.form.url=="undefined"){
+        this.$message.warning("请输入播放地址");
+        return false;
+      }else if(this.form.startTimes==""||typeof this.form.startTimes=="undefined"){
+        this.$message.warning("请输入播放起始时间");
+        return false;
+      }else{
+        this.dialogTableVisible=false
+        this.$message.success("操作成功");
+      }
+    },
+    getStatus() {
+      updateBroadcastStatus(this.programId).then((res) => {
+        if (res.data.code == 200) {
+          if (res.data.data) {
+            this.liveBroadcast = res.data.data;
           }
         }
-      })
+      });
     },
     loadMore() {
       // 点击加载更多
@@ -246,12 +314,15 @@ export default {
         pageNum: pageNo,
         pageSize: pageSize,
         groupId: this.$store.state.groupId,
+        modelId: this.modelId,
+        partionId: this.areaType, //编辑区域
+        title: this.searchVal,
       };
       queryProgramList(odata)
         .then((res) => {
           if (res.data.code == 200) {
-            this.listData = res.data.data;
-            this.totalNo = res.data.data.total;
+            this.listData = res.data.data.programList;
+            this.totalNo = res.data.data.programTotal;
             //总页数
             this.totalPage = Math.ceil(this.totalNo / this.pageSize);
           } else {
@@ -286,11 +357,24 @@ export default {
         this.itemRemove(index);
         return false;
       }
-      this.listData[index] = this.listData.splice(
-        index + 1,
-        1,
-        this.listData[index]
-      )[0];
+
+      if (id == 2) {
+        // 上移动
+        this.listData[index] = this.listData.splice(
+          index - 1,
+          1,
+          this.listData[index]
+        )[0];
+      }
+
+      if (id == 3) {
+        // 下移动
+        this.listData[index] = this.listData.splice(
+          index + 1,
+          1,
+          this.listData[index]
+        )[0];
+      }
       this.$message.success("操作成功");
       return this.listData;
     },
@@ -305,8 +389,52 @@ export default {
     },
     gotoSel() {
       //完成--去保存
-      this.$router.push({
-        name: "programManage",
+      // this.$router.push({
+      //   name: "programManage",
+      // });
+      var selArr = [];
+      //处理选中的列表
+      this.listData.forEach((item) => {
+        // !1：视频  2：图片  3：文字
+        if (this.type != 1) {
+          selArr.push({
+            materialId: item.materialId,
+            totalTime: item.second,
+          });
+        } else {
+          selArr.push({
+            materialId: item.materialId,
+            totalTime: item.materialTotalTime,
+          });
+        }
+      });
+
+      var odata = {
+        program: {
+          modelId: Number(this.modelId),
+          programBroadcast: "",
+          programBroastStartTime: this.form.startTimes,
+          programBroastStatus: "",
+          programBroastUrl: this.form.url,
+          programCreateTime: "",
+          programGroupId: Number(this.$store.state.groupId),
+          programId: Number(this.programId),
+          programType: this.isLoop, //是否循环
+          programStartTime: this.playStartEnd,
+          programUpdateTime: "",
+        },
+        programMaterialList: selArr,
+        programPartition: "A",
+      };
+      console.log(selArr);
+      console.log(odata);
+      // return false;
+      updateProgram(odata).then((res) => {
+        if (res.data.code == 200) {
+          this.$router.push({
+            name: "programManage",
+          });
+        }
       });
     },
     goBack() {
@@ -317,12 +445,20 @@ export default {
     },
     handleAddSel(type) {
       // todo type:1 添加视频   2：添加内容
+      if (this.playStartEnd == "") {
+        this.$message.warning("请选择播放起始时间");
+        return false;
+      }
       // 跳转至添加
       this.$router.push({
         name: "addProgram",
         query: {
           type: type,
-          programId:this.programId
+          programId: this.programId,
+          modelId: this.$route.query.modelId,
+          startTimes: this.playStartEnd,
+          areaType: this.areaType,
+          // programPartition
         },
       });
     },
@@ -421,7 +557,7 @@ export default {
             display: flex;
             justify-content: space-between;
             .img {
-              width: 150px!important;
+              width: 150px !important;
               height: 80px;
               margin-right: 10px;
               img {
@@ -431,7 +567,7 @@ export default {
               }
             }
             .text {
-              flex:1;
+              flex: 1;
               overflow: hidden;
               .play_title {
                 line-height: 40px;
@@ -459,7 +595,7 @@ export default {
               overflow: hidden;
               text-overflow: ellipsis;
               white-space: nowrap;
-              text-align:left;
+              text-align: left;
             }
           }
           .dd {

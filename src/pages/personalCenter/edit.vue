@@ -62,12 +62,19 @@
               class="input-with-select"
               clearable
             >
-              <el-button @click="searchGroup" slot="append" icon="el-icon-search"></el-button>
+              <el-button
+                @click="searchGroup"
+                slot="append"
+                icon="el-icon-search"
+              ></el-button>
             </el-input>
           </div>
           <div class="groupList">
             <div class="item" v-for="(item, index) in groupList" :key="index">
-              <el-input v-model="item.group.groupName"></el-input>
+              <el-input
+                v-model="item.group.groupName"
+                @blur="inputBlur(item.group)"
+              ></el-input>
               <span class="del el-icon-remove" @click="delGroup(index)"></span>
             </div>
           </div>
@@ -111,7 +118,7 @@
             </el-upload>
           </el-form-item>
           <el-form-item>
-             <el-button type="primary" @click="editCancle">取消</el-button>
+            <el-button type="primary" @click="editCancle">取消</el-button>
             <el-button type="primary" @click="save">保存</el-button>
           </el-form-item>
         </el-form>
@@ -120,14 +127,17 @@
   </div>
 </template>
 <script>
-import {addGroup,queryGroup} from '@/api/personalCenter/index.js'
+import {
+  addGroup,
+  queryGroup,
+  updateGroup,
+} from "@/api/personalCenter/index.js";
 export default {
   data() {
     return {
-      
       picMasterVisible: false, //是否编辑
       groupList: [],
-      delList:[],//删除的组列表
+      delList: [], //删除的组列表
       mygroup: "", //添加的分组名称
       searchVal: "", //搜索分组
       form: {
@@ -155,69 +165,73 @@ export default {
       },
     };
   },
-  mounted(){
+  mounted() {
     this.getGroup();
   },
   methods: {
     changePack() {
       this.picMasterVisible = true;
     },
-    submitPicForm(formName){
-       this.$refs[formName].validate((valid) => {
+    submitPicForm(formName) {
+      this.$refs[formName].validate((valid) => {
         if (valid) {
-          var groupName=""
-          this.groupList.forEach((item)=>{
-            groupName+=item.name+","
-          })
-            // 添加分组
-          var p_group=groupName.substr(0, groupName.length - 1)
-          
-          addGroup(p_group).then(res=>{
-            if (res.data.code == 200) {
-              this.$message({
-                type: "success",
-                message: "操作成功!",
-              });
-
-              this.$router.push({
-                name:"personalCenter"
-              })
-
-            }
-          })
+          console.log("pass");
+          // this.$router.push({
+          //   name: "personalCenter",
+          // });
         }
-       })
+      });
     },
-    getGroup(){
+    getGroup() {
       // 获取组列表
-      var odata={
-        name:this.searchVal
-      }
-      queryGroup(odata).then(res=>{
+      var odata = {
+        name: this.searchVal,
+      };
+      queryGroup(odata).then((res) => {
         if (res.data.code == 200) {
-          this.groupList=res.data.data;
+          this.groupList = res.data.data;
         }
-      })
+      });
     },
-    searchGroup(){
+    searchGroup() {
       // 组查询
       this.getGroup();
     },
     addGroup() {
       if (this.mygroup) {
-        this.groupList.push({ group:{groupName: this.mygroup }});
-        this.mygroup = "";
+        addGroup(this.mygroup).then((res) => {
+          if (res.data.code == 200) {
+            this.$message({
+              type: "success",
+              message: "操作成功!",
+            });
+            this.mygroup = "";
+            this.getGroup();
+          }
+        });
       } else {
         this.$message.warning("请输入需要添加的分组");
       }
 
-      console.log(this.groupList)
+      console.log(this.groupList);
     },
-    delGroup(index){
+    inputBlur(obj) {
+      // input 失去焦点保存
+      // console.log(id)
+      updateGroup(obj).then((res) => {
+        if (res.data.code == "200") {
+          this.$message({
+            type: "success",
+            message: "修改成功!",
+          });
+          this.getGroup();
+        }
+      });
+    },
+    delGroup(index) {
       // 删除分组
       this.delList.push(this.groupList[index]);
-      this.groupList.splice(index,1);
-
+      this.groupList.splice(index, 1);
 
       this.mygroupId = "";
 
@@ -227,15 +241,15 @@ export default {
     },
     handlePicRemove() {},
     beforePicUpload() {},
-    editCancle(){
+    editCancle() {
       // 取消保存
       this.$router.push({
-        name:"personalCenter"
-      })
+        name: "personalCenter",
+      });
     },
-    save(){
+    save() {
       //保存
-    }
+    },
   },
 };
 </script>

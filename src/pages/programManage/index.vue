@@ -1,79 +1,10 @@
 <template>
   <div class="wrap">
-    
     <div class="manage_box" v-if="isTemplate">
       <!-- A区 -->
       <el-row :gutter="20">
         <el-col :span="16">
-          <div class="block_title">
-            <el-row :gutter="20" class="title_box">
-              <el-col :span="6">
-                <div class="title">A区节目播放</div>
-              </el-col>
-              <el-col :span="12" :offset="6">
-                <div class="search">
-                  <el-button type="primary" @click="gotoEdit"
-                    >编辑节目单</el-button
-                  >
-                  <el-input
-                    placeholder="请输入名称搜索"
-                    prefix-icon="el-icon-search"
-                    v-model="searchVal"
-                  >
-                    <el-button slot="append" icon="el-icon-search"></el-button
-                  ></el-input>
-                </div>
-              </el-col>
-            </el-row>
-            <div class="row_box">
-              <dl
-                class="dl flip-list-move"
-                v-for="(item, index) in listDataA"
-                :key="index"
-              >
-                <dt>
-                  <div class="img">
-                    <img v-if="item.materialType==1" :src="item.materialUrl" alt="">
-                    <img v-if="item.materialType==0" src="@/assets/img/media/01.png" alt />
-                    <img v-if="item.materialType==2" src="@/assets/img/media/03.png" alt />
-                  </div>
-                  <div class="text">
-                    <p class="play_title">
-                      <span>设置播放时长：</span>
-                    </p>
-                    <div class="play_times">
-                      <el-input
-                        :readonly="readonly"
-                        v-model="item.houre"
-                        placeholder="时"
-                      ></el-input
-                      >:
-                      <el-input
-                        :readonly="readonly"
-                        v-model="item.minute"
-                        placeholder="分"
-                      ></el-input
-                      >:
-                      <el-input
-                        :readonly="readonly"
-                        v-model="item.second"
-                        placeholder="秒"
-                      ></el-input>
-                    </div>
-                  </div>
-                </dt>
-                <dd class="total_times">
-                  <span class="a_title">{{ item.materialTitle }}</span>
-                  <span v-if="item.materialType!=0">已设时长：{{item.programMaterialTotalTime}}</span>
-                  <span v-else>总时长：{{item.programMaterialTotalTime}}</span>
-                </dd>
-                <dd class="dd">
-                  {{ item.materialBrief }}
-                </dd>
-              </dl>
-              <div class="no_list" v-if="listDataA.length==0">暂无节目</div>
-            </div>
-          </div>
+            <program-item :info="info" areaType="A"></program-item>
         </el-col>
         <el-col :span="8">
           <div class="right">
@@ -103,79 +34,73 @@
         </el-col>
       </el-row>
       <!-- B区 -->
-      
+      <el-row :gutter="20" v-if="this.info[0].modelId==2||this.info[0].modelId==3">
+        <el-col :span="16">
+            <program-item :info="info" areaType="B"></program-item>
+        </el-col>
+        <el-col :span="8">
+          <div class="right">
+            <div class="date_title">
+              <ul class="ul">
+                <li v-for="(item, index) in titleDate" :key="index">
+                  {{ item }}
+                </li>
+              </ul>
+              <el-button
+                class="button"
+                type="primary"
+                icon="el-icon-download"
+                circle
+              ></el-button>
+            </div>
+            <div class="data_list">
+              <div class="item" v-for="(item, index) in listDataA" :key="index">
+                <div class="icon">
+                  <span class="el-icon-picture-outline-round"></span>
+                </div>
+                <div class="item_text">{{ item.title }}</div>
+                <div class="item_times">{{ item.times }}</div>
+              </div>
+            </div>
+          </div>
+        </el-col>
+      </el-row>
       <!-- c区域 -->
-
+      <el-row :gutter="20" v-if="this.info[0].modelId==3">
+        <el-col :span="16">
+            <program-item :info="info" areaType="C"></program-item>
+        </el-col>
+        <el-col :span="8">
+          <div class="right">
+            <div class="date_title">
+              <ul class="ul">
+                <li v-for="(item, index) in titleDate" :key="index">
+                  {{ item }}
+                </li>
+              </ul>
+              <el-button
+                class="button"
+                type="primary"
+                icon="el-icon-download"
+                circle
+              ></el-button>
+            </div>
+            <div class="data_list">
+              <div class="item" v-for="(item, index) in listDataA" :key="index">
+                <div class="icon">
+                  <span class="el-icon-picture-outline-round"></span>
+                </div>
+                <div class="item_text">{{ item.title }}</div>
+                <div class="item_times">{{ item.times }}</div>
+              </div>
+            </div>
+          </div>
+        </el-col>
+      </el-row>
       <!-- 文字专区--无论选择哪屏模板都有此区 -->
       <el-row :gutter="20">
         <el-col :span="16">
-          <div class="block_title">
-            <el-row :gutter="20" class="title_box">
-              <el-col :span="6">
-                <div class="title">文字专区</div>
-              </el-col>
-              <el-col :span="12" :offset="6">
-                <div class="search">
-                  <el-button type="primary" @click="gotoEdit"
-                    >编辑节目单</el-button
-                  >
-                  <el-input
-                    placeholder="请输入名称搜索"
-                    prefix-icon="el-icon-search"
-                    v-model="searchVal"
-                  >
-                    <el-button slot="append" icon="el-icon-search"></el-button
-                  ></el-input>
-                </div>
-              </el-col>
-            </el-row>
-            <div class="row_box">
-              <dl
-                class="dl flip-list-move"
-                v-for="(item, index) in listDataText"
-                :key="index"
-              >
-                <dt>
-                  <div class="img">
-                    <img src="@/assets/img/media/03.png" alt />
-                  </div>
-                  <div class="text">
-                    <p class="play_title">
-                      <span>设置播放时长：</span>
-                    </p>
-                    <div class="play_times">
-                      <el-input
-                        :readonly="readonly"
-                        v-model="item.houre"
-                        placeholder="时"
-                      ></el-input
-                      >:
-                      <el-input
-                        :readonly="readonly"
-                        v-model="item.minute"
-                        placeholder="分"
-                      ></el-input
-                      >:
-                      <el-input
-                        :readonly="readonly"
-                        v-model="item.second"
-                        placeholder="秒"
-                      ></el-input>
-                    </div>
-                  </div>
-                </dt>
-                <dd class="total_times">
-                  <span class="a_title">{{ item.title }} {{item.materialType}}</span>
-                  <span v-if="item.materialType==0">总时长22：50:00</span>
-                  <span v-if="item.materialType==1">已设时长：{{item.programMaterialTotalTime}}</span>
-                </dd>
-                <dd class="dd">
-                  {{ item.materialBrief}}
-                </dd>
-              </dl>
-              <div class="no_list" v-if="listDataText.length==0">暂无节目</div>
-            </div>
-          </div>
+            <program-item :info="info" areaType="D"></program-item>
         </el-col>
         <el-col :span="8">
           <div class="right">
@@ -207,20 +132,23 @@
     </div>
     <dl class="no_template" v-else>
       <dt><img src="@/assets/img/media/01.png" alt="" /></dt>
-      <dd>请前往<span @click="gotoTemplate">模板管理</span>页，选择需要使用的模板</dd>
+      <dd>
+        请前往<span @click="gotoTemplate">模板管理</span>页，选择需要使用的模板
+      </dd>
     </dl>
   </div>
 </template>
 <script>
 import {
-  queryProgram,//查询是否有分组
-  queryProgramList,//查询组列表数据
-} from '@/api/program/index.js'
+  queryProgram, //查询是否有分组
+  queryProgramList, //查询组列表数据
+} from "@/api/program/index.js";
 
+import programItem from '@/components/programItem'
 export default {
   data() {
     return {
-      isTemplate:false,//true :有模板
+      isTemplate: false, //true :有模板
       searchVal: "",
       i_hour: "",
       i_minute: "",
@@ -250,86 +178,84 @@ export default {
         "01-21",
         "01-22",
       ],
-      listDataA: [
-        // {
-        //   id: 1,
-        //   desc: "标题标题标题标题标题标题级标题表发达范德萨范德萨",
-        //   title: "11一旦房贷卡范德萨范德萨范德萨发第三范德萨范德萨",
-        //   houre: 1,
-        //   minute: 10,
-        //   second: 10,
-        //   checked: false,
-        // }
-      ],
-      listDataB:[],
-      listDataC:[],
-      listDataText:[],
-      pageNo:1,//当前页
-      pageSize:3//每页显示多少条
+      listDataA: [],
+      listDataB: [],
+      listDataC: [],
+      listDataText: [],
+      pageNo: 1, //当前页
+      pageSize: 3, //每页显示多少条
     };
   },
-  mounted(){
-    console.log("id::",this.$store.state.groupId)
+  components:{
+    programItem
+  },
+  mounted() {
+    // 文件类型：materialType  0：视频 1：图片  2：文字
+    console.log("id::", this.$store.state.groupId);
     this.searchProgram();
   },
   methods: {
-    searchProgram(){
+    searchProgram() {
       // 查询分组是否有模板
-      var odata={
-        groupId:this.$store.state.groupId
-      }
-      queryProgram(odata).then(res=>{
+      var odata = {
+        groupId: this.$store.state.groupId,
+      };
+      queryProgram(odata).then((res) => {
         if (res.data.code == 200) {
-          if(res.data.data.length==0){
+          if (res.data.data.length == 0) {
             // 选择分组--没有选择模板--展示无内容
-            this.isTemplate=false;
-            
-          }else{
+            this.isTemplate = false;
+          } else {
             // 有模板，查询当前组节目模板列表
-            this.isTemplate=true;
-            this.info=res.data.data;
-            this.getTemplateList();
+            this.isTemplate = true;
+            this.info = res.data.data;
+            // this.getTemplateList();
           }
-        }
-      })
-    },
-    getTemplateList(){
-      var odata={
-        groupId:this.$store.state.groupId,
-        pageNum:this.pageNo,
-        pageSize:this.pageSize,
-        modelId:this.info[0].modelId,
-        partionId:''
-      }
-      //获取模板列表
-      queryProgramList(odata).then(res=>{
-        if (res.data.code == 200) {
-          this.listDataA=res.data.data;
-          this.programId=res.data.data[0].programId
-        }
-      })
-    },
-    gotoEdit() {
-      this.$router.push({
-        name: "progranEdit",
-        query:{
-          programId:this.programId
         }
       });
     },
-    gotoTemplate(){
+    getTemplateList() {
+      var odata = {
+        groupId: this.$store.state.groupId,
+        pageNum: this.pageNo,
+        pageSize: this.pageSize,
+        modelId: this.info[0].modelId,
+        partionId: "",
+      };
+      //获取模板列表
+      queryProgramList(odata).then((res) => {
+        if (res.data.code == 200) {
+          if (res.data.data.length != 0) {
+            this.listDataA = res.data.data;
+            this.programId = res.data.data[0].programId;
+          }
+        }
+      });
+    },
+    gotoEdit(areaType) {
+      // areaType: A： A区  B:B区   C: C区    D:文字专区
+      this.$router.push({
+        name: "progranEdit",
+        query: {
+          programId: this.programId,
+          modelId: this.info[0].modelId,
+          areaType: areaType,
+        },
+      });
+    },
+    gotoTemplate() {
       // 跳转到模板中心
       this.$router.push({
-        name:"templateCenter"
-      })
-    }
+        name: "templateCenter",
+      });
+    },
   },
 };
 </script>
 <style lang="scss" scoped>
-/deep/.el-input .el-input__inner{
-  padding:0;
-  text-align:center;
+/deep/.el-input .el-input__inner {
+  padding: 0;
+  text-align: center;
 }
 .wrap {
   width: 100%;
@@ -345,8 +271,8 @@ export default {
     dd {
       line-height: 40px;
     }
-    span{
-      color:blue;
+    span {
+      color: blue;
       cursor: pointer;
     }
   }
@@ -389,7 +315,7 @@ export default {
             display: flex;
             justify-content: space-between;
             .img {
-              width: 150px!important;
+              width: 150px !important;
               height: 80px;
               margin-right: 10px;
               img {
@@ -399,7 +325,7 @@ export default {
               }
             }
             .text {
-              flex:1;
+              flex: 1;
               overflow: hidden;
               .play_title {
                 line-height: 40px;
@@ -427,7 +353,7 @@ export default {
               overflow: hidden;
               text-overflow: ellipsis;
               white-space: nowrap;
-              text-align:left;
+              text-align: left;
             }
           }
           .dd {
@@ -446,12 +372,12 @@ export default {
             }
           }
         }
-        .no_list{
-          font-size:18px;
-          text-align:center;
-          line-height:200px;
-          width:100%;
-          color:palevioletred;
+        .no_list {
+          font-size: 18px;
+          text-align: center;
+          line-height: 200px;
+          width: 100%;
+          color: palevioletred;
         }
       }
     }

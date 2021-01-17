@@ -9,8 +9,8 @@
       >
         <dt>
           <div class="item"></div>
-          <div class="item" v-if="item.modelId == 1 || item.modelId == 2"></div>
-          <div class="item" v-if="item.modelId == 2"></div>
+          <div class="item" v-if="item.modelId == 2 || item.modelId == 3"></div>
+          <div class="item" v-if="item.modelId == 3"></div>
         </dt>
         <dd>
           {{ item.text
@@ -36,6 +36,7 @@ export default {
     return {
       active: "",
       list: [],
+      info:{},
       templateList: [
         {
           modelId: 1,
@@ -53,10 +54,25 @@ export default {
     };
   },
   mounted() {
-    //   查询当前组是否有模板
-    this.isTemplate();
+    
+    this.searchProgram();
   },
   methods: {
+    searchProgram() {
+      // 查询分组是否有模板
+      var odata = {
+        groupId: this.$store.state.groupId,
+      };
+      queryProgram(odata).then((res) => {
+        if (res.data.code == 200) {
+          if (res.data.data.length == 0) {
+            this.info = res.data.data;
+            //   查询当前组是否有模板
+            this.isTemplate();
+          }
+        }
+      });
+    },
     handleClickItem(id) {
       this.active = id;
     },
@@ -79,7 +95,7 @@ export default {
       var odata={
         "modelId": this.active,
         "programBroadcast": "",
-        "programBroastStartTime": "",
+        "programBroastStartTime": null,
         "programBroastStatus": "",
         "programBroastUrl": "",
         "programCreateTime": "",
@@ -87,11 +103,14 @@ export default {
         "programId": "",
         "programStartTime": "",
         "programType": "",
-        "programUpdateTime": ""
+        "programUpdateTime": null
       }
       addProgram(odata).then(res=>{
         if (res.data.code == 200) {
-          this.$router.gok(-1)
+          this.$message.success("操作成功");
+          this.$router.push({
+            name:"programManage"
+          })
         }
       })
     },

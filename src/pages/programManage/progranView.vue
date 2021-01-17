@@ -19,6 +19,7 @@
                 placeholder="请输入名称搜索"
                 prefix-icon="el-icon-search"
                 v-model="searchVal"
+                clearable
               >
                 <el-button slot="append" icon="el-icon-search"></el-button
               ></el-input>
@@ -59,9 +60,9 @@
           >
             <dt>
               <div class="img">
-                <img v-if="type==2"  :src="item.materialUrl" alt="">
-                <img v-if="type==1" src="@/assets/img/media/01.png" alt />
-                 <img v-if="type==3" src="@/assets/img/media/03.png" alt />
+                <img v-if="type == 2" :src="item.materialUrl" alt="" />
+                <img v-if="type == 1" src="@/assets/img/media/01.png" alt />
+                <img v-if="type == 3" src="@/assets/img/media/03.png" alt />
               </div>
               <div class="text">
                 <p class="play_title">
@@ -97,7 +98,7 @@
                   </el-popover>
                 </p>
                 <div class="play_times" v-if="type != 1">
-                  <el-input
+                  <!-- <el-input
                     :readonly="readonly"
                     v-model="item.houre"
                     placeholder="时"
@@ -108,7 +109,7 @@
                     v-model="item.minute"
                     placeholder="分"
                   ></el-input
-                  >:
+                  >: -->
                   <el-input
                     :readonly="readonly"
                     v-model="item.second"
@@ -119,7 +120,9 @@
             </dt>
             <dd class="total_times">
               <span class="a_title">{{ item.materialTitle }}</span>
-              <span>已设时长：{{ item.materialTotalTime }}</span>
+              <span v-if="type == 1"
+                >总设时长：{{ item.materialTotalTime }}</span
+              >
             </dd>
             <dd class="dd">
               {{ item.materialBrief }}
@@ -141,17 +144,20 @@
 </template>
 <script>
 import {
+  queryProgramList,
   updateProgram, //添加
 } from "@/api/program/index.js";
 export default {
   data() {
     return {
-      programId:this.$route.query.programId,
+      modelId: this.$route.query.modelId, //当前使用的模板 1  2  3  4
+      areaType: this.$route.query.areaType, //内容添加的区域  A B C D
+      programId: this.$route.query.programId,
       type: this.$route.query.type, //获取添加的类型 1：视频  2：图片  3：文字
       active: 1, //步骤1
       isPopover: true, //弹出窗显示隐藏
       isLoop: 1, //设置是否循环播放
-      playStartEnd: "", //播放起始时间设置
+      playStartEnd: this.$route.query.startTimes, //播放起始时间设置
       eidtLayerList: [
         {
           id: "1",
@@ -181,14 +187,12 @@ export default {
       i_second: "",
       readonly: false,
       listData: [],
+      pageNo: 1,
+      pageSize: 100,
     };
   },
   mounted() {
-    // 获取选中的数据并赋值
-    if (localStorage.getItem("addSelList")) {
-      console.log();
-      this.listData = JSON.parse(localStorage.getItem("addSelList"));
-    }
+    this.getTemplateList();
   },
   methods: {
     swapItems(id, index, fid) {
@@ -212,13 +216,28 @@ export default {
       if (id == 5) {
         //删除
         this.itemRemove(index);
+
         return false;
       }
-      this.listData[index] = this.listData.splice(
-        index + 1,
-        1,
-        this.listData[index]
-      )[0];
+
+      if (id == 2) {
+        // 上移动
+        this.listData[index] = this.listData.splice(
+          index - 1,
+          1,
+          this.listData[index]
+        )[0];
+      }
+
+      if (id == 3) {
+        // 下移动
+        this.listData[index] = this.listData.splice(
+          index + 1,
+          1,
+          this.listData[index]
+        )[0];
+      }
+
       this.$message.success("操作成功");
       return this.listData;
     },
@@ -233,33 +252,40 @@ export default {
     },
     gotoSel() {
       //完成--去保存
-      var selArr=[];
+      var selArr = [];
       //处理选中的列表
-      this.listData.forEach(item=>{
-        selArr.push({
-          materialId:item.materialId,
-          totalTime:item.materialTotalTime
-        })
-       
-      })
+      this.listData.forEach((item) => {
+        console.log("item", item);
+        // !1：视频  2：图片  3：文字
+        if (this.type != 1) {
+          selArr.push({
+            materialId: item.materialId,
+            totalTime: item.second,
+          });
+        } else {
+          selArr.push({
+            materialId: item.materialId,
+            totalTime: item.materialTotalTime,
+          });
+        }
+      });
 
       var odata = {
         program: {
-          modelId: this.programId,
+          modelId: Number(this.modelId),
           programBroadcast: "",
           programBroastStartTime: "",
           programBroastStatus: "",
           programBroastUrl: "",
           programCreateTime: "",
-          programGroupId: this.$store.state.groupId,
-          programId: this.programId,
-          programStartTime: "",
+          programGroupId: Number(this.$store.state.groupId),
+          programId: Number(this.programId),
+          programStartTime: this.playStartEnd,
           programUpdateTime: "",
         },
-        programMaterialList: selArr
+        programMaterialList: selArr,
+        programPartition: this.areaType,
       };
-      console.log(selArr)
-      console.log(odata);
       // return false;
       updateProgram(odata).then((res) => {
         if (res.data.code == 200) {
@@ -272,7 +298,7 @@ export default {
     goBack() {
       //返回上-层
       //移除选择的内容
-      localStorage.removeItem(addSelList);
+      localStorage.removeItem("addSelList");
       this.$router.go(-1);
     },
     handleAddSel(type) {
@@ -284,6 +310,37 @@ export default {
           type: type,
         },
       });
+    },
+    getTemplateList() {
+      var odata = {
+        groupId: this.$store.state.groupId,
+        pageNum: this.pageNo,
+        pageSize: this.pageSize,
+        modelId: this.modelId,
+        partionId: this.areaType,
+        title:this.searchVal
+      };
+      //获取模板列表
+      queryProgramList(odata).then((res) => {
+        if (res.data.code == 200) {
+          if (res.data.data.length != 0) {
+            //原有的数据
+            var oldList = res.data.data.programList;
+            // 后来新增添加的数据
+            var newList = JSON.parse(localStorage.getItem("addSelList"));
+
+            // 合并新老数据
+            this.listData = this.unique([...oldList, ...newList]);
+          }
+        }
+      });
+    },
+    unique(arr) {
+      // 根据唯一标识materialId来对数组进行过滤
+      const res = new Map(); //定义常量 res,值为一个Map对象实例 //返回arr数组过滤后的结果，结果为一个数组   过滤条件是，如果res中没有某个键，就设置这个键的值为1
+      return arr.filter(
+        (arr) => !res.has(arr.materialId) && res.set(arr.materialId, 1)
+      );
     },
   },
 };
@@ -395,7 +452,7 @@ export default {
             }
             .text {
               overflow: hidden;
-              flex:1;
+              flex: 1;
               .play_title {
                 line-height: 40px;
                 display: flex;

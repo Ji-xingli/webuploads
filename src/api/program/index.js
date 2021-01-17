@@ -23,16 +23,7 @@ export const queryProgram = (row) => {
     })
 }
 
-// 添加节目
-export const addProgram = (row) => {
-    return request({
-        url: '/sqfc/program/addProgram',
-        method: 'post',
-        params:{
-            materialProgramRelation:{...row}
-        }
-    })
-}
+
 
 // 更新播放状态
 export const updateBroadcastStatus = (programId) => {
@@ -51,6 +42,15 @@ export const updateProgram = (program) => {
         url: '/sqfc/program/updateProgram',
         method: 'post',
         data:program
+    })
+}
+
+// 添加节目
+export const addProgram = (materialProgramRelation) => {
+    return request({
+        url: '/sqfc/program/addProgram',
+        method: 'post',
+        data:materialProgramRelation
     })
 }
 
