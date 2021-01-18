@@ -6,6 +6,7 @@
         <el-col :span="16">
             <program-item :info="info" areaType="A"></program-item>
         </el-col>
+        
         <el-col :span="8">
           <div class="right">
             <div class="date_title">
