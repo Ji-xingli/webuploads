@@ -281,6 +281,7 @@ export default {
           programGroupId: Number(this.$store.state.groupId),
           programId: Number(this.programId),
           programStartTime: this.playStartEnd,
+          programType: this.isLoop, //是否循环
           programUpdateTime: "",
         },
         programMaterialList: selArr,
