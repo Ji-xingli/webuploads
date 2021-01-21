@@ -68,6 +68,7 @@
       @prev-click="getPrev"
       @next-click="getNext"
       @current-change="handleCurrentChange"
+      
       :page-size="pageSize"
       :total="totalNo"
     ></el-pagination>

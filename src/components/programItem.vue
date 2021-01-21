@@ -93,10 +93,12 @@
     </div>
     <el-pagination
       layout="prev, pager, next"
+      :hide-on-single-page="value"
       :total="totalNo"
+      :page-size="pageSize"
+      @current-change="handleCurrentChange"
       @prev-click="getPrev"
       @next-click="getNext"
-      v-if="listData.length != 0"
     >
     </el-pagination>
   </div>
@@ -110,12 +112,13 @@ export default {
   props: ["info", "areaType"],
   data() {
     return {
+      value:false,
       readonly: false,
       searchVal: "",
       listData: [],
       pageNo: 1, //当前页
       pageSize: 3, //每页显示多少条
-      totalNo: 0, //总页数
+      totalNo: 5, //总页数
     };
   },
   mounted() {
@@ -143,7 +146,7 @@ export default {
     getTemplateList(pageNo, pageSize) {
       var odata = {
         groupId: this.$store.state.groupId,
-        pageNum: this.pageNo,
+        pageNum: pageNo,
         pageSize: this.pageSize,
         modelId: this.info[0].modelId,
         partionId: this.areaType,
@@ -155,6 +158,8 @@ export default {
           if (res.data.data.length != 0) {
             this.listData = res.data.data.programList;
             this.totalNo = res.data.data.programTotal;
+            console.log(res.data.data.programTotal)
+            console.log(this.totalNo)
             // this.programId = this.info[0].programId;
           }
         }
@@ -166,6 +171,11 @@ export default {
     },
     //点击下一页获取数据
     getNext(val) {
+      console.log("next",val)
+      this.getTemplateList(val, this.pageSize);
+    },
+    handleCurrentChange(val) {
+      this.pageNo = val;
       this.getTemplateList(val, this.pageSize);
     },
   },
