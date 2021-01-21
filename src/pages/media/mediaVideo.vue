@@ -325,6 +325,9 @@ export default {
                   this.getList(this.currentPage, this.pageSize);
                   // 弹窗消失
                   this.videoEditMaster = false;
+                  //清空上传内容
+                  this.fileList=[];
+                  this.videoUrl="";
                 }
               },
               (err) => {
@@ -352,6 +355,9 @@ export default {
                   this.getList(this.currentPage, this.pageSize);
                   // 弹窗消失
                   this.videoEditMaster = false;
+                  //清空上传内容
+                  this.fileList=[];
+                  this.videoUrl="";
                 }
               },
               (err) => {
