@@ -216,6 +216,7 @@ export default {
     },
     beforeUpload(file, fileList) {
       console.log(file);
+      console.log(fileList)
       const IMG_ALLOWD = ["jpeg", "jpg", "gif", "png"];
       const imgType = file.raw.type.split("/")[1];
       const imgSize = file.size / 1024 / 1024;
@@ -232,7 +233,7 @@ export default {
         fileList.splice(-1, 1);
         return false;
       } else {
-        this.fileList = file;
+        this.fileList = fileList;
         return true;
       }
     },
@@ -260,7 +261,7 @@ export default {
             }
             //添加上传
             let formData = new FormData(); //  用FormData存放上传文件
-            formData.append("file", this.fileList.raw);
+            formData.append("file", this.fileList[0].raw);
             formData.append("materialBrief", this.form.materialBrief);
             formData.append("materialTitle", this.form.materialTitle);
             formData.append("materialTotalTime", this.duration);
@@ -275,6 +276,8 @@ export default {
                   this.getList(this.currentPage, this.pageSize);
                   // 弹窗消失
                   this.videoEditMaster = false;
+                  //重置表单
+                  this.fileList =[]
                 }
               },
               (err) => {
@@ -302,6 +305,7 @@ export default {
                   this.getList(this.currentPage, this.pageSize);
                   // 弹窗消失
                   this.videoEditMaster = false;
+                  this.fileList =[]
                 }
               },
               (err) => {
