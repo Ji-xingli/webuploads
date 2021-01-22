@@ -71,37 +71,23 @@
               </div>
               <div class="text">
                 <div class="play_title">
-                  <span v-if="type!=1">设置播放时长：</span>
+                  <!-- <span v-if="type!=1">设置播放时长：</span> -->
                   <div
                     class="sel"
                     @click="itemChecked(index)"
                     :class="item.checked ? 'checked' : ''"
                   ></div>
                 </div>
-                <div class="play_times" v-if="type!=1">
-                  <!-- <el-input
-                    :readonly="readonly"
-                    v-model="item.houre"
-                    placeholder="时"
-                  ></el-input
-                  >:
-                  <el-input
-                    :readonly="readonly"
-                    v-model="item.minute"
-                    placeholder="分"
-                  ></el-input
-                  >: -->
-                  <el-input
-                    :readonly="readonly"
-                    v-model="item.materialTotalTime"
-                    placeholder="秒"
-                  ></el-input>
-                </div>
+                <!-- <div class="play_times" v-if="item.materialType != 0">
+                  <el-input v-model="item.hour" placeholder="时"></el-input>:
+                  <el-input v-model="item.minute" placeholder="分"></el-input>:
+                  <el-input v-model="item.second" placeholder="秒"></el-input>
+                </div> -->
               </div>
             </dt>
             <dd class="total_times">
               <span class="a_title">{{ item.materialTitle }}</span>
-              <span v-if="type==1">总时长：{{item.materialTotalTime}}</span>
+              <span v-if="type==1">总时长：{{timeFormat(item.materialTotalTime)[0]}}时{{timeFormat(item.materialTotalTime)[1]}}分{{timeFormat(item.materialTotalTime)[2]}}秒</span>
             </dd>
             <dd class="dd">
               {{ item.materialBrief }}
@@ -132,11 +118,15 @@ import {
 import { getVideoList } from "@/api/media/index.js";
 import { getList } from "@/api/media/mediaText.js";
 import { getPList } from "@/api/media/mediaPic.js";
+
+//秒转时分秒
+import { formatSeconds, timeEvent } from "@/assets/util/util.js";
+
 export default {
   data() {
     return {
       currentPage: 1, //-分页
-      pageSize: 10, //-分页
+      pageSize: 12, //-分页
       totalNo: 0, //-分页,总条数
       totalPage: 0, //分页-总页数
       type: this.$route.query.type, //1:视频  2：图片  3：文字
@@ -182,6 +172,9 @@ export default {
     }
   },
   methods: {
+    timeFormat(val) {
+      return formatSeconds(val);
+    },
     loadMore() {
       // 点击加载更多
       this.currentPage += 1; //页数++
@@ -423,7 +416,7 @@ export default {
               .play_title {
                 line-height: 40px;
                 display: flex;
-                justify-content: space-between;
+                justify-content: flex-end;
                 .sel {
                   width: 28px;
                   height: 28px;
