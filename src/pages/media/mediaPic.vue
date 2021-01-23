@@ -72,7 +72,7 @@
       :total="totalNo"
     ></el-pagination>
     <el-drawer
-      title="视频"
+      title="图片"
       :visible.sync="videoEditMaster"
       :before-close="visibleBefore"
       direction="rtl"

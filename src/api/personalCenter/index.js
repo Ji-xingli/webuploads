@@ -1,7 +1,7 @@
 import request from '@/api/http';
 
 // 个人中心
-
+// ======组相关======
 // 添加分组
 export const addGroup = (name) => {
     return request({
@@ -54,3 +54,24 @@ export const updateGroup = (row) => {
         params:row
     })
 }
+
+
+// ====个人信息相关===
+// 获取个人信息
+export const getUserInfo = () => {
+    return request({
+        url: '/sqfc/user/queryUserInfo',
+        method: 'get',
+        params:{}
+    })
+}
+
+// 个人信息更新
+export const userInfoUpdate = (params) => {
+    return request({
+        url: '/sqfc/user/updateUser',
+        method: 'post',
+        data:params
+    })
+}
+

@@ -27,23 +27,29 @@
               <img v-if="item.materialType == 0" src="@/assets/img/media/01.png" alt>
               <img v-if="item.materialType == 2" src="@/assets/img/media/03.png" alt>
             </div>
-            <div class="text" v-if="item.materialType != 0">
-              <p class="play_title">
-                <span>已置播放时长：</span>
+            <div class="text">
+              <p class="play_title" >
+                <span v-if="item.materialType != 0">已置播放时长：</span>
+                <span v-else>总时长：</span>
               </p>
               <div class="play_times">
-                <el-input :readonly="readonly" v-model="timeFormat(item.programMaterialTotalTime)[0]" placeholder="时"></el-input>:
+                <span v-if="item.materialType !=0">{{timeFormat(item.programMaterialTotalTime)[0]}}时{{timeFormat(item.programMaterialTotalTime)[1]}}分{{timeFormat(item.programMaterialTotalTime)[2]}}秒</span>
+                <span v-else>{{timeFormat(item.materialTotalTime)[0]}}时{{timeFormat(item.materialTotalTime)[1]}}分{{timeFormat(item.materialTotalTime)[2]}}秒</span>
+                <!-- <el-input :readonly="readonly" v-model="timeFormat(item.programMaterialTotalTime)[0]" placeholder="时"></el-input>:
                 <el-input :readonly="readonly" v-model="timeFormat(item.programMaterialTotalTime)[1]" placeholder="分"></el-input>:
-                <el-input :readonly="readonly" v-model="timeFormat(item.programMaterialTotalTime)[2]" placeholder="秒"></el-input>
+                <el-input :readonly="readonly" v-model="timeFormat(item.programMaterialTotalTime)[2]" placeholder="秒"></el-input> -->
               </div>
             </div>
           </dt>
           <dd class="total_times">
             <span class="a_title">{{ item.materialTitle }}</span>
             <!-- <span v-if="item.materialType==0">已设时长：{{item.programMaterialTotalTime}}</span> -->
-            <span
+            <!-- <span
               v-if="item.materialType == 0"
             >总时长：{{timeFormat(item.materialTotalTime)[0]}}时{{timeFormat(item.materialTotalTime)[1]}}分{{timeFormat(item.materialTotalTime)[2]}}秒</span>
+            <span
+              v-else
+            >已设时长：{{timeFormat(item.programMaterialTotalTime)[0]}}时{{timeFormat(item.programMaterialTotalTime)[1]}}分{{timeFormat(item.programMaterialTotalTime)[2]}}秒</span> -->
           </dd>
           <dd class="dd">{{ item.materialBrief }}</dd>
         </dl>
@@ -109,6 +115,8 @@ export default {
     },
     getTemplateList(pageNo, pageSize) {
       var odata = {
+        startTime:"",//右侧数据展示，传入的月日时间-开始时间
+        endTime:"",//右侧数据展示，传入的月日时间-结束时间
         groupId: this.$store.state.groupId,
         pageNum: pageNo,
         pageSize: this.pageSize,
@@ -193,6 +201,7 @@ export default {
               width: 100%;
               height: 100%;
               display: block;
+              object-fit: cover;
             }
           }
           .text {
@@ -200,8 +209,8 @@ export default {
             overflow: hidden;
             .play_title {
               line-height: 40px;
-              display: flex;
-              justify-content: space-between;
+              // display: flex;
+              // justify-content: space-between;
               .setting {
                 font-size: 20px;
               }
@@ -213,13 +222,16 @@ export default {
           }
         }
         .total_times {
-          display: flex;
-          justify-content: space-between;
+          // display: flex;
+          // justify-content: space-between;
           line-height: 30px;
-          text-align: right;
+          // text-align: right;
           margin-top: 10px;
+          overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
           .a_title {
-            width: 55%;
+            width: 100%;
             height: 30px;
             overflow: hidden;
             text-overflow: ellipsis;

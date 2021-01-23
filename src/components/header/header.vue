@@ -4,7 +4,7 @@
       <li class="title">
         <el-select
           v-model="groupVal"
-          :disabled="this.$store.state.isSel"
+          v-show="!this.$store.state.isSel"
           @change="changeVal"
           placeholder="请选择"
         >

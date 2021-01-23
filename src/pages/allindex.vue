@@ -14,7 +14,7 @@
         <div class="item">
           <span class="el-icon-video-camera icon"></span>
           <dl>
-            <dd>音频总数</dd>
+            <dd>视频总数</dd>
             <dd>123456</dd>
           </dl>
         </div>
@@ -107,7 +107,7 @@
               <el-input v-model="num2" placeholder="请输入设备编号"></el-input>
             </div>
             <div class="i_item">
-              <el-button class="goLink" type="primary">查询</el-button>
+              <el-button class="goLink" type="primary">发起对话</el-button>
             </div>
           </div>
         </el-card>
@@ -154,36 +154,11 @@ export default {
         xAxis: {
           type: "category",
           data: [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9,
-            10,
-            11,
-            12,
-            13,
-            14,
-            15,
-            16,
-            17,
-            18,
-            19,
-            20,
-            21,
-            22,
-            23,
-            24,
-            25,
-            26,
-            27,
-            28,
-            29,
-            30,
+            "A组",
+            "B组",
+            "C组",
+            "D组",
+            "E组",
           ],
         },
         yAxis: {
@@ -199,7 +174,7 @@ export default {
         series: [
           {
             name: 'A区',
-            data: [820, 932, 901, 934, 1290, 1330, 1320],
+            data: [820, 932, 901, 934, 1290],
             type: "bar",
             // itemStyle : { normal: {label : {show: true}}}
           },

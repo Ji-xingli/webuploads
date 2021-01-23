@@ -14,32 +14,32 @@
         :rules="rules"
         label-width="120px"
       >
-        <el-form-item label="我的头像" prop="num">
+        <el-form-item label="我的头像">
           <el-upload
             class="headPic"
             action="api/blade-project/project/projectfiles/uploadFiles"
             :auto-upload="false"
             :limit="1"
             list-type="picture-card"
-            v-model="form.img"
+            v-model="form.userLogoUrl"
             :on-change="beforePicUpload"
             :on-remove="handlePicRemove"
           >
             <i class="el-icon-plus"></i>
           </el-upload>
         </el-form-item>
-        <el-form-item label="用户名" prop="name">
-          <el-input v-model="form.name"></el-input>
+        <el-form-item label="用户名" prop="userName">
+          <el-input v-model="form.userName"></el-input>
         </el-form-item>
-        <el-form-item label="手机号" prop="phone">
-          <el-input v-model="form.phone"></el-input>
+        <el-form-item label="手机号" prop="userPhone">
+          <el-input v-model="form.userPhone"></el-input>
         </el-form-item>
-        <el-form-item label="当前密码" prop="password">
-          <el-input v-model="form.password"></el-input>
+        <el-form-item label="当前密码" prop="userPassword">
+          <el-input v-model="form.userPassword"></el-input>
         </el-form-item>
         <el-form-item label="设备软件包" prop="versions">
           <div @click="changePack">
-            <span>{{ form.versions }}</span>
+            <span>{{ form.userDeviceVersion }}</span>
             <span class="el-icon-s-goods" style="font-size: 20px"></span>
           </div>
         </el-form-item>
@@ -74,8 +74,13 @@
               <el-input
                 v-model="item.group.groupName"
                 @blur="inputBlur(item.group)"
-              ></el-input>
-              <span class="del el-icon-remove" @click="delGroup(index)"></span>
+              >
+                <template slot="append">({{ item.total }})</template></el-input
+              >
+              <span
+                class="del el-icon-remove"
+                @click="delGroup(item.group.groupId)"
+              ></span>
             </div>
           </div>
           <el-form-item>
@@ -101,7 +106,7 @@
           label-width="120px"
         >
           <el-form-item label="软件版本号" prop="versions">
-            <el-input v-model="form.versions"></el-input>
+            <el-input v-model="form.userDeviceVersion"></el-input>
           </el-form-item>
           <el-form-item label="选择软件包" prop="num">
             <el-upload
@@ -131,27 +136,24 @@ import {
   addGroup,
   queryGroup,
   updateGroup,
+  deleteGroup,
+  getUserInfo, //个人中心信息
+  userInfoUpdate, //信息更新
 } from "@/api/personalCenter/index.js";
 export default {
   data() {
     return {
+      file: {}, //上传的文件
       picMasterVisible: false, //是否编辑
       groupList: [],
       delList: [], //删除的组列表
       mygroup: "", //添加的分组名称
       searchVal: "", //搜索分组
-      form: {
-        img:
-          "https://c-ssl.duitang.com/uploads/item/202001/10/20200110192530_EjxRV.jpeg",
-        name: "张三",
-        phone: "15523658956",
-        password: "123456789",
-        versions: "V1.0",
-      },
+      form: {},
       rules: {
-        name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
+        userName: [{ required: true, message: "请输入姓名", trigger: "blur" }],
 
-        phone: [
+        userPhone: [
           { required: true, message: "请输入手机号", trigger: "blur" },
           // { validator: idcard, trigger: 'blur' },
           {
@@ -161,24 +163,75 @@ export default {
           },
           // { max:11, message: '请输入11位手机号码', trigger: 'blur' }
         ],
-        password: [{ required: true, message: "请输入姓名", trigger: "blur" }],
+        userPassword: [
+          { required: true, message: "请输入姓名", trigger: "blur" },
+        ],
       },
     };
   },
   mounted() {
+    // 获取用户信息
+    this.getInfo();
+    // 获取组信息
     this.getGroup();
   },
   methods: {
+    getInfo() {
+      // 获取用户信息
+      getUserInfo().then((res) => {
+        if (res.data.code == "200") {
+          this.form = res.data.data;
+        }
+      });
+    },
     changePack() {
       this.picMasterVisible = true;
     },
     submitPicForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          console.log("pass");
-          // this.$router.push({
-          //   name: "personalCenter",
-          // });
+          console.log(this.form.userLogoUrl);
+          if (this.form.userLogoUrl == "") {
+            this.$message({
+              type: "error",
+              message: "请选择头像!",
+            });
+            return false;
+          }
+
+          // 更新提交
+          let formData = new FormData(); //  用FormData存放上传文件
+          if(this.file){
+
+            formData.append("file", this.file.raw);
+          }else{
+            formData.append("file", this.form.userLogoUrl);
+          }
+          // 版本
+          formData.append("userDeviceVersion", this.form.userDeviceVersion);
+          formData.append("userName", this.form.userName);
+          formData.append("userPassword", this.form.userPassword);
+          formData.append("userPhone", this.form.userPhone);
+          userInfoUpdate(formData).then(
+            (res) => {
+              if (res.data.code == 200) {
+                this.$message({
+                  type: "success",
+                  message: "保存成功!",
+                });
+                // 跳转到个人中心
+                this.$router.push({
+                  name: "personalCenter",
+                });
+              }
+            },
+            (err) => {
+              this.$message({
+                type: "error",
+                message: "操作失败!",
+              });
+            }
+          );
         }
       });
     },
@@ -217,8 +270,11 @@ export default {
     },
     inputBlur(obj) {
       // input 失去焦点保存
-      // console.log(id)
-      updateGroup(obj).then((res) => {
+      var odata = {
+        groupId: obj.groupId,
+        name: obj.groupName,
+      };
+      updateGroup(odata).then((res) => {
         if (res.data.code == "200") {
           this.$message({
             type: "success",
@@ -228,19 +284,54 @@ export default {
         }
       });
     },
-    delGroup(index) {
+    delGroup(id) {
       // 删除分组
-      this.delList.push(this.groupList[index]);
-      this.groupList.splice(index, 1);
+      // this.delList.push(this.groupList[index]);
+      // this.groupList.splice(index, 1);
 
-      this.mygroupId = "";
-
-      // deleteGroup(){
-
-      // }
+      // this.mygroupId = "";
+      this.$confirm("确认删除？")
+        .then((res) => {
+          deleteGroup(id).then((r) => {
+            if (r.data.code == "200") {
+              this.$message({
+                type: "success",
+                message: "删除成功!",
+              });
+              this.getGroup();
+            }
+          });
+        })
+        .catch((err) => {
+          //   console.log(err)
+        });
     },
-    handlePicRemove() {},
-    beforePicUpload() {},
+    handlePicRemove() {
+      // 头像删除
+      this.form.userLogoUrl = "";
+      this.file = {};
+    },
+    beforePicUpload(file, fileList) {
+      const IMG_ALLOWD = ["jpeg", "jpg", "gif", "png"];
+      const imgType = file.raw.type.split("/")[1];
+      const imgSize = file.size / 1024 / 1024;
+      if (IMG_ALLOWD.indexOf(imgType) === -1) {
+        this.$message.warning("上传图片格式错误");
+        //不匹配不展示
+        fileList.splice(-1, 1);
+        return false;
+      } else if (imgSize >= 400) {
+        // 判断图片大小
+        this.$message.warning("图片大小大于5M");
+        //不匹配不展示
+        fileList.splice(-1, 1);
+        return false;
+      } else {
+        this.form.userLogoUrl = file.url;
+        this.file = file;
+        return true;
+      }
+    },
     editCancle() {
       // 取消保存
       this.$router.push({

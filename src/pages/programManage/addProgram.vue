@@ -271,13 +271,14 @@ export default {
       // localStorage保存选中的数据，带入下一步
       localStorage.setItem("addSelList", JSON.stringify(this.selList)); 
       this.$router.push({
-        name: "progranView",
+        name: "progranEdit",
         query: {
-          type: this.type,//添加内容类型
+          // type: this.type,//添加内容类型
           programId:this.$route.query.programId,//节目id
           modelId:this.$route.query.modelId,//选用的模板
-          startTimes:this.$route.query.startTimes,//开始时间
-          areaType:this.areaType//内容添加的区域
+          // startTimes:this.$route.query.startTimes,//开始时间
+          areaType:this.areaType,//内容添加的区域
+          isSel:true//是否是编辑选择跳转进入
         }
       });
     },
@@ -408,6 +409,7 @@ export default {
                 width: 100%;
                 height: 100%;
                 display: block;
+                object-fit: cover;
               }
             }
             .text {

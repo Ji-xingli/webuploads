@@ -87,7 +87,8 @@ const routes = [
                 component: programManage,
                 name: "programManage",
                 meta: {
-                    title: '节目管理'
+                    title: '节目管理',
+                    isDisabled:true
                 },
             },
             {

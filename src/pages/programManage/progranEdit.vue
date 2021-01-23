@@ -6,7 +6,9 @@
           <el-col :span="6">
             <div class="title">
               <el-breadcrumb separator-class="el-icon-arrow-right">
-                <el-breadcrumb-item :to="{ path: '/programManage' }">节目管理</el-breadcrumb-item>
+                <el-breadcrumb-item :to="{ path: '/programManage' }"
+                  >节目管理</el-breadcrumb-item
+                >
                 <el-breadcrumb-item>编辑节目单</el-breadcrumb-item>
               </el-breadcrumb>
             </div>
@@ -19,10 +21,26 @@
                   <i class="el-icon-arrow-down el-icon--right"></i>
                 </el-button>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item v-if="areaType != 'D'" @click.native="handleAddSel(1)">添加视频</el-dropdown-item>
-                  <el-dropdown-item v-if="areaType != 'D'" @click.native="handleAddSel(2)">添加图片</el-dropdown-item>
-                  <el-dropdown-item v-if="areaType == 'D'" @click.native="handleAddSel(3)">添加文字</el-dropdown-item>
-                  <el-dropdown-item v-if="areaType != 'D'" @click.native="handleLiveBroadcast">插入直播</el-dropdown-item>
+                  <el-dropdown-item
+                    v-if="areaType != 'D'"
+                    @click.native="handleAddSel(1)"
+                    >添加视频</el-dropdown-item
+                  >
+                  <el-dropdown-item
+                    v-if="areaType != 'D'"
+                    @click.native="handleAddSel(2)"
+                    >添加图片</el-dropdown-item
+                  >
+                  <el-dropdown-item
+                    v-if="areaType == 'D'"
+                    @click.native="handleAddSel(3)"
+                    >添加文字</el-dropdown-item
+                  >
+                  <el-dropdown-item
+                    v-if="areaType != 'D'"
+                    @click.native="handleLiveBroadcast"
+                    >插入直播</el-dropdown-item
+                  >
                 </el-dropdown-menu>
               </el-dropdown>
               <el-input
@@ -59,21 +77,42 @@
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"-->
               </el-time-picker>
-              <el-button type="primary" v-if="liveBroadcast">停止播放</el-button>
+              <span v-if="form.startTimes" style="margin-left:20px;font-size:14px;">直播播放起始时间：{{form.startTimes}}</span>
+              <el-button type="primary" v-if="form.url"
+                >结束直播</el-button
+              >
             </div>
           </el-col>
         </el-row>
         <div class="row_box">
-          <dl class="dl flip-list-move" v-for="(item, index) in listData" :key="index">
+          <dl
+            class="dl flip-list-move"
+            v-for="(item, index) in listData"
+            :key="index"
+          >
             <dt>
               <div class="img">
-                <img v-if="item.materialType == 0" src="@/assets/img/media/01.png" alt>
-                <img v-if="item.materialType == 1" :src="item.materialUrl" alt>
-                <img v-if="item.materialType == 2" src="@/assets/img/media/03.png" alt>
+                <img
+                  v-if="item.materialType == 0"
+                  src="@/assets/img/media/01.png"
+                  alt
+                />
+                <img
+                  v-if="item.materialType == 1"
+                  :src="item.materialUrl"
+                  alt
+                />
+                <img
+                  v-if="item.materialType == 2"
+                  src="@/assets/img/media/03.png"
+                  alt
+                />
               </div>
               <div class="text">
                 <p class="play_title">
-                  <span class="text" v-if="item.materialType != 0">设置播放时长：</span>
+                  <span class="text" v-if="item.materialType != 0"
+                    >设置播放时长：</span
+                  >
                   <el-popover
                     :ref="'refNamePopover' + item.materialId"
                     placement="left"
@@ -94,10 +133,14 @@
                               (index == listData.length - 1 && ind == 2) ||
                               (index == listData.length - 1 && ind == 3),
                           }"
-                        >{{ i.name }}</span>
+                          >{{ i.name }}</span
+                        >
                       </li>
                     </ul>
-                    <span slot="reference" class="setting el-icon-setting"></span>
+                    <span
+                      slot="reference"
+                      class="setting el-icon-setting"
+                    ></span>
                   </el-popover>
                 </p>
                 <div class="play_times" v-if="item.materialType != 0">
@@ -110,12 +153,14 @@
             <dd class="total_times">
               <span class="a_title">{{ item.materialTitle }}</span>
               <!-- <span v-if="item.materialType==0">已设时长：{{item.programMaterialTotalTime}}</span> -->
-              <span
-                v-if="item.materialType == 0"
-              >总时长：{{timeFormat(item.materialTotalTime)[0]}}时{{timeFormat(item.materialTotalTime)[1]}}分{{timeFormat(item.materialTotalTime)[2]}}秒</span>
+              <span v-if="item.materialType == 0"
+                >总时长：{{ timeFormat(item.materialTotalTime)[0] }}时{{
+                  timeFormat(item.materialTotalTime)[1]
+                }}分{{ timeFormat(item.materialTotalTime)[2] }}秒</span
+              >
             </dd>
             <dd class="dd">
-              {{item.materialBrief}}
+              {{ item.materialBrief }}
               <!-- <textarea class="textarea" maxlength="100" v-model="item.materialBrief"></textarea> -->
             </dd>
           </dl>
@@ -123,7 +168,9 @@
         </div>
       </div>
       <!-- 点击加载更多 -->
-      <div class="load_more" v-if="currentPage < totalPage" @click="loadMore">点击加载更多</div>
+      <div class="load_more" v-if="currentPage < totalPage" @click="loadMore">
+        点击加载更多
+      </div>
       <div class="bottom_btn" v-if="listData.length != 0">
         <el-button type="primary" @click="gotoSel">完成</el-button>
         <el-button @click="goBack">取消</el-button>
@@ -137,9 +184,19 @@
           <el-input v-model="form.url" placeholder="请输入直播链接"></el-input>
         </el-form-item>
         <el-form-item label="播放起始时间">
-          <el-input v-model="form.startTimes" type="number" placeholder="请输入播放起始时间"></el-input>
+          <el-date-picker
+            v-model="form.startTimes"
+            type="datetime"
+            format="yyyy-MM-dd hh:mm"
+            value-format="yyyy-MM-dd hh:mm"
+            placeholder="请输入播放起始时间"
+          ></el-date-picker>
         </el-form-item>
-        <div class="bottom_btn" v-if="listData.length != 0" style="text-align:center;">
+        <div
+          class="bottom_btn"
+          v-if="listData.length != 0"
+          style="text-align: center"
+        >
           <el-button @click.native="handleLiveBroadcast">取消</el-button>
           <el-button type="primary" @click="liveSure">确定</el-button>
         </div>
@@ -152,7 +209,7 @@ import {
   queryProgram,
   queryProgramList, //查询节目
   updateBroadcastStatus,
-  updateProgram //保存
+  updateProgram, //保存
 } from "@/api/program/index.js";
 
 //秒转时分秒
@@ -161,11 +218,12 @@ import { formatSeconds, timeEvent } from "@/assets/util/util.js";
 export default {
   data() {
     return {
-      form: {
+      form: {//直播时间，地址信息
         url: "",
-        startTimes: ""
+        startTimes: "",
       },
-      info:{},
+      info: {},
+      isSel: this.$route.query.isSel, //判断是否是添加内容跳转过去
       dialogTableVisible: false, //直播弹窗
       areaType: this.$route.query.areaType, //编辑的区域 A,B,C,D
       modelId: this.$route.query.modelId, //模板
@@ -180,24 +238,24 @@ export default {
       eidtLayerList: [
         {
           id: "1",
-          name: "置于顶层"
+          name: "置于顶层",
         },
         {
           id: "2",
-          name: "向上一层"
+          name: "向上一层",
         },
         {
           id: "3",
-          name: "向下一层"
+          name: "向下一层",
         },
         {
           id: "4",
-          name: "置于底层"
+          name: "置于底层",
         },
         {
           id: "5",
-          name: "删除"
-        }
+          name: "删除",
+        },
       ],
       addSel: "", //选择添加的内容
       searchVal: "",
@@ -211,8 +269,8 @@ export default {
         //今日以前的日期都不能选择
         disabledDate(time) {
           return time.getTime() < Date.now() - 8.64e7; //如果当天可选，就不用减8.64e7
-        }
-      }
+        },
+      },
     };
   },
   mounted() {
@@ -225,27 +283,26 @@ export default {
     searchProgram() {
       // 查询分组是否有模板
       var odata = {
-        groupId: this.$store.state.groupId
+        groupId: this.$store.state.groupId,
       };
-      queryProgram(odata).then(res => {
+      queryProgram(odata).then((res) => {
         if (res.data.code == 200) {
           console.log("-----", res);
 
-            // 有模板，查询当前组节目模板列表
-            this.isTemplate = true;
-            this.info = res.data.data[0];
-            // 播放起始时间
-            this.playStartEnd=this.info.programStartTime;
-            // 是否循环
-            console.log("loop",this.info.programType)
-            this.isLoop=this.info.programType||1;
+          // 有模板，查询当前组节目模板列表
+          this.isTemplate = true;
+          this.info = res.data.data[0];
+          // 播放起始时间
+          this.playStartEnd = this.info.programStartTime;
+          // 是否循环
+          console.log("loop", this.info.programType);
+          this.isLoop = this.info.programType || 1;
 
-            // 获取编辑组的列表
-            this.getList(this.currentPage, this.pageSize);
+          // 获取编辑组的列表
+          this.getList(this.currentPage, this.pageSize);
 
-            // 查看是否有直播
-            this.getStatus();
-          
+          // 查看是否有直播
+          this.getStatus();
         }
       });
     },
@@ -273,7 +330,7 @@ export default {
       }
     },
     getStatus() {
-      updateBroadcastStatus(this.programId).then(res => {
+      updateBroadcastStatus(this.programId).then((res) => {
         if (res.data.code == 200) {
           if (res.data.data) {
             this.liveBroadcast = res.data.data;
@@ -291,19 +348,30 @@ export default {
       // 编辑前调用--获取分组列表
       this.currentPage = pageNo;
       var odata = {
+        startTime:"",//右侧数据展示，传入的月日时间-开始时间
+        endTime:"",//右侧数据展示，传入的月日时间-结束时间
         pageNum: pageNo,
         pageSize: pageSize,
         groupId: this.$store.state.groupId,
         modelId: this.modelId,
         partionId: this.areaType, //编辑区域
-        title: this.searchVal
+        title: this.searchVal,
       };
       queryProgramList(odata)
-        .then(res => {
+        .then((res) => {
           if (res.data.code == 200) {
             var list = res.data.data.programList;
             this.totalNo = res.data.data.programTotal;
-            list.forEach(item => {
+            // 如果是选择返回跳转进入
+            if (this.isSel) {
+              // 后来新增添加的数据
+              var newList = JSON.parse(localStorage.getItem("addSelList"));
+              list = this.unique([...list, ...newList]);
+            }
+            // else {
+            //   this.infoList.concat(res.data.data.programList);
+            // }
+            list.forEach((item) => {
               if (item.materialType != 0) {
                 // console.log(item.materialTotalTime == null)
                 if (
@@ -325,15 +393,23 @@ export default {
             });
             //总页数
             this.totalPage = Math.ceil(this.totalNo / this.pageSize);
+
             this.listData = list;
           } else {
             this.$message.error(res.msg);
           }
         })
-        .catch(err => {
+        .catch((err) => {
           //   this.$message.error(err.head.msg);
           console.log(err);
         });
+    },
+    unique(arr) {
+      // 根据唯一标识materialId来对数组进行过滤
+      const res = new Map(); //定义常量 res,值为一个Map对象实例 //返回arr数组过滤后的结果，结果为一个数组   过滤条件是，如果res中没有某个键，就设置这个键的值为1
+      return arr.filter(
+        (arr) => !res.has(arr.materialId) && res.set(arr.materialId, 1)
+      );
     },
     swapItems(id, index, fid) {
       //移动操作操作 id:1 置顶  4:置地 对应相应的操作id
@@ -381,10 +457,10 @@ export default {
     },
     itemRemove(index) {
       this.$confirm("确认删除？")
-        .then(res => {
+        .then((res) => {
           this.listData.splice(index, 1);
         })
-        .catch(err => {
+        .catch((err) => {
           //   console.log(err)
         });
     },
@@ -398,7 +474,7 @@ export default {
       var flg = true; //判断分秒校验是否通过
       var selArr = [];
       //处理选中的列表
-      this.listData.forEach(item => {
+      this.listData.forEach((item) => {
         // !1：视频  2：图片  3：文字
         if (item.materialType != 0) {
           // 判断不通过提示
@@ -411,13 +487,13 @@ export default {
           } else {
             selArr.push({
               materialId: item.materialId,
-              totalTime: timeEvent(item.hour, item.minute, item.second)
+              totalTime: timeEvent(item.hour, item.minute, item.second),
             });
           }
         } else {
           selArr.push({
             materialId: item.materialId,
-            totalTime: item.programMaterialTotalTime
+            totalTime: item.programMaterialTotalTime,
           });
         }
       });
@@ -437,24 +513,24 @@ export default {
           programBroadcast: "",
           programBroastStartTime: this.form.startTimes, //直播起始时间
           programBroastStatus: "",
-          programBroastUrl: this.form.url,
+          programBroastUrl: this.form.url,//直播url
           programCreateTime: "",
           programGroupId: Number(this.$store.state.groupId),
           programId: Number(this.programId),
           programType: this.isLoop, //是否循环
           programStartTime: this.playStartEnd, //播放起始时间
-          programUpdateTime: ""
+          programUpdateTime: "",
         },
         programMaterialList: selArr,
-        programPartition: this.areaType
+        programPartition: this.areaType,
       };
       console.log(selArr);
       console.log(odata);
 
-      updateProgram(odata).then(res => {
+      updateProgram(odata).then((res) => {
         if (res.data.code == 200) {
           this.$router.push({
-            name: "programManage"
+            name: "programManage",
           });
         }
       });
@@ -462,7 +538,7 @@ export default {
     goBack() {
       //返回上-层
       this.$router.push({
-        name: "programManage"
+        name: "programManage",
       });
     },
     handleAddSel(type) {
@@ -479,18 +555,19 @@ export default {
           programId: this.programId,
           modelId: this.$route.query.modelId,
           startTimes: this.playStartEnd,
-          areaType: this.areaType
+          areaType: this.areaType,
           // programPartition
-        }
+        },
       });
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="scss" scoped>
 /deep/ .el-popover {
   padding: 0 !important;
 }
+
 .flip-list-move {
   animation: bounce-in 0.5s;
 }
@@ -563,6 +640,12 @@ export default {
         margin-top: 10px;
         display: flex;
         flex-flow: row wrap;
+        /deep/ .el-input {
+          .el-input__inner {
+            padding: 0;
+            text-align: center;
+          }
+        }
         .dl {
           // width: calc((100% - 60px)/4);
           width: 22.8%;
@@ -586,6 +669,7 @@ export default {
                 width: 100%;
                 height: 100%;
                 display: block;
+                object-fit: cover;
               }
             }
             .text {

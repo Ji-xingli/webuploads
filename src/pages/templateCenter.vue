@@ -21,8 +21,8 @@
       </dl>
     </div>
     <div class="bottom_btn">
-      <el-button type="primary" v-if="list.length != 0">重置模板</el-button>
-      <el-button type="primary" @click="selTemplate" v-else>确定</el-button>
+      <!-- <el-button type="primary" v-if="list.length != 0">重置模板</el-button> -->
+      <el-button type="primary" @click="selTemplate" v-if="list.length == 0">确定</el-button>
     </div>
   </div>
 </template>
@@ -55,24 +55,24 @@ export default {
   },
   mounted() {
     
-    this.searchProgram();
+    this.isTemplate();
   },
   methods: {
-    searchProgram() {
-      // 查询分组是否有模板
-      var odata = {
-        groupId: this.$store.state.groupId,
-      };
-      queryProgram(odata).then((res) => {
-        if (res.data.code == 200) {
-          if (res.data.data.length == 0) {
-            this.info = res.data.data;
-            //   查询当前组是否有模板
-            this.isTemplate();
-          }
-        }
-      });
-    },
+    // searchProgram() {
+    //   // 查询分组是否有模板
+    //   var odata = {
+    //     groupId: this.$store.state.groupId,
+    //   };
+    //   queryProgram(odata).then((res) => {
+    //     if (res.data.code == 200) {
+    //       if (res.data.data.length == 0) {
+    //         this.info = res.data.data;
+    //         //   查询当前组是否有模板
+    //         this.isTemplate();
+    //       }
+    //     }
+    //   });
+    // },
     handleClickItem(id) {
       this.active = id;
     },
@@ -85,7 +85,7 @@ export default {
         if (res.data.code == 200) {
           if(res.data.data.length!==0){
             this.list = res.data.data;
-            this.active = this.list[0].modelId ;
+            this.active = this.list[0].modelId;
           }
         }
       });
@@ -137,10 +137,10 @@ export default {
       flex: 1;
       border: 1px solid #ddd;
       line-height: 30px;
-      &:hover {
-        border: 1px solid #f00;
-        cursor: pointer;
-      }
+      // &:hover {
+      //   border: 1px solid #f00;
+      //   cursor: pointer;
+      // }
       dt {
         display: flex;
         flex-flow: column;

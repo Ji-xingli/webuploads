@@ -6,24 +6,24 @@
       </el-breadcrumb>
       <el-form ref="form" class="formclass" :model="form" label-width="120px">
         <el-form-item label="我的头像">
-          <img class="head_pic" :src="form.img" alt="" />
+          <img class="head_pic" :src="form.userLogoUrl" alt="" />
         </el-form-item>
         <el-form-item label="用户名">
-          <span class="text">{{ form.name }}</span>
+          <span class="text">{{ form.userName }}</span>
         </el-form-item>
         <el-form-item label="手机号">
-          <span class="text">{{ form.phone }}</span>
+          <span class="text">{{ form.userPhone }}</span>
         </el-form-item>
         <el-form-item label="当前密码" prop="password">
-          <span class="text">{{ form.password }}</span>
+          <span class="text">{{ form.userPassword }}</span>
         </el-form-item>
         <el-form-item label="设备软件包" prop="versions">
-          <span class="text">{{ form.versions }}</span>
+          <span class="text">{{ form.userDeviceVersion }}</span>
         </el-form-item>
         <el-form-item label="我的分组">
           <div class="groupList">
             <div class="item" v-for="(item, index) in groupList" :key="index">
-              <span class="text">{{ item.name }}{{ item.num }}</span>
+              <span class="text">{{ item.group.groupName }} ({{item.total}})</span>
             </div>
           </div>
           <el-form-item>
@@ -35,32 +35,47 @@
   </div>
 </template>
 <script>
+import {
+  queryGroup,
+  getUserInfo //个人中心信息
+} from "@/api/personalCenter/index.js";
 
 export default {
   data() {
     return {
       isEdit: false, //是否编辑
-      groupList: [
-        { name: "a组", id: 1, num: 100 },
-        { name: "bdsfdfsf组", id: 2, num: 120 },
-        { name: "c组", id: 3, num: 130 },
-        { name: "a组", id: 1, num: 100 },
-        { name: "bdsfdfsf组", id: 2, num: 120 },
-        { name: "c组", id: 3, num: 130 },
-      ],
+      groupList: [],
       mygroup: "", //添加的分组名称
       searchVal: "", //搜索分组
-      form: {
-        img:
-          "https://c-ssl.duitang.com/uploads/item/202001/10/20200110192530_EjxRV.jpeg",
-        name: "张三",
-        phone: "15523658956",
-        password: "123456789",
-        versions: "V1.0",
-      },
+      form: {},
     };
   },
+  mounted(){
+    // 获取用户信息
+    this.getInfo();
+    // 获取组信息
+    this.getGroup();
+  },
   methods: {
+    getInfo() {
+      // 获取用户信息
+      getUserInfo().then((res) => {
+        if (res.data.code == "200") {
+          this.form = res.data.data;
+        }
+      });
+    },
+    getGroup() {
+      // 获取组列表
+      var odata = {
+        name: this.searchVal,
+      };
+      queryGroup(odata).then((res) => {
+        if (res.data.code == 200) {
+          this.groupList = res.data.data;
+        }
+      });
+    },
     goEdit() {
       //   跳转编辑页面
       this.$router.push({
