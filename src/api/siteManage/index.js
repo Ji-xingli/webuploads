@@ -1,5 +1,6 @@
 // 站点管理
-
+import request from '@/api/http';
+//添加对话
 export const addDialog = (row) => {
     return request({
         url: '/sqfc/website/addDialog',
@@ -7,15 +8,15 @@ export const addDialog = (row) => {
         params: row
     })
 }
-
-export const addWebsite = (row) => {
+// 添加站点
+export const addWebsite = (website) => {
     return request({
         url: '/sqfc/website/addWebsite',
         method: 'post',
-        params: row
+        data:website
     })
 }
-
+// 删除站点
 export const deleteWebsite = (websiteId) => {
     return request({
         url: '/sqfc/website/deleteWebsite',
@@ -24,6 +25,7 @@ export const deleteWebsite = (websiteId) => {
     })
 }
 
+// 查询站点列表
 export const queryWebsite = (row) => {
     return request({
         url: '/sqfc/website/queryWebsite',
@@ -32,14 +34,7 @@ export const queryWebsite = (row) => {
     })
 }
 
-export const queryWebsite = (row) => {
-    return request({
-        url: '/sqfc/website/queryWebsite',
-        method: 'get',
-        params: { ...row }
-    })
-}
-
+// 更新对话
 export const updateDialog = (dialogId) => {
     return request({
         url: '/sqfc/website/updateDialog',

@@ -35,7 +35,7 @@
         </el-col>
       </el-row>
       <!-- B区 -->
-      <el-row :gutter="20" v-if="this.info[0].modelId==2||this.info[0].modelId==3">
+      <el-row :gutter="20" v-if="this.info.length-1>=2">
         <el-col :span="16">
             <program-item :info="info" areaType="B"></program-item>
         </el-col>
@@ -67,7 +67,7 @@
         </el-col>
       </el-row>
       <!-- c区域 -->
-      <el-row :gutter="20" v-if="this.info[0].modelId==3">
+      <el-row :gutter="20" v-if="this.info.length-1>=3">
         <el-col :span="16">
             <program-item :info="info" areaType="C"></program-item>
         </el-col>
@@ -149,6 +149,7 @@ import programItem from '@/components/programItem'
 export default {
   data() {
     return {
+      programIndex:"",//当前选择区id,判断是A,B,C，D哪个区进入的
       isTemplate: false, //true :有模板
       searchVal: "",
       i_hour: "",
@@ -190,6 +191,11 @@ export default {
   components:{
     programItem
   },
+  watch:{
+    '$store.state.groupId': function () {
+      this.searchProgram();
+    }
+  },
   mounted() {
     // 文件类型：materialType  0：视频 1：图片  2：文字
     console.log("id::", this.$store.state.groupId);
@@ -200,6 +206,7 @@ export default {
       // 查询分组是否有模板
       var odata = {
         groupId: this.$store.state.groupId,
+        partion:""
       };
       queryProgram(odata).then((res) => {
         if (res.data.code == 200) {
@@ -210,6 +217,7 @@ export default {
             // 有模板，查询当前组节目模板列表
             this.isTemplate = true;
             this.info = res.data.data;
+        
             // this.getTemplateList();
           }
         }
@@ -228,20 +236,10 @@ export default {
         if (res.data.code == 200) {
           if (res.data.data.length != 0) {
             this.listDataA = res.data.data;
+
             this.programId = res.data.data[0].programId;
           }
         }
-      });
-    },
-    gotoEdit(areaType) {
-      // areaType: A： A区  B:B区   C: C区    D:文字专区
-      this.$router.push({
-        name: "progranEdit",
-        query: {
-          programId: this.programId,
-          modelId: this.info[0].modelId,
-          areaType: areaType,
-        },
       });
     },
     gotoTemplate() {

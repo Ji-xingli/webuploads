@@ -92,7 +92,7 @@ const routes = [
                 },
             },
             {
-                path: '/progranEdit',
+                path: '/programManage/progranEdit',
                 component: progranEdit,
                 name: "progranEdit",
                 meta: {
@@ -100,7 +100,7 @@ const routes = [
                 },
             },
             {
-                path: '/progranAdd',
+                path: '/programManage/progranAdd',
                 component: addProgram,
                 name: "addProgram",
                 meta: {

@@ -47,6 +47,7 @@
                 placeholder="请输入名称搜索"
                 prefix-icon="el-icon-search"
                 v-model="searchVal"
+                @click="searchList"
                 clearable
               >
                 <el-button slot="append" icon="el-icon-search"></el-button>
@@ -78,7 +79,7 @@
                 end-placeholder="结束日期"-->
               </el-time-picker>
               <span v-if="form.startTimes" style="margin-left:20px;font-size:14px;">直播播放起始时间：{{form.startTimes}}</span>
-              <el-button type="primary" v-if="form.url"
+              <el-button type="primary" @click="getBroadcastStop" v-if="isBroastStatus==0&&isBroastStatus!=''"
                 >结束直播</el-button
               >
             </div>
@@ -233,7 +234,8 @@ export default {
       totalNo: 0, //-分页,总条数
       totalPage: 0, //分页-总页数
       isPopover: true, //弹出窗显示隐藏
-      isLoop: 1, //设置是否循环播放  1:循环   0：非循环
+      isBroastStatus:"",//是否显示直播按钮   0：显示  1：不显示
+      isLoop: "", //设置是否循环播放  1:循环   0：非循环
       playStartEnd: "", //播放起始时间设置
       eidtLayerList: [
         {
@@ -280,10 +282,15 @@ export default {
     this.searchProgram();
   },
   methods: {
+    searchList(){
+      // 编辑搜索
+      this.searchProgram();
+    },
     searchProgram() {
       // 查询分组是否有模板
       var odata = {
         groupId: this.$store.state.groupId,
+        partion:this.areaType
       };
       queryProgram(odata).then((res) => {
         if (res.data.code == 200) {
@@ -292,17 +299,24 @@ export default {
           // 有模板，查询当前组节目模板列表
           this.isTemplate = true;
           this.info = res.data.data[0];
-          // 播放起始时间
+          // // 播放起始时间
           this.playStartEnd = this.info.programStartTime;
-          // 是否循环
-          console.log("loop", this.info.programType);
-          this.isLoop = this.info.programType || 1;
+          // console.log(this.playStartEnd)
+          // !是否循环
+          this.isLoop = Number(this.info.programType);
+
+
+          //!直播--起始时间、地址
+          this.form.url=this.info.programBroastUrl;
+          this.form.startTimes=this.info.programBroastStartTime;
+
+          //!设置直播状态
+           this.isBroastStatus=this.info.programBroastStatus;
+          
 
           // 获取编辑组的列表
           this.getList(this.currentPage, this.pageSize);
 
-          // 查看是否有直播
-          this.getStatus();
         }
       });
     },
@@ -329,12 +343,13 @@ export default {
         this.$message.success("操作成功");
       }
     },
-    getStatus() {
+    getBroadcastStop() {
+      // 结束直播
       updateBroadcastStatus(this.programId).then((res) => {
         if (res.data.code == 200) {
-          if (res.data.data) {
-            this.liveBroadcast = res.data.data;
-          }
+
+            // this.liveBroadcast = res.data.data;
+            this.searchProgram();
         }
       });
     },
@@ -469,6 +484,14 @@ export default {
       // this.$router.push({
       //   name: "programManage",
       // });
+      if(this.isLoop==""&&this.isLoop!=0){
+        this.$message.warning("请选择播放方式");
+        return false;
+      }
+      if(this.playStartEnd==""){
+        this.$message.warning("请选择播放起始时间");
+        return false;
+      }
       var reg = /^([0-9]|[1-5][0-9]|60)$/; //校验分秒使用
       var isH = /^[0-9]*$/; //校验小时，是否时数字
       var flg = true; //判断分秒校验是否通过
@@ -480,9 +503,10 @@ export default {
           // 判断不通过提示
           if (
             isH.test(item.hour) &&
-            !reg.test(item.minute) &&
-            !reg.test(item.second)
+            reg.test(item.minute) &&
+            reg.test(item.second)
           ) {
+            console.log(1)
             flg = false;
           } else {
             selArr.push({
@@ -493,7 +517,7 @@ export default {
         } else {
           selArr.push({
             materialId: item.materialId,
-            totalTime: item.programMaterialTotalTime,
+            totalTime: item.materialTotalTime,
           });
         }
       });
@@ -533,6 +557,9 @@ export default {
             name: "programManage",
           });
         }
+      }).catch(error=>{
+        console.log("error",error)
+        this.$message.warning(error.data.data);
       });
     },
     goBack() {

@@ -3,9 +3,11 @@
     <div class="logo"><img src="@/assets/img/logo.png" alt="" /></div>
     <el-menu
       class="el-menu-vertical-demo"
-      default-active="/"
+      
+      :default-active="$route.path"
       router
     >
+    <!-- default-active="/" -->
       <div v-for="(item, index) in list" :key="index">
         <el-menu-item :index="item.route">
           <i class="iconfont" :class="item.icon"></i>
@@ -97,6 +99,13 @@ export default {
 
   mounted() {
     // this.activedMenu();
+  },
+  computed:{
+    getActive(){
+      var path=this.$route.path.split("/")
+      console.log(path)
+      return path[1];
+    }
   },
   methods: {
     getmenu(index) {

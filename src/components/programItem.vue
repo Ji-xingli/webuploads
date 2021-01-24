@@ -76,7 +76,7 @@ import {
 //秒转时分秒
 import {formatSeconds} from "@/assets/util/util.js";
 export default {
-  props: ["info", "areaType"],
+  props: ["info", "areaType"],//info:A,B,C区全部信息  areaType:A  B  C  D 区域 
   data() {
     return {
       readonly: true,
@@ -88,10 +88,16 @@ export default {
     };
   },
   mounted() {
-    //   console.log("获取到区域",this.areaType)  //A  B  C  D 等
+
+      // console.log("获取到区域",this.info.length)  //A  B  C  D 等
     // console.log("info--", this.info);
-    console.log(formatSeconds("200")[1]);
+    // console.log(formatSeconds("200")[1]);
     this.getTemplateList(1, this.pageSize);
+  },
+  watch:{
+    '$store.state.groupId':function () {
+       this.getTemplateList(1, this.pageSize);
+    }
   },
   methods: {
     timeFormat(val) {
@@ -104,14 +110,31 @@ export default {
     gotoEdit(areaType) {
       // 跳转编辑页面
       // areaType: A： A区  B:B区   C: C区    D:文字专区
+      // this.$router.push({
+      //   name: "progranEdit",
+      //   query: {
+      //     programId: this.info[0].programId,
+      //     modelId: this.info[0].modelId,
+      //     areaType: areaType
+      //   }
+      // });
+       var oindex;
+      this.info.forEach((item,index) => {
+        if(item.programPartion==areaType){
+          console.log("index",index)
+          oindex=index;
+        }
+      });
+      console.log("oindex---",oindex)
       this.$router.push({
         name: "progranEdit",
         query: {
-          programId: this.info[0].programId,
-          modelId: this.info[0].modelId,
-          areaType: areaType
-        }
+          programId: this.info[oindex].programId,
+          modelId: this.info[oindex].modelId,
+          areaType: areaType,
+        },
       });
+
     },
     getTemplateList(pageNo, pageSize) {
       var odata = {
@@ -119,7 +142,7 @@ export default {
         endTime:"",//右侧数据展示，传入的月日时间-结束时间
         groupId: this.$store.state.groupId,
         pageNum: pageNo,
-        pageSize: this.pageSize,
+        pageSize: pageSize,
         modelId: this.info[0].modelId,
         partionId: this.areaType,
         title: this.searchVal

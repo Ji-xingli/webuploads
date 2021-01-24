@@ -46,7 +46,8 @@ axios.interceptors.response.use(res => {
 
   //获取状态码
   const status = res.data.code || res.status;
-  const message = res.data.msg || res.data.error_description || '未知错误';
+  const message = res.data.data || res.data.msg || '未知错误';
+  console.log(message)
 
   //如果是401则跳转到登录页面
   if (status === 401){
@@ -64,7 +65,10 @@ axios.interceptors.response.use(res => {
   }
   return res;
 }, error => {
-  console.log(error)
+  Message({
+    message: error.data.data||error.data.msg,
+    type: 'error'
+  });
   return Promise.reject(new Error(error));
 });
 

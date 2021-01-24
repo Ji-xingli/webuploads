@@ -80,6 +80,7 @@ export default {
       // 查询分组是否有模板
       var odata = {
         groupId: this.$store.state.groupId,
+        partion:""
       };
       queryProgram(odata).then((res) => {
         if (res.data.code == 200) {

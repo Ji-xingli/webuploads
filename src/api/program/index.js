@@ -25,7 +25,7 @@ export const queryProgram = (row) => {
 
 
 
-// 更新播放状态
+// 直播结束
 export const updateBroadcastStatus = (programId) => {
     return request({
         url: '/sqfc/program/updateBroadcastStatus',
