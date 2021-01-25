@@ -1,11 +1,11 @@
 // 站点管理
 import request from '@/api/http';
 //添加对话
-export const addDialog = (row) => {
+export const addDialog = (dialog) => {
     return request({
         url: '/sqfc/website/addDialog',
         method: 'post',
-        params: row
+        data: dialog
     })
 }
 // 添加站点

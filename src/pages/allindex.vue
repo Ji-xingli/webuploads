@@ -19,15 +19,15 @@
           </dl>
         </div>
       </el-col>
-      <el-col :span="8"
-        ><div class="item">
+      <el-col :span="8">
+        <div class="item">
           <span class="el-icon-picture-outline icon"></span>
           <dl>
             <dd>图片总数</dd>
             <dd>123456</dd>
           </dl>
-        </div></el-col
-      >
+        </div>
+      </el-col>
     </el-row>
     <el-row type="flex" :gutter="10" class="top_center" justify="space-around">
       <el-col :span="8">
@@ -46,18 +46,14 @@
         <el-card class="box-card">
           <div slot="header" class="clearfix">
             <span class="title">A区节目顺序</span>
-            <el-button style="float: right; padding: 3px 0" type="text"
-              >更多</el-button
-            >
+            <el-button style="float: right; padding: 3px 0" type="text">更多</el-button>
           </div>
           <div class="text_group">
             <div class="t_item">
               <div class="icon el-icon-picture-outline-round"></div>
               <dl class="text">
                 <dt>节目标题</dt>
-                <dd>
-                  简字简介文简字简介文简字简介文简字简介文简字简介文简字简介文
-                </dd>
+                <dd>简字简介文简字简介文简字简介文简字简介文简字简介文简字简介文</dd>
               </dl>
               <div class="timer">总时长：18：50</div>
             </div>
@@ -65,9 +61,7 @@
               <div class="icon el-icon-picture-outline-round"></div>
               <dl class="text">
                 <dt>节目标题</dt>
-                <dd>
-                  简字简介文简字简介文简字简介文简字简介文简字简介文简字简介文
-                </dd>
+                <dd>简字简介文简字简介文简字简介文简字简介文简字简介文简字简介文</dd>
               </dl>
               <div class="timer">总时长：18：50</div>
             </div>
@@ -75,9 +69,7 @@
               <div class="icon el-icon-picture-outline-round"></div>
               <dl class="text">
                 <dt>节目标题</dt>
-                <dd>
-                  简字简介文简字简介文简字简介文简字简介文简字简介文简字简介文
-                </dd>
+                <dd>简字简介文简字简介文简字简介文简字简介文简字简介文简字简介文</dd>
               </dl>
               <div class="timer">总时长：18：50</div>
             </div>
@@ -85,9 +77,7 @@
               <div class="icon el-icon-picture-outline-round"></div>
               <dl class="text">
                 <dt>节目标题</dt>
-                <dd>
-                  简字简介文简字简介文简字简介文简字简介文简字简介文简字简介文
-                </dd>
+                <dd>简字简介文简字简介文简字简介文简字简介文简字简介文简字简介文</dd>
               </dl>
               <div class="timer">总时长：18：50</div>
             </div>
@@ -101,13 +91,14 @@
           </div>
           <div class="input_group">
             <div class="i_item">
-              <el-input v-model="num1" placeholder="请输入设备编号"></el-input>
+              <el-input v-model="deviceOne" placeholder="请输入设备编号"></el-input>
             </div>
             <div class="i_item">
-              <el-input v-model="num2" placeholder="请输入设备编号"></el-input>
+              <el-input v-model="deviceTwo" placeholder="请输入设备编号"></el-input>
             </div>
             <div class="i_item">
-              <el-button class="goLink" type="primary">发起对话</el-button>
+              <el-button class="goLink" type="primary" :disabled="disabled" @click="sendDialog">发起对话</el-button>
+              <el-button class="goLink" type="primary" @click="endDialog">结束对话</el-button>
             </div>
           </div>
         </el-card>
@@ -121,14 +112,15 @@
   </div>
 </template>
 <script>
-// import { reqGetSaleData } from "@/api/api";
+import { addDialog, updateDialog } from "@/api/siteManage/index.js";
 import echarts from "echarts";
 export default {
   data() {
     return {
-      num1: "",
-      num2: "",
-      chartColumn: null,
+      deviceOne: "",
+      deviceTwo: "",
+      disabled:false,
+      chartColumn: null
     };
   },
   mounted() {
@@ -138,50 +130,89 @@ export default {
     compnyname() {
       return this.officeName + "数据统计";
     },
+    validateDialog() {
+      // 验证发起对话
+      let reg = /[1-9]\d?/; //数字
+      let errText = "";
+      if (!reg.test(this.deviceOne)) {
+        errText = "请输入正确的设备编号";
+        return { errText };
+      } else if (!reg.test(this.deviceTwo)) {
+        errText = "请输入正确的设备编号";
+        return { errText };
+      } else if (this.deviceTwo == this.deviceOne) {
+        errText = "两个设备编号不能相同";
+        return { errText };
+      }
+      return { errText };
+    }
   },
   methods: {
+    sendDialog() {
+      // 发起对话
+      if (this.validateDialog.errText !== "") {
+        this.$message.error(this.validateDialog.errText);
+        return false;
+      }
+      var odata = {
+        dialogCreateTime: "",
+        dialogId:"",
+        dialogNumber: this.deviceOne,
+        dialogNumberEnd: this.deviceTwo,
+        dialogStatus: ""
+      };
+      addDialog(odata).then(res=>{
+        if(res.data.code==200){
+          this.disabled=true;
+          this.$message.success("发起成功");
+
+        }
+      })
+    },
+    endDialog(){
+      // 结束对话
+      updateDialog(id).then(res=>{
+        if(res.data.code==200){
+          this.$message.success("结束对话成功");
+        }
+      })
+    },
     drawLine() {
       this.chartColumn = echarts.init(document.getElementById("chartColumn"));
 
       this.chartColumn.setOption({
         title: { text: "站点在线数" },
         tooltip: {
-          trigger: 'axis'
+          trigger: "axis"
         },
         // legend: {
         //       data: ['A区', 'B区', 'C区']
         //   },
         xAxis: {
           type: "category",
-          data: [
-            "A组",
-            "B组",
-            "C组",
-            "D组",
-            "E组",
-          ],
+          data: ["A组", "B组", "C组", "D组", "E组"]
         },
         yAxis: {
-          type: "value",
+          type: "value"
         },
         grid: {
           left: "1%",
           right: "1%",
           bottom: "12%",
           top: "18%",
-          containLabel: true,
+          containLabel: true
         },
         series: [
           {
-            name: 'A区',
+            name: "A区",
             data: [820, 932, 901, 934, 1290],
-            type: "bar",
+            type: "bar"
             // itemStyle : { normal: {label : {show: true}}}
-          },
-        ],
+          }
+        ]
       });
-    },
-  },
+    }
+  }
 };
 </script>
 <style lang="scss" scoped>

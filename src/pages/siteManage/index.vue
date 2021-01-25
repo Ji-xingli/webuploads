@@ -27,7 +27,7 @@
         </el-col>
         <el-col :span="12">
           <el-input
-            placeholder="可输入站点编号/业主姓名/销售员姓名/分组进行搜索"
+            placeholder="可输入站点编号"
             v-model="searchVal"
             class="input-with-select"
             clearable
