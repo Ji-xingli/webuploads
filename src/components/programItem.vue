@@ -5,7 +5,10 @@
         <el-col :span="6">
           <div class="title">{{ areaType == "D" ? "文字专" : areaType }}区节目播放</div>
         </el-col>
-        <el-col :span="12" :offset="6">
+        <el-col :span="6" v-if="info.length!=0&&info[oindex].programBroastStartTime!=null&&info[oindex].programBroastStartTime!=undefined">
+          <div class="title">直播播放起始时间:{{info[oindex].programBroastStartTime}}</div>
+        </el-col>
+        <el-col :span="12" :offset="info.length!=0&&info[oindex].programBroastStartTime?0:6" >
           <div class="search">
             <el-button type="primary" @click="gotoEdit(areaType)">编辑节目单</el-button>
             <el-input
@@ -28,16 +31,20 @@
               <img v-if="item.materialType == 2" src="@/assets/img/media/03.png" alt>
             </div>
             <div class="text">
-              <p class="play_title" >
+              <p class="play_title">
                 <span v-if="item.materialType != 0">已置播放时长：</span>
                 <span v-else>总时长：</span>
               </p>
               <div class="play_times">
-                <span v-if="item.materialType !=0">{{timeFormat(item.programMaterialTotalTime)[0]}}时{{timeFormat(item.programMaterialTotalTime)[1]}}分{{timeFormat(item.programMaterialTotalTime)[2]}}秒</span>
-                <span v-else>{{timeFormat(item.materialTotalTime)[0]}}时{{timeFormat(item.materialTotalTime)[1]}}分{{timeFormat(item.materialTotalTime)[2]}}秒</span>
+                <span
+                  v-if="item.materialType !=0"
+                >{{timeFormat(item.programMaterialTotalTime)[0]}}时{{timeFormat(item.programMaterialTotalTime)[1]}}分{{timeFormat(item.programMaterialTotalTime)[2]}}秒</span>
+                <span
+                  v-else
+                >{{timeFormat(item.materialTotalTime)[0]}}时{{timeFormat(item.materialTotalTime)[1]}}分{{timeFormat(item.materialTotalTime)[2]}}秒</span>
                 <!-- <el-input :readonly="readonly" v-model="timeFormat(item.programMaterialTotalTime)[0]" placeholder="时"></el-input>:
                 <el-input :readonly="readonly" v-model="timeFormat(item.programMaterialTotalTime)[1]" placeholder="分"></el-input>:
-                <el-input :readonly="readonly" v-model="timeFormat(item.programMaterialTotalTime)[2]" placeholder="秒"></el-input> -->
+                <el-input :readonly="readonly" v-model="timeFormat(item.programMaterialTotalTime)[2]" placeholder="秒"></el-input>-->
               </div>
             </div>
           </dt>
@@ -49,12 +56,12 @@
             >总时长：{{timeFormat(item.materialTotalTime)[0]}}时{{timeFormat(item.materialTotalTime)[1]}}分{{timeFormat(item.materialTotalTime)[2]}}秒</span>
             <span
               v-else
-            >已设时长：{{timeFormat(item.programMaterialTotalTime)[0]}}时{{timeFormat(item.programMaterialTotalTime)[1]}}分{{timeFormat(item.programMaterialTotalTime)[2]}}秒</span> -->
+            >已设时长：{{timeFormat(item.programMaterialTotalTime)[0]}}时{{timeFormat(item.programMaterialTotalTime)[1]}}分{{timeFormat(item.programMaterialTotalTime)[2]}}秒</span>-->
           </dd>
           <dd class="dd">{{ item.materialBrief }}</dd>
         </dl>
-        <div class="no_list" v-if="listData.length == 0">暂无节目</div>
       </div>
+        <div class="no_list" v-if="listData.length == 0">暂无节目</div>
     </div>
     <el-pagination
       layout="prev, pager, next"
@@ -74,9 +81,9 @@ import {
   queryProgramList //查询组列表数据
 } from "@/api/program/index.js";
 //秒转时分秒
-import {formatSeconds} from "@/assets/util/util.js";
+import { formatSeconds } from "@/assets/util/util.js";
 export default {
-  props: ["info", "areaType"],//info:A,B,C区全部信息  areaType:A  B  C  D 区域 
+  props: ["info", "areaType"], //info:A,B,C区全部信息  areaType:A  B  C  D 区域
   data() {
     return {
       readonly: true,
@@ -84,19 +91,25 @@ export default {
       listData: [],
       pageNo: 1, //当前页
       pageSize: 3, //每页显示多少条
-      totalNo: 5 //总页数
+      totalNo: 5, //总页数
+      oindex: "" //第几个模板 a,b,c,d 获取到的0，1，2，3
     };
   },
   mounted() {
-
-      // console.log("获取到区域",this.info.length)  //A  B  C  D 等
-    // console.log("info--", this.info);
-    // console.log(formatSeconds("200")[1]);
+    if (this.info && this.areaType) {
+      this.oindex = "";
+      this.info.forEach((item, index) => {
+        if (item.programPartion == this.areaType) {
+          this.oindex = Number(index); //第几个模板
+        }
+      });
+      console.log("===",this.oindex)
+    }
     this.getTemplateList(1, this.pageSize);
   },
-  watch:{
-    '$store.state.groupId':function () {
-       this.getTemplateList(1, this.pageSize);
+  watch: {
+    "$store.state.groupId": function() {
+      this.getTemplateList(1, this.pageSize);
     }
   },
   methods: {
@@ -118,28 +131,26 @@ export default {
       //     areaType: areaType
       //   }
       // });
-       var oindex;
-      this.info.forEach((item,index) => {
-        if(item.programPartion==areaType){
-          console.log("index",index)
-          oindex=index;
+      var oindex = "";
+      this.info.forEach((item, index) => {
+        if (item.programPartion == areaType) {
+          oindex = index; //第几个模板
         }
       });
-      console.log("oindex---",oindex)
+
       this.$router.push({
         name: "progranEdit",
         query: {
           programId: this.info[oindex].programId,
           modelId: this.info[oindex].modelId,
-          areaType: areaType,
-        },
+          areaType: areaType
+        }
       });
-
     },
     getTemplateList(pageNo, pageSize) {
       var odata = {
-        startTime:"",//右侧数据展示，传入的月日时间-开始时间
-        endTime:"",//右侧数据展示，传入的月日时间-结束时间
+        startTime: "", //右侧数据展示，传入的月日时间-开始时间
+        endTime: "", //右侧数据展示，传入的月日时间-结束时间
         groupId: this.$store.state.groupId,
         pageNum: pageNo,
         pageSize: pageSize,
@@ -251,8 +262,8 @@ export default {
           // text-align: right;
           margin-top: 10px;
           overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+          text-overflow: ellipsis;
+          white-space: nowrap;
           .a_title {
             width: 100%;
             height: 30px;
@@ -278,6 +289,7 @@ export default {
           }
         }
       }
+    }
       .no_list {
         font-size: 18px;
         text-align: center;
@@ -285,7 +297,6 @@ export default {
         width: 100%;
         color: palevioletred;
       }
-    }
   }
   .right {
     background: #fff;

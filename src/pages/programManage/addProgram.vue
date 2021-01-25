@@ -197,7 +197,7 @@ export default {
       getVideoList(odata)
         .then((res) => {
           if (res.data.code == 200) {
-            this.listData = res.data.data.list;
+            this.listData =this.listData.concat(res.data.data.list);
             this.totalNo = res.data.data.total;
             //总页数
             this.totalPage = Math.ceil(this.totalNo / this.pageSize);
@@ -220,7 +220,8 @@ export default {
       getPList(odata)
         .then((res) => {
           if (res.data.code == 200) {
-            this.listData = res.data.data.list;
+            // this.listData = res.data.data.list;
+            this.listData =this.listData.concat(res.data.data.list);
             this.totalNo = res.data.data.total;
             //总页数
             this.totalPage = Math.ceil(this.totalNo / this.pageSize);
@@ -243,7 +244,8 @@ export default {
       getList(odata)
         .then((res) => {
           if (res.data.code == 200) {
-            this.listData = res.data.data.list;
+            // this.listData = res.data.data.list;
+            this.listData =this.listData.concat(res.data.data.list);
             this.totalNo = res.data.data.total;
             //总页数
             this.totalPage = Math.ceil(this.totalNo / this.pageSize);
@@ -287,7 +289,6 @@ export default {
       this.$router.go(-1);
     },
     itemChecked(index) {
-      console.log(index)
       this.listData[index].checked = !this.listData[index].checked;
       var num = 0;
       this.listData.forEach((item, index) => {

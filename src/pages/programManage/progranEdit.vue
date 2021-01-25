@@ -570,10 +570,10 @@ export default {
     },
     handleAddSel(type) {
       // todo type:1 添加视频   2：添加内容
-      if (this.playStartEnd == "") {
-        this.$message.warning("请选择播放起始时间");
-        return false;
-      }
+      // if (this.playStartEnd == "") {
+      //   this.$message.warning("请选择播放起始时间");
+      //   return false;
+      // }
       // 跳转至添加
       this.$router.push({
         name: "addProgram",
@@ -581,7 +581,7 @@ export default {
           type: type,
           programId: this.programId,
           modelId: this.$route.query.modelId,
-          startTimes: this.playStartEnd,
+          // startTimes: this.playStartEnd,
           areaType: this.areaType,
           // programPartition
         },

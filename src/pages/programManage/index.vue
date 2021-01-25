@@ -193,6 +193,7 @@ export default {
   },
   watch:{
     '$store.state.groupId': function () {
+      this.isTemplate=false;
       this.searchProgram();
     }
   },
@@ -219,25 +220,6 @@ export default {
             this.info = res.data.data;
         
             // this.getTemplateList();
-          }
-        }
-      });
-    },
-    getTemplateList() {
-      var odata = {
-        groupId: this.$store.state.groupId,
-        pageNum: this.pageNo,
-        pageSize: this.pageSize,
-        modelId: this.info[0].modelId,
-        partionId: "",
-      };
-      //获取模板列表
-      queryProgramList(odata).then((res) => {
-        if (res.data.code == 200) {
-          if (res.data.data.length != 0) {
-            this.listDataA = res.data.data;
-
-            this.programId = res.data.data[0].programId;
           }
         }
       });

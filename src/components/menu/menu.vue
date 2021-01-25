@@ -3,8 +3,7 @@
     <div class="logo"><img src="@/assets/img/logo.png" alt="" /></div>
     <el-menu
       class="el-menu-vertical-demo"
-      
-      :default-active="$route.path"
+      :default-active="getActive"
       router
     >
     <!-- default-active="/" -->
@@ -98,13 +97,17 @@ export default {
   },
 
   mounted() {
-    // this.activedMenu();
+
   },
   computed:{
     getActive(){
-      var path=this.$route.path.split("/")
-      console.log(path)
-      return path[1];
+      // 导航蓝根据当前页面关联高亮
+      if (this.$route.path.indexOf("/programManage") == 0) {
+        return "/programManage";
+      } else {
+        console.log(this.$route.path)
+        return this.$route.path;
+      }
     }
   },
   methods: {
@@ -126,19 +129,14 @@ export default {
       // console.log(key, keyPath);
     },
     //导航蓝根据当前页面关联高亮
-    activedMenu() {
-      if (
-        this.$route.path.indexOf("/orderEnter") == 0 ||
-        this.$route.path.indexOf("/index") == 0 ||
-        this.$route.path.indexOf("/zfProduct") == 0
-      ) {
-        return "/orderEnter";
-      } else if (this.$route.path.indexOf("/order") == 0) {
-        return "/order/list";
-      } else if (this.$route.path.indexOf("/member") == 0) {
-        return "/member/center";
-      }
-    },
+    // activedMenu() {
+    //   if (this.$route.path.indexOf("/programManage") == 0) {
+    //     return "/programManage";
+    //   } else {
+    //     console.log(this.$route.path)
+    //     return this.$route.path;
+    //   }
+    // },
   },
 };
 </script>

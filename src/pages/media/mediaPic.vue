@@ -122,9 +122,9 @@ export default {
           { required: true, message: "请输入图片标题", trigger: "blur" },
         ],
         materialBrief: [
-          { required: true, message: "请输入视频简介", trigger: "change" },
+          { required: true, message: "请输入图片简介", trigger: "change" },
         ],
-        img: [{ required: true, message: "请选择封面", trigger: "change" }],
+        img: [{ required: true, message: "请选择上传图片", trigger: "change" }],
       },
       videoUrl: "", //上传视频显示地址
       videoUploadPercent: 0, //进度条

@@ -295,7 +295,10 @@ export default {
     },
     formatGroup(row) {
       // console.log(row.$index)
-      return this.groups[row.$index].group.groupName;
+      if(this.groups.length!=0){
+
+        return this.groups[row.$index].group.groupName;
+      }
     },
     visibleBefore(formName) {
       // 遮罩关闭前
