@@ -37,7 +37,7 @@
                     >添加文字</el-dropdown-item
                   >
                   <el-dropdown-item
-                    v-if="areaType != 'D'"
+                    v-if="areaType != 'D'&&info.programBroastStatus!=1"
                     @click.native="handleLiveBroadcast"
                     >插入直播</el-dropdown-item
                   >
@@ -79,7 +79,7 @@
                 end-placeholder="结束日期"-->
               </el-time-picker>
               <span v-if="form.startTimes" style="margin-left:20px;font-size:14px;">直播播放起始时间：{{form.startTimes}}</span>
-              <el-button type="primary" @click="getBroadcastStop" v-if="isBroastStatus==0&&isBroastStatus!=''"
+              <el-button type="primary" @click="getBroadcastStop" v-if="info.programBroastStatus==1"
                 >结束直播</el-button
               >
             </div>
@@ -172,7 +172,7 @@
       <div class="load_more" v-if="currentPage < totalPage" @click="loadMore">
         点击加载更多
       </div>
-      <div class="bottom_btn" v-if="listData.length != 0">
+      <div class="bottom_btn">
         <el-button type="primary" @click="gotoSel">完成</el-button>
         <el-button @click="goBack">取消</el-button>
       </div>
@@ -195,7 +195,6 @@
         </el-form-item>
         <div
           class="bottom_btn"
-          v-if="listData.length != 0"
           style="text-align: center"
         >
           <el-button @click.native="handleLiveBroadcast">取消</el-button>
@@ -344,14 +343,21 @@ export default {
       }
     },
     getBroadcastStop() {
-      // 结束直播
-      updateBroadcastStatus(this.programId).then((res) => {
-        if (res.data.code == 200) {
-
-            // this.liveBroadcast = res.data.data;
-            this.searchProgram();
-        }
-      });
+      this.$confirm("确认结束？")
+        .then((res) => {
+          // 结束直播
+          updateBroadcastStatus(this.programId).then((res) => {
+            if (res.data.code == 200) {
+              this.form.url="";
+              this.form.startTimes="";
+              this.searchProgram();
+            }
+          });
+        })
+        .catch((err) => {
+          //   console.log(err)
+        });
+      
     },
     loadMore() {
       // 点击加载更多

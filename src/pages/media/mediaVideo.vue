@@ -28,7 +28,7 @@
       </el-row>
     </div>
     <!-- 列表 -->
-    <el-table :data="tableData" style="width: 100%" max-height="500">
+    <el-table :data="tableData" style="width: 100%" :height="screenHeight">
       <el-table-column fixed prop="img" label="图片" width="230">
         <template slot-scope="scope">
           　　　　<img
@@ -150,6 +150,7 @@ import {
 export default {
   data() {
     return {
+      screenHeight: `${document.documentElement.clientHeight}` - 242,
       otype: "", //! 新增or上传   otype:add/edit
       form: {},
       rules: {
@@ -175,7 +176,11 @@ export default {
     };
   },
   mounted() {
-    this.getList(this.currentPage, this.pageSize);
+    const _this = this;
+    window.onresize = function temp() {
+      _this.screenHeight = `${document.documentElement.clientHeight}` - 242;
+    };
+    _this.getList(_this.currentPage, _this.pageSize);
   },
   methods: {
     visibleBefore() {

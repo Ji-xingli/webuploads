@@ -5,10 +5,10 @@
         <el-col :span="6">
           <div class="title">{{ areaType == "D" ? "文字专" : areaType }}区节目播放</div>
         </el-col>
-        <el-col :span="6" v-if="info.length!=0&&info[oindex].programBroastStartTime!=null&&info[oindex].programBroastStartTime!=undefined">
-          <div class="title">直播播放起始时间:{{info[oindex].programBroastStartTime}}</div>
+        <el-col :span="8" v-if="areaType&&obj[areaType].programBroastStatus==1">
+          <div class="title">直播播放起始时间:{{obj[areaType].programBroastStartTime}}</div>
         </el-col>
-        <el-col :span="12" :offset="info.length!=0&&info[oindex].programBroastStartTime?0:6" >
+        <el-col :span="10" :offset="info.length!=0&&obj[areaType].programBroastStatus==1?0:8" >
           <div class="search">
             <el-button type="primary" @click="gotoEdit(areaType)">编辑节目单</el-button>
             <el-input
@@ -92,18 +92,19 @@ export default {
       pageNo: 1, //当前页
       pageSize: 3, //每页显示多少条
       totalNo: 5, //总页数
-      oindex: "" //第几个模板 a,b,c,d 获取到的0，1，2，3
+      oindex: "", //第几个模板 a,b,c,d 获取到的0，1，2，3
+      obj:{},//保存模板
     };
   },
   mounted() {
     if (this.info && this.areaType) {
-      this.oindex = "";
+      this.obj={}
       this.info.forEach((item, index) => {
         if (item.programPartion == this.areaType) {
-          this.oindex = Number(index); //第几个模板
+         this.obj[item.programPartion]=item
         }
       });
-      console.log("===",this.oindex)
+      
     }
     this.getTemplateList(1, this.pageSize);
   },
