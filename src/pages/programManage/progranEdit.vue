@@ -306,11 +306,13 @@ export default {
 
 
           //!直播--起始时间、地址
-          this.form.url=this.info.programBroastUrl;
-          this.form.startTimes=this.info.programBroastStartTime;
+          if(this.info.programBroastStatus==1){
+            this.form.url=this.info.programBroastUrl;
+            this.form.startTimes=this.info.programBroastStartTime;
+          }
 
-          //!设置直播状态
-           this.isBroastStatus=this.info.programBroastStatus;
+          //设置直播状态
+          //  this.isBroastStatus=this.info.programBroastStatus;
           
 
           // 获取编辑组的列表
