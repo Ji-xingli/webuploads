@@ -28,7 +28,7 @@
         <el-table-column prop="websiteManegementType" label="经营方式" :formatter="formatType"></el-table-column>
         <el-table-column fixed="right" label="操作" width="120">
           <template slot-scope="scope">
-            <el-button @click.native="showVisible(scope.row.websiteId)" type="text" size="small">编辑</el-button>
+            <el-button @click.native="showVisible(scope.row)" type="text" size="small">编辑</el-button>
             <el-button
               @click.native.prevent="rewDel(scope.row.websiteId)"
               type="text"
@@ -89,7 +89,7 @@
           </el-form-item>
           <el-form-item label="经营方式" prop="websiteManegementType">
             <el-radio-group v-model="form.websiteManegementType">
-              <el-radio :label="item.id" v-for="(item, ind) in types" :key="ind">{{ item.label }}</el-radio>
+              <el-radio :label="item.id" v-for="item in types" :key="item.id">{{ item.label }}</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="地址" prop="websiteAddress">
@@ -110,7 +110,8 @@
 import {
   addWebsite,
   queryWebsite,
-  deleteWebsite
+  deleteWebsite,
+  deleteWebsiteByIds
 } from "@/api/siteManage/index.js";
 import {
   queryGroup //查询组列表
@@ -189,9 +190,9 @@ export default {
       },
       groups: [],
       types: [
-        { id: 1, label: "专营" },
-        { id: 2, label: "双机" },
-        { id: 3, label: "兼营" }
+        { id: "1", label: "专营" },
+        { id: "2", label: "双机" },
+        { id: "3", label: "兼营" }
       ],
       type: "", //1:编辑  2：新增
       groupId: this.$store.state.groupId,
@@ -209,7 +210,7 @@ export default {
     ids() {
       let ids = [];
       this.selectionList.forEach(ele => {
-        ids.push(ele.id);
+        ids.push(ele.websiteId);
       });
       return ids.join(",");
     }
@@ -323,11 +324,14 @@ export default {
         }
       });
     },
-    showVisible(id) {
+    showVisible(row) {
       // 有值：编辑     否则：新增
-      if (id) {
+      if (row) {
         this.type = 1;
         this.visibleTitle = "编辑";
+        // 赋值
+        console.log(row)
+        this.form=row;
       } else {
         this.type = 2;
         this.visibleTitle = "新增";
@@ -377,8 +381,13 @@ export default {
         type: "warning"
       })
         .then(() => {
-          console.log("删除");
-          console.log(this.ids);
+          deleteWebsiteByIds(this.ids).then(res=>{
+            if(res.data.code==200){
+              this.$message.success("删除成功");
+              this.getList(1);
+            }
+          })
+
         })
         .catch(err => {
           console.log("取消");

@@ -91,14 +91,32 @@
           </div>
           <div class="input_group">
             <div class="i_item">
-              <el-input v-model="deviceOne" placeholder="请输入设备编号"></el-input>
+              <el-input
+                v-model="deviceOne"
+                :disabled="deviceStatus==1?true:false"
+                placeholder="请输入设备编号"
+              ></el-input>
             </div>
             <div class="i_item">
-              <el-input v-model="deviceTwo" placeholder="请输入设备编号"></el-input>
+              <el-input
+                v-model="deviceTwo"
+                :disabled="deviceStatus==1?true:false"
+                placeholder="请输入设备编号"
+              ></el-input>
             </div>
             <div class="i_item">
-              <el-button class="goLink" type="primary" :disabled="disabled" @click="sendDialog">发起对话</el-button>
-              <el-button class="goLink" type="primary" @click="endDialog">结束对话</el-button>
+              <el-button
+                class="goLink"
+                type="primary"
+                v-if="deviceStatus==0"
+                @click="sendDialog"
+              >发起对话</el-button>
+              <el-button
+                class="goLink"
+                type="primary"
+                v-if="deviceStatus==1"
+                @click="endDialog"
+              >结束对话</el-button>
             </div>
           </div>
         </el-card>
@@ -112,19 +130,28 @@
   </div>
 </template>
 <script>
-import { addDialog, updateDialog } from "@/api/siteManage/index.js";
+import {
+  addDialog,
+  updateDialog,
+  queryDialog
+} from "@/api/siteManage/index.js";
 import echarts from "echarts";
 export default {
   data() {
     return {
-      deviceOne: "",
-      deviceTwo: "",
-      disabled:false,
+      deviceStatus: 0, //设备状态
+      deviceOne: "", //设备1
+      deviceTwo: "", //设备2
+      dialogId: "", //对话id
+      disabled: false,
       chartColumn: null
     };
   },
   mounted() {
     this.drawLine();
+
+    // 查询是否有对话链接
+    this.queryLink();
   },
   computed: {
     compnyname() {
@@ -148,6 +175,29 @@ export default {
     }
   },
   methods: {
+    queryLink() {
+      //查询是否有对话链接
+      queryDialog().then(res => {
+        if (res.data.code == 200) {
+          console.log(res.data.data.length);
+          if (res.data.data.length != 0) {
+            this.deviceOne = res.data.data[0].dialogNumber;
+            this.deviceTwo = res.data.data[0].dialogNumberEnd;
+            // 设备状态  1：链接   0：非链接
+            this.deviceStatus = res.data.data[0].dialogStatus;
+            //对话id
+            this.dialogId = res.data.data[0].dialogId;
+          } else {
+            this.deviceOne = "";
+            this.deviceTwo = "";
+            // 设备状态  1：链接   0：非链接
+            this.deviceStatus = 0;
+            //对话id
+            this.dialogId = "";
+          }
+        }
+      });
+    },
     sendDialog() {
       // 发起对话
       if (this.validateDialog.errText !== "") {
@@ -156,26 +206,29 @@ export default {
       }
       var odata = {
         dialogCreateTime: "",
-        dialogId:"",
+        dialogId: "",
         dialogNumber: this.deviceOne,
         dialogNumberEnd: this.deviceTwo,
         dialogStatus: ""
       };
-      addDialog(odata).then(res=>{
-        if(res.data.code==200){
-          this.disabled=true;
+      addDialog(odata).then(res => {
+        if (res.data.code == 200) {
+          this.disabled = true;
           this.$message.success("发起成功");
-
+          //查询对话状态
+          this.queryLink();
         }
-      })
+      });
     },
-    endDialog(){
+    endDialog() {
       // 结束对话
-      updateDialog(id).then(res=>{
-        if(res.data.code==200){
+      updateDialog(this.dialogId).then(res => {
+        if (res.data.code == 200) {
           this.$message.success("结束对话成功");
+          //查询是否有对话链接
+          this.queryLink();
         }
-      })
+      });
     },
     drawLine() {
       this.chartColumn = echarts.init(document.getElementById("chartColumn"));
