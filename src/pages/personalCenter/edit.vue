@@ -16,15 +16,19 @@
       >
         <el-form-item label="我的头像">
           <el-upload
-            class="headPic"
+            class="headPic headImg"
             action="api/blade-project/project/projectfiles/uploadFiles"
             :auto-upload="false"
             :limit="1"
             list-type="picture-card"
-            v-model="form.userLogoUrl"
+            :file-list="fileList"
+            accept=".jpg,.png,.jpeg,JPG,JPEG"
             :on-change="beforePicUpload"
             :on-remove="handlePicRemove"
           >
+            <!-- v-model="form.userLogoUrl"
+             :show-file-list="false"
+            :file-list="dialogImageUrlArray" -->
             <i class="el-icon-plus"></i>
           </el-upload>
         </el-form-item>
@@ -37,7 +41,7 @@
         <el-form-item label="当前密码" prop="userPassword">
           <el-input v-model="form.userPassword"></el-input>
         </el-form-item>
-        <el-form-item label="设备软件包" prop="versions">
+        <el-form-item label="设备软件包" prop="userDeviceVersion">
           <div @click="changePack">
             <span>{{ form.userDeviceVersion }}</span>
             <span class="el-icon-s-goods" style="font-size: 20px"></span>
@@ -74,20 +78,29 @@
               <el-input
                 v-model="item.group.groupName"
                 @blur="inputBlur(item.group)"
+                v-if="item.group.groupId!=999"
               >
-                <template slot="append">({{ item.total }})</template></el-input
+                <template slot="append">({{ item.total }})</template>
+              </el-input>
+              <el-input
+                v-model="item.group.groupName"
+                readonly="readonly"
+                v-else
               >
+                <template slot="append">({{ item.total }})</template>
+              </el-input>
               <span
                 class="del el-icon-remove"
                 @click="delGroup(item.group.groupId)"
+                v-if="item.group.groupId!=999"
               ></span>
             </div>
           </div>
           <el-form-item>
+            <el-button @click="editCancle(2)">取消</el-button>
             <el-button type="primary" @click="submitPicForm('form')"
               >确定</el-button
             >
-            <el-button type="primary" @click="editCancle">取消</el-button>
           </el-form-item>
         </el-form-item>
       </el-form>
@@ -96,35 +109,40 @@
         title="上传软件包"
         :visible.sync="picMasterVisible"
         direction="rtl"
+        :before-close="beforeCloseDrawer"
+        :wrapperClosable="false"
         size="50%"
       >
         <el-form
-          ref="form"
-          class="formclass"
+          ref="form_device"
+          class="formclass deviceClass"
           :model="form"
           :rules="rules"
           label-width="120px"
         >
-          <el-form-item label="软件版本号" prop="versions">
+          <el-form-item label="软件版本号" prop="userDeviceVersion">
             <el-input v-model="form.userDeviceVersion"></el-input>
           </el-form-item>
-          <el-form-item label="选择软件包" prop="num">
+          <el-form-item label="选择软件包" prop="userDeviceUrl">
             <el-upload
               class="headPic"
-              action="api/blade-project/project/projectfiles/uploadFiles"
+              action="sqfc/user/updateDevice"
               :auto-upload="false"
               :limit="1"
-              list-type="picture-card"
-              v-model="form.img"
-              :on-change="beforePicUpload"
-              :on-remove="handlePicRemove"
+              :file-list="fileDeviceList"
+              :on-change="beforeDeviceUpload"
+              :on-remove="handleDeviceRemove"
             >
-              <i class="el-icon-plus"></i>
+              <!-- :file-list="fileDeviceList" -->
+              <!-- <i class="el-icon-plus"></i> -->
+              <el-button size="small" type="primary">点击上传</el-button>
             </el-upload>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="editCancle">取消</el-button>
-            <el-button type="primary" @click="save">保存</el-button>
+            <el-button @click="editCancle(1)">取消</el-button>
+            <el-button type="primary" @click="save('form_device')"
+              >保存</el-button
+            >
           </el-form-item>
         </el-form>
       </el-drawer>
@@ -139,11 +157,15 @@ import {
   deleteGroup,
   getUserInfo, //个人中心信息
   userInfoUpdate, //信息更新
+  updateDevice, //更新上传软件包
 } from "@/api/personalCenter/index.js";
 export default {
   data() {
     return {
-      file: {}, //上传的文件
+      fileList: [], //头像回显
+      file: {}, //上传头像的文件
+      fileDevice: {}, //上传设备的文件
+      fileDeviceList: [], //设备软件包回显
       picMasterVisible: false, //是否编辑
       groupList: [],
       delList: [], //删除的组列表
@@ -166,6 +188,9 @@ export default {
         userPassword: [
           { required: true, message: "请输入姓名", trigger: "blur" },
         ],
+        userDeviceVersion: [
+          { required: true, message: "请输入软件版本号", trigger: "blur" },
+        ],
       },
     };
   },
@@ -181,6 +206,14 @@ export default {
       getUserInfo().then((res) => {
         if (res.data.code == "200") {
           this.form = res.data.data;
+          //头像回显
+          this.fileList = [{ url: this.form.userLogoUrl }];
+          // this.fileDeviceList = [
+          //   {
+          //     name: "软件包" + this.form.userDeviceVersion,
+          //     url: this.form.userDeviceUrl,
+          //   },
+          // ];
         }
       });
     },
@@ -201,10 +234,9 @@ export default {
 
           // 更新提交
           let formData = new FormData(); //  用FormData存放上传文件
-          if(this.file){
-
+          if (this.file) {
             formData.append("file", this.file.raw);
-          }else{
+          } else {
             formData.append("file", this.form.userLogoUrl);
           }
           // 版本
@@ -243,6 +275,7 @@ export default {
       queryGroup(odata).then((res) => {
         if (res.data.code == 200) {
           this.groupList = res.data.data;
+          this.$store.commit("setGroupLen", res.data.data.length);
         }
       });
     },
@@ -259,7 +292,10 @@ export default {
               message: "操作成功!",
             });
             this.mygroup = "";
+            //! 添加或删除、修改后默认总组- 默认选择总组
+            this.$store.commit("setGroupId", 999);
             this.getGroup();
+
           }
         });
       } else {
@@ -281,6 +317,8 @@ export default {
             message: "修改成功!",
           });
           this.getGroup();
+          //! 添加或删除、修改后默认总组- 默认选择总组
+          this.$store.commit("setGroupId", 999);
         }
       });
     },
@@ -290,7 +328,7 @@ export default {
       // this.groupList.splice(index, 1);
 
       // this.mygroupId = "";
-      this.$confirm("确认删除？")
+      this.$confirm("删除分组后，分组中的所有站点也将删除！确认删除？")
         .then((res) => {
           deleteGroup(id).then((r) => {
             if (r.data.code == "200") {
@@ -298,6 +336,8 @@ export default {
                 type: "success",
                 message: "删除成功!",
               });
+              //! 添加或删除、修改后默认总组- 默认选择总组
+              this.$store.commit("setGroupId", 999);
               this.getGroup();
             }
           });
@@ -327,19 +367,99 @@ export default {
         fileList.splice(-1, 1);
         return false;
       } else {
+        console.log("file", file);
         this.form.userLogoUrl = file.url;
         this.file = file;
+        console.log(file);
         return true;
       }
     },
-    editCancle() {
-      // 取消保存
-      this.$router.push({
-        name: "personalCenter",
-      });
+    beforeDeviceUpload(file, fileList) {
+      this.form.userDeviceUrl = file.url;
+      this.fileDevice = file;
+      console.log(this.fileDevice);
+      return true;
     },
-    save() {
-      //保存
+    handleDeviceRemove() {
+      // 软件包删除
+      this.form.userDeviceUrl = "";
+      this.fileDevice = {};
+      
+    },
+    beforeCloseDrawer(){
+      // 软件包删除
+        this.form.userDeviceUrl = "";
+        this.fileDevice = {};
+        this.picMasterVisible = false;
+        this.fileDeviceList=[]
+    },
+    editCancle(flg) {
+      // 取消保存
+      if (flg == 1) {
+        
+        
+        this.picMasterVisible = false;
+        // 软件包删除
+        this.form.userDeviceUrl = "";
+        this.fileDevice = {};
+        this.fileDeviceList=[]
+
+
+      } else {
+        this.$router.push({
+          name: "personalCenter",
+        });
+      }
+    },
+    save(formName) {
+      //设备软件包--保存
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          if (this.form.userDeviceUrl == "") {
+            this.$message({
+              type: "error",
+              message: "请上传设备软件包!",
+            });
+            return false;
+          }
+
+          let formData = new FormData(); //  用FormData存放上传文件
+          if (this.fileDevice) {
+            formData.append("file", this.fileDevice.raw);
+          } else {
+            formData.append("file", this.form.userDeviceUrl);
+          }
+          // 版本
+          formData.append("userDeviceVersion", this.form.userDeviceVersion);
+          formData.append("userName", this.form.userName);
+          formData.append("userPassword", this.form.userPassword);
+          formData.append("userPhone", this.form.userPhone);
+          updateDevice(formData)
+            .then((res) => {
+              if (res.data.code == 200) {
+                this.$message({
+                  type: "success",
+                  message: "更新成功!",
+                });
+                //刷新个人信息
+                this.getInfo();
+                // 隐藏弹窗
+                this.picMasterVisible = false;
+
+                // 软件包删除
+                this.form.userDeviceUrl = "";
+                this.fileDevice = {};
+
+              }
+            })
+            .catch((err) => {
+              this.$message({
+                type: "error",
+                message: "操作失败!",
+              });
+            });
+        }
+      });
     },
   },
 };
@@ -356,6 +476,26 @@ export default {
   margin-top: 10px;
   background: #fff;
   overflow-y: scroll;
+  .headImg {
+    width: 500px;
+    // height:1rem;
+    img {
+      width: 148px;
+      height: 148px;
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+  }
+  .oImg {
+    width: 148px;
+    height: 148px;
+  }
+  .deviceClass {
+    /deep/.el-upload-list__item-name {
+      width: 200px;
+    }
+  }
   .table_box {
     padding: 10px;
     .title {

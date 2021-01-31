@@ -9,7 +9,7 @@
           placeholder="请选择"
         >
           <el-option
-            v-for="(item, index) in groups[0]"
+            v-for="(item, index) in groups"
             :key="index"
             :label="item.group.groupName"
             :value="item.group.groupId"
@@ -34,10 +34,13 @@
 </template>
 <script>
 import { queryGroup } from "@/api/personalCenter/index.js";
+import {
+  loginout//退出登录
+} from "@/api/login/index.js";
 export default {
   data() {
     return {
-      groupVal: 999,
+      groupVal: this.$store.state.groupId,
       groups: [],
     };
   },
@@ -45,9 +48,17 @@ export default {
     this.getGroup();
     //
   },
+  watch: {
+    "$store.state.groupLen": function() {
+        this.getGroup();
+      
+    }
+  },
   methods: {
     changeVal(selVal) {
       this.$store.commit("setGroupId", selVal);
+      console.log(selVal)
+      this.groupVal=selVal;
     },
     getGroup() {
       var odata = {
@@ -55,10 +66,14 @@ export default {
       };
       queryGroup(odata).then((res) => {
         if (res.data.code == 200) {
-          this.groups.push(res.data.data);
-          var arr = { group: { groupId: 999, groupName: "总组" }, total: 2 };
-          this.groups[0].unshift(arr);
-          console.log(this.groups);
+          this.groups=res.data.data;
+          // var arr = { group: { groupId: 999, groupName: "总组" }, total: 2 };
+          // this.groups[0].unshift(arr);
+          
+          // 默认显
+          // if(res.data.data.length!=0){
+          //   this.groupVal=this.groups[0].group.groupId;
+          // }
         }
       });
     },
@@ -68,7 +83,16 @@ export default {
         name:"personalCenter"
       })
     },
-    outlogin() {},
+    outlogin() {
+      loginout().then(res=>{
+        if(res.data.code==200){
+          this.$router.push({
+            name:"login"
+          })
+
+        }
+      })
+    },
   },
 };
 </script>

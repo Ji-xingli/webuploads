@@ -28,13 +28,17 @@
       </el-row>
     </div>
     <!-- 列表 -->
-    <el-table :data="tableData" style="width: 100%" :height="screenHeight">
+
+    <el-table
+      :data="tableData"
+      style="width: 100%"
+      :height="screenHeight"
+      v-loading="loading"
+      element-loading-text="正在努力加载中..."
+    >
       <el-table-column fixed prop="img" label="图片" width="230">
         <template slot-scope="scope">
-          <img
-            src="@/assets/img/media/03.png"
-            class="head_pic"
-          />
+          <img src="@/assets/img/media/03.png" class="head_pic" />
           　　</template
         >
       </el-table-column>
@@ -77,6 +81,7 @@
       :page-size="pageSize"
       :total="totalNo"
     ></el-pagination>
+
     <el-drawer
       title="文本"
       :visible.sync="videoEditMaster"
@@ -172,8 +177,11 @@ export default {
             this.tableData = res.data.data.list;
             this.totalNo = res.data.data.total;
 
-             // 顶部总数
-            this.$emit('getTopTotal')
+            // 顶部总数
+            this.$emit("getTopTotal");
+
+            //取消加载
+            this.loading = false;
           } else {
             this.$message.error(res.msg);
           }
@@ -295,9 +303,9 @@ export default {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  .head_pic{
-      width:184px;
-      height:104px;
+  .head_pic {
+    width: 184px;
+    height: 104px;
   }
 }
 .up_video_box {

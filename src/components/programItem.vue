@@ -61,7 +61,7 @@
           <dd class="dd">{{ item.materialBrief }}</dd>
         </dl>
       </div>
-        <div class="no_list" v-if="listData.length == 0">暂无节目</div>
+        <div class="no_list" v-if="listData.length == 0"><img src="@/assets/img/no_bg.png" alt=""></div>
     </div>
     <el-pagination
       layout="prev, pager, next"
@@ -297,6 +297,11 @@ export default {
         line-height: 200px;
         width: 100%;
         color: palevioletred;
+        overflow:hidden;
+        img{
+          width:200px;
+          margin-top:40px;
+        }
       }
   }
   .right {

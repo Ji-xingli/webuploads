@@ -165,7 +165,7 @@
               <!-- <textarea class="textarea" maxlength="100" v-model="item.materialBrief"></textarea> -->
             </dd>
           </dl>
-          <div class="no_list" v-if="listData.length == 0">暂无数据</div>
+          <div class="no_list" v-if="listData.length == 0"><img src="@/assets/img/no_bg.png" alt=""></div>
         </div>
       </div>
       <!-- 点击加载更多 -->
@@ -174,7 +174,7 @@
       </div>
       <div class="bottom_btn">
         <el-button type="primary" @click="gotoSel">完成</el-button>
-        <el-button @click="goBack">取消</el-button>
+        <el-button type="default" class="cancle" @click="goBack">取消</el-button>
       </div>
     </div>
 
@@ -188,8 +188,8 @@
           <el-date-picker
             v-model="form.startTimes"
             type="datetime"
-            format="yyyy-MM-dd hh:mm"
-            value-format="yyyy-MM-dd hh:mm"
+            format="yyyy-MM-dd HH:mm"
+            value-format="yyyy-MM-dd HH:mm"
             placeholder="请输入播放起始时间"
           ></el-date-picker>
         </el-form-item>
@@ -328,7 +328,6 @@ export default {
       this.dialogTableVisible = !this.dialogTableVisible;
     },
     liveSure() {
-      console.log(this.form.url);
       // 插入直播确定
       if (this.form.url == "" || typeof this.form.url == "undefined") {
         this.$message.warning("请输入播放地址");
@@ -489,9 +488,7 @@ export default {
     },
     gotoSel() {
       //完成--去保存
-      // this.$router.push({
-      //   name: "programManage",
-      // });
+      
       if(this.isLoop==""&&this.isLoop!=0){
         this.$message.warning("请选择播放方式");
         return false;
@@ -505,30 +502,33 @@ export default {
       var flg = true; //判断分秒校验是否通过
       var selArr = [];
       //处理选中的列表
-      this.listData.forEach((item) => {
-        // !1：视频  2：图片  3：文字
-        if (item.materialType != 0) {
-          // 判断不通过提示
-          if (
-            isH.test(item.hour) &&
-            reg.test(item.minute) &&
-            reg.test(item.second)
-          ) {
-            console.log(1)
-            flg = false;
+      if(this.listData.length==0){
+        selArr = [];
+      }else{
+        this.listData.forEach((item) => {
+          // !1：视频  2：图片  3：文字
+          if (item.materialType != 0) {
+            // 判断不通过提示
+            if (
+              isH.test(item.hour) &&
+              reg.test(item.minute) &&
+              reg.test(item.second)
+            ) {
+              flg = false;
+            } else {
+              selArr.push({
+                materialId: item.materialId,
+                totalTime: timeEvent(item.hour, item.minute, item.second),
+              });
+            }
           } else {
             selArr.push({
               materialId: item.materialId,
-              totalTime: timeEvent(item.hour, item.minute, item.second),
+              totalTime: item.materialTotalTime,
             });
           }
-        } else {
-          selArr.push({
-            materialId: item.materialId,
-            totalTime: item.materialTotalTime,
-          });
-        }
-      });
+        });
+      }
 
       if (!flg) {
         this.$message.error("请设置正确的播放时长");
@@ -539,6 +539,18 @@ export default {
       console.log("list", this.listData);
       console.log(selArr);
 
+      // 视频+图片总播放时长不能超过24 小时
+      if(selArr.length!=0){
+        var len=0
+        selArr.forEach(item=>{
+          len+=item.totalTime
+        })
+
+        if(len>24*60*60){
+          this.$message.error("视频+图片总播放时长不能超过24小时");
+          return false;
+        }
+      }
       var odata = {
         program: {
           modelId: Number(this.modelId),
@@ -766,6 +778,10 @@ export default {
           line-height: 200px;
           width: 100%;
           color: palevioletred;
+          img{
+          width:300px;
+          margin-top:80px;
+        }
         }
       }
       .top_label {

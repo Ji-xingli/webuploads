@@ -28,7 +28,7 @@
       </el-row>
     </div>
     <!-- 列表 -->
-    <el-table :data="tableData" style="width: 100%" :height="screenHeight">
+    <el-table :data="tableData" style="width: 100%" :height="screenHeight" v-loading="loading"  element-loading-text="正在努力加载中...">
       <el-table-column fixed prop="img" label="图片" width="230">
         <template slot-scope="scope">
           　　　　<img
@@ -227,6 +227,9 @@ export default {
             this.totalNo = res.data.data.total;
 
             this.$emit("getTopTotal");
+
+            //取消加载
+            this.loading=false;
           } else {
             this.$message.error(res.msg);
           }

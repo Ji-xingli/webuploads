@@ -75,3 +75,12 @@ export const userInfoUpdate = (params) => {
     })
 }
 
+// 更新上传设备软件包
+export const updateDevice = (params) => {
+    return request({
+        url: '/sqfc/user/updateDevice',
+        method: 'post',
+        data:params
+    })
+}
+

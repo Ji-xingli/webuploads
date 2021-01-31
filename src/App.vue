@@ -23,6 +23,47 @@ export default {
   height: 100%;
   font-size: 12px;
 }
+.el-button--primary.is-disabled:active,.el-button--primary,.el-button--primary:focus, .el-button--primary:hover {
+   background-image: linear-gradient(172deg, 
+		#f83e73 0%, 
+		#fd6963 100%), 
+	linear-gradient(
+		#272d42, 
+		#272d42);
+	background-blend-mode: normal, 
+		normal;
+    background-color:none!important;
+    border:0;
+}
+.btn_bgColor{
+  background-image: linear-gradient(
+		#f34648, 
+		#f34648), 
+	linear-gradient(
+		#aaaaaa, 
+		#aaaaaa);
+	background-blend-mode: normal, 
+		normal;
+}
+.btn_bgColor:hover{
+  background-image: linear-gradient(
+		#f34648, 
+		#f34648), 
+	linear-gradient(
+		#aaaaaa, 
+		#aaaaaa);
+	background-blend-mode: normal, 
+		normal;
+}
+.el-button--text{
+  color:#2ecc71;
+}
+.el-tabs__item.is-active,.el-tabs__item:hover{
+  color:#f34648;
+}
+.el-tabs__active-bar{
+  background-color:#f34648;
+}
 .el-drawer {
   overflow-y: scroll;
 }
@@ -55,71 +96,18 @@ export default {
   color: #f00;
     border-color: #f00;
 }
-// .el-dialog__wrapper .el-dialog {
-//   // width:20%!important;
-//   height: 550px;
-//   min-width: 670px;
-//   overflow-y: scroll;
-// }
-// .el-dialog__body .dialogTree {
-//   height: 360px;
-//   overflow-y: scroll;
-// }
-// .top-line {
-//   width: 100%;
-//   background: #3ca0ec;
-//   height: 50px;
-//   // position: fixed;
-// }
-// .el-breadcrumb {
-//   width:1005px!important;
-// }
-// .el-breadcrumb__inner {
-//   color: #fff !important;
-// }
-// .el-breadcrumb__separator {
-//   color: #fff !important;
-// }
-// .order_topcont .el-form--inline .el-form-item__label {
-//     white-space: nowrap;
-//     width: 70px!important;
-//   }
-//   .order_topcont .el-form--inline .el-form-item__content{
-//     width: 160px;
-//   }
-//   .orderlistcont .el-table td, .el-table th{
-//     padding:0;
-//     font-size: 12px;
-//   }
-//   .order_topcont .el-input__inner{
-//     height: 30px;
-//     line-height: 30px;
-//   }
-//   .order_topcont .el-form-item{
-//     margin-bottom: 10px;
-//   }
-//   .form-box .el-form--inline .el-form-item__label{
-//     width: 85px;
-//     white-space: nowrap;
-//   }
-//   .order-item .el-form-item__content{
-//     width: 200px;
-//   }
-//   .order-item .el-input--prefix .el-input__inner{
-//     width: 90%;
-//   }
-//   .order_topcont .el-input__inner{
-//     height: 30px;
-//     line-height: 30px;
-//   }
-//   .allindex .el-table .cell{
-//     line-height: 40px;
-//   }
-//   .order-content .el-input__inner{
-//     height: 30px;
-//     line-height: 30px;
-//   }
-//   .el-form-item__error{
-//     padding-top:0!important;
-//   }
+.el-pagination.is-background .el-pager li:not(.disabled).active{
+  background-color: #f34648;
+}
+.el-checkbox__input.is-checked .el-checkbox__inner, .el-checkbox__input.is-indeterminate .el-checkbox__inner{
+  background-color: #f34648;
+    border-color: #fff;
+}
+.el-radio__input.is-checked .el-radio__inner{
+  background-color: #f34648;
+    border-color: #f34648;
+}
+.el-radio__input.is-checked+.el-radio__label{
+  color:#333;
+}
 </style>

@@ -3,21 +3,21 @@
     <div class="headers">
       <ul>
         <li class="title">
-          <span>业务系统</span>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp; 人类就是在挑战不可能中进步
+          <span> <img class="user-headpic" src="@/assets/img/logo1.png" alt></span>
         </li>
         <li class="user-li">
-          <img class="user-headpic" src="../../assets/logo.png" alt>
-          <span>您好，欢迎您回来</span>
+          <!-- <img class="user-headpic" src="@/assets/img/logo1.png" alt> -->
+          <!-- <span>您好，欢迎您回来</span> -->
         </li>
       </ul>
     </div>
     <div class="login-main">
       <div class="login-text">
-        <img src="../../assets/text.png" alt>
+        <!-- <img src="../../assets/text.png" alt> -->
       </div>
       <div class="login-box">
         <el-form :model="form" @keyup.enter.native="submit()">
-          <div class="login-title">业务系统</div>
+          <div class="login-title">商丘福彩</div>
           <el-form-item>
             <el-input v-model="form.username" placeholder="请输入用户名"></el-input>
           </el-form-item>
@@ -36,7 +36,9 @@
   </div>
 </template>
 <script>
-// import { reqGetLogin, reqGetWallet,reqofficeTree } from "@/api/api";
+import {
+  login//登录
+} from "@/api/login/index.js";
 export default {
   data() {
     return {
@@ -65,24 +67,20 @@ export default {
   },
   methods: {
     submit() {
-      this.$router.push({ name:"index"});
-      return false;
+      // this.$router.push({ name:"index"});
+
       if (this.form.username == "" || this.form.password == "") {
         this.$message.error("用户名或密码不能为空");
       } else {
         let params = {
-          loginName: this.form.username,
+          userName: this.form.username,
           password: this.form.password
         };
-        reqGetLogin(this, params)
+        login(params)
           .then(res => {
-            if (res.head.code == "000000") {
-              console.log(res.body)
+            if (res.data.code == "200") {
               
-              localStorage.setItem("token", res.body.token);
-              localStorage.setItem("officeId", res.body.officeId);
-              localStorage.setItem("officeName", res.body.officeName);
-              localStorage.setItem("companyName", res.body.companyName);
+              // localStorage.setItem("token", res.body.token);
 
               //验证判断是否记住密码
               if(this.flg==1){
@@ -95,12 +93,11 @@ export default {
                 localStorage.setItem("userName","")
               }
               //用户姓名
-              localStorage.setItem("loginName",res.body.name)
-               localStorage.setItem("userId",res.body.id)
-              localStorage.setItem("userRoleType",res.body.userRoleType)
+              // localStorage.setItem("loginName",res.body.name)
+              //  localStorage.setItem("userId",res.body.id)
               
               this.$message({
-                message: res.head.msg,
+                message: res.data.msg,
                 type: "success",
                 duration: 1000,
                 onClose: () => {
@@ -133,7 +130,7 @@ export default {
 .login-wrap {
   width: 100%;
   height: 100%;
-  background-image: url("../../assets/loginBg.jpg");
+  background-image: url("../../assets/bj.jpeg");
   background-size: cover;
   overflow: hidden;
   .headers {
@@ -152,7 +149,7 @@ export default {
         color: #fff;
         .user-headpic {
           display: inline-block;
-          width: 30px;
+          // width: 30px;
           vertical-align: middle;
         }
         .user-name {
@@ -170,6 +167,7 @@ export default {
         line-height: 60px;
         span {
           font-size: 28px;
+          vertical-align: middle;
         }
       }
     }

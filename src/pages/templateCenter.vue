@@ -1,9 +1,9 @@
 <template>
   <div class="wrap">
     <div class="box">
+      <div class="item_box" v-for="(item, index) in templateList" :key="index">
       <dl
-        v-for="(item, index) in templateList"
-        :key="index"
+        v-if="item.modelId!=3"
         :class="active=== item.modelId ? 'cur' : ''"
         @click="handleClickItem(item.modelId)"
       >
@@ -15,10 +15,28 @@
         <dd>
           {{ item.text
           }}<span class="nowTemplate" v-if="active === item.modelId"
-            >--当前选用模板</span
+            ></span
           >
         </dd>
       </dl>
+      <dl
+        v-else
+      >
+        <dt>
+          <div class="item"></div>
+          <div class="item" v-if="item.modelId == 2 || item.modelId == 3"></div>
+          <div class="item" v-if="item.modelId == 3"></div>
+        </dt>
+        <dd>
+          {{ item.text
+          }}<span class="nowTemplate" v-if="active === item.modelId"
+            ></span
+          >
+        </dd>
+      </dl>
+
+      </div>
+
     </div>
     <div class="bottom_btn">
       <!-- <el-button type="primary" v-if="list.length != 0">重置模板</el-button> -->
@@ -86,7 +104,9 @@ export default {
         if (res.data.code == 200) {
           if(res.data.data.length!==0){
             this.list = res.data.data;
-            this.active = this.list[0].modelId;
+
+            //当前默认选择一个
+            // this.active = this.list[0].modelId;
           }
         }
       });
@@ -130,6 +150,9 @@ export default {
     display: flex;
     justify-content: space-between;
     text-align: center;
+    .item_box{
+      flex:1;
+    }
     dl.cur {
       border: 1px solid #f00;
     }

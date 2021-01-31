@@ -97,6 +97,7 @@
             :limit="1"
             :file-list="fileList"
             :on-change="beforeUpload"
+            accept=".bmp,.jpeg,.png,.jpg" 
             list-type="picture-card"
           >
             <i class="el-icon-plus avatar-uploader-icon"></i>
@@ -184,7 +185,6 @@ export default {
       };
       getPList(odata)
         .then((res) => {
-          console.log(res);
           if (res.data.code == 200) {
             this.tableData = res.data.data.list;
             this.totalNo = res.data.data.total;
@@ -224,7 +224,7 @@ export default {
     beforeUpload(file, fileList) {
       console.log(file);
       console.log(fileList)
-      const IMG_ALLOWD = ["jpeg", "jpg", "gif", "png"];
+      const IMG_ALLOWD = ["jpeg", "jpg", "png","bmp"];
       const imgType = file.raw.type.split("/")[1];
       const imgSize = file.size / 1024 / 1024;
 
@@ -358,6 +358,7 @@ export default {
   .head_pic{
       width:184px;
       height:104px;
+      object-fit: cover;
   }
 }
 .title {

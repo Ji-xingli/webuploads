@@ -389,16 +389,16 @@ export default {
         flex-flow: row wrap;
         .dl {
           // width: calc((100% - 60px)/4);
-          width: 22.8%;
+          width: 22.5%;
           margin-right: 10px;
           background: #fff;
           min-height: 280px;
           overflow: hidden;
           padding: 10px;
           margin-bottom: 10px;
-          &:nth-child(4n) {
-            margin-right: 0;
-          }
+          // &:nth-child(4n) {
+          //   margin-right: 0;
+          // }
           dt {
             display: flex;
             justify-content: space-between;

@@ -132,7 +132,7 @@
       </el-row>
     </div>
     <dl class="no_template" v-else>
-      <dt><img src="@/assets/img/media/01.png" alt="" /></dt>
+      <dt><img src="@/assets/img/no_bg.png" alt="" /></dt>
       <dd>
         请前往<span @click="gotoTemplate">模板管理</span>页，选择需要使用的模板
       </dd>
@@ -253,7 +253,7 @@ export default {
       line-height: 40px;
     }
     span {
-      color: blue;
+      color: #f34648;
       cursor: pointer;
     }
   }
