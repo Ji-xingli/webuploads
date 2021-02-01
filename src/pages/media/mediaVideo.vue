@@ -83,6 +83,7 @@
       title="视频"
       :visible.sync="videoEditMaster"
       :before-close="visibleBefore"
+      :wrapperClosable="false"
       direction="rtl"
       size="50%"
     >
@@ -100,12 +101,14 @@
         <el-form-item label="选择视频文件" v-if="otype == 'add'">
           <el-upload
             class="video-uploader"
-            action="https://jsonplaceholder.typicode.com/posts/"
-            :auto-upload="false"
+            action="/sqfc/material/uploadVideo"
+           
             :limit="1"
             v-model="form.video"
             v-if="!videoUrl"
             :on-change="beforeVideoUpload"
+            :on-success="handleVideoSuccess"
+            :on-progress="uploadVideoProcess"
             list-type="picture-card"
             accept=".mp4"
           >
@@ -261,6 +264,7 @@ export default {
       });
     },
     beforeVideoUpload(file, fileList) {
+      console.log("fileList",file)
       this.videoUploadPercent = 0;
       // 视频上传前校验
       if (
@@ -290,9 +294,19 @@ export default {
           console.log("视频时长：",this.duration)
         });
 
-        fileList.splice(-1, 1);
+        //fileList.splice(-1, 1);
         return true;
       }
+    },
+    handleVideoSuccess(res,file){
+      console.log(res)
+      console.log("status",file.status)
+    },
+    uploadVideoProcess(event, file, fileList){
+      console.log(event.percent)
+      console.log("进度条",file.percentage)
+      console.log(file.percentage.toFixed(0) * 1)
+      console.log(fileList)
     },
     getVideoMsg(file) {
       //获取视频信息
