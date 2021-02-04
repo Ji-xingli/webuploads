@@ -6,16 +6,16 @@ const path = require('path')
 
 module.exports = {
   dev: {
-    env:require('./dev.env'),
+    // env:require('./dev.env'),
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
       '/api':{
-        target:'http://118.31.122.133:9090/',
+        target:'http://118.31.122.133:9099',
         changeOrigin: true,
         pathRewrite: {
-          '^/api': '' 
+          '^/api': '/sqfc' 
         }
       }
     },
@@ -52,7 +52,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../sqfc'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
+    assetsPublicPath: './',
 
     /**
      * Source Maps

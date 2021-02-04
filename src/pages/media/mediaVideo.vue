@@ -86,8 +86,9 @@
       :wrapperClosable="false"
       direction="rtl"
       size="50%"
+      
     >
-      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="120px"  v-loading="isLoadingSuccess" element-loading-text="努力上传中...">
         <el-form-item label="视频标题" prop="materialTitle">
           <el-input v-model="form.materialTitle"></el-input>
         </el-form-item>
@@ -101,8 +102,7 @@
         <el-form-item label="选择视频文件" v-if="otype == 'add'">
           <el-upload
             class="video-uploader"
-            action="/sqfc/material/uploadVideo"
-           
+            action=""
             :limit="1"
             v-model="form.video"
             v-if="!videoUrl"
@@ -126,13 +126,11 @@
             >
               您的浏览器不支持视频播放
             </video>
-            <!-- <el-progress
-               
-                type="circle"
+            <el-progress
                 :percentage="videoUploadPercent"
-                
-                style="margin-top: 30px"
-              ></el-progress> -->
+                style="margin-top: -10px"
+                v-if="videoUploadPercent!=100&&videoUploadPercent!=0"
+              >{{videoUploadPercent}}</el-progress>
           </div>
         </el-form-item>
         <el-form-item>
@@ -176,6 +174,7 @@ export default {
       pageSize: 10,
       totalNo: 0,
       loading: true,
+      isLoadingSuccess:false//上传大文件加载
     };
   },
   mounted() {
@@ -264,8 +263,8 @@ export default {
       });
     },
     beforeVideoUpload(file, fileList) {
-      console.log("fileList",file)
-      this.videoUploadPercent = 0;
+      //进度百分百
+      this.videoUploadPercent = 100;
       // 视频上传前校验
       if (
         [
@@ -303,10 +302,11 @@ export default {
       console.log("status",file.status)
     },
     uploadVideoProcess(event, file, fileList){
-      console.log(event.percent)
-      console.log("进度条",file.percentage)
+  
+      console.log("进度条",fileList)
       console.log(file.percentage.toFixed(0) * 1)
       console.log(fileList)
+      this.videoUploadPercent=file.percentage.toFixed(0) * 1
     },
     getVideoMsg(file) {
       //获取视频信息
@@ -331,6 +331,7 @@ export default {
               return false;
             }
             //添加上传
+            this.isLoadingSuccess=true;
             let formData = new FormData(); //  用FormData存放上传文件
             formData.append("file", this.fileList.raw);
             formData.append("materialBrief", this.form.materialBrief);
@@ -339,6 +340,7 @@ export default {
             videoUpLoad(formData).then(
               (res) => {
                 if (res.data.code == 200) {
+                  this.isLoadingSuccess=false;
                   this.$message({
                     type: "success",
                     message: "上传成功!",

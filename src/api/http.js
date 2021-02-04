@@ -7,14 +7,16 @@ import router from '../router/index'
 import {Message} from 'element-ui';
 
 //默认超时时间
-axios.defaults.timeout = 10000;
+axios.defaults.timeout = 120000;
 //返回其他状态码
 axios.defaults.validateStatus = function (status) {
   return status >= 200 && status <= 500;
 };
 //跨域请求，允许保存cookie
 axios.defaults.withCredentials = true;
-axios.defaults.baseURL ='http://118.31.122.133:9090'
+axios.defaults.baseURL ='http://118.31.122.133:9099'//本地需注销
+
+// axios.defaults.baseURL= process.env.BASE_API;// 配置的请求前缀,可以配置不同环境下不同路径
 
 //http request拦截
 axios.interceptors.request.use(config => {
