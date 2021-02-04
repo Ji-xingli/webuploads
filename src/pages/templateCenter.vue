@@ -3,7 +3,7 @@
     <div class="box">
       <div class="item_box" v-for="(item, index) in templateList" :key="index">
       <dl
-        v-if="item.modelId!=3"
+        v-if="item.modelId!=3&&item.modelId!=1"
         :class="active=== item.modelId ? 'cur' : ''"
         @click="handleClickItem(item.modelId)"
       >

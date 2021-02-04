@@ -74,7 +74,8 @@ export default {
 </script>
 <style lang="scss" scpoed>
 .wrap_i {
-  height: 238px;
+  height: 400px;
+  // background:#def;
   overflow-y: scroll;
 }
 .text_group {
@@ -133,7 +134,7 @@ export default {
   .no_list{
     width:100%;
     img{
-      margin:0 auto;
+      margin:88px auto 0;
       display:block;
     }
     

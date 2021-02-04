@@ -62,7 +62,7 @@
         ></el-table-column>
         <el-table-column fixed="right" label="操作" width="120">
           <template slot-scope="scope">
-            <!-- <el-button @click.native="showVisible(scope.row)" type="text" size="small">编辑</el-button> -->
+            <el-button @click.native="showVisible(scope.row)" type="text" size="small">编辑</el-button>
             <el-button
               @click.native.prevent="rewDel(scope.row.websiteId)"
               type="text"
@@ -264,6 +264,12 @@ export default {
       return ids.join(",");
     },
   },
+  watch: {
+    "$store.state.groupId": function () {
+      // 刷新当前列表
+      this.getList(1);
+    },
+  },
   mounted() {
     const _this = this;
     window.onresize = function temp() {
@@ -322,7 +328,7 @@ export default {
       // 当前页数赋值
       this.currentPage = currentPage;
       var odata = {
-        groupId: this.groupId,
+        groupId:  this.$store.state.groupId,
         pageNum: this.currentPage,
         pageSize: this.pageSize,
         websiteNumber: this.searchVal,

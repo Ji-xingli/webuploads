@@ -55,7 +55,8 @@ const routes = [
                 component: siteManage,
                 name: "siteManage",
                 meta: {
-                    title: '站点管理'
+                    title: '站点管理',
+                    isDisabled:true
                 },
             },
             {
