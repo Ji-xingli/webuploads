@@ -2,37 +2,35 @@
   <div class="video_content">
     <div class="upload_video">
       <el-row>
-        <el-col :span="4"
-          ><el-button
+        <el-col :span="4">
+          <el-button
             type="primary"
             @click.native="editRow()"
             size="medium"
             icon="el-icon-upload2"
-            >上传图片</el-button
-          ></el-col
-        >
+          >上传视频</el-button>
+        </el-col>
         <el-col :span="10">
-          <el-input
-            placeholder="搜索名称"
-            v-model="searchVal"
-            class="input-with-select"
-          >
-            <el-button slot="append" icon="el-icon-search"></el-button>
+          <el-input placeholder="搜索名称" v-model="searchVal" clearable class="input-with-select">
+            <el-button slot="append" icon="el-icon-search" @click="videoSearch"></el-button>
           </el-input>
         </el-col>
       </el-row>
     </div>
     <!-- 列表 -->
-    <el-table :data="tableData" style="width: 100%" :height="screenHeight" v-loading="loading"  element-loading-text="正在努力加载中...">
-      <el-table-column fixed prop="materialUrl" label="图片" width="230">
+    <el-table
+      :data="tableData"
+      style="width: 100%"
+      :height="screenHeight"
+      v-loading="loading"
+      element-loading-text="正在努力加载中..."
+    >
+      <el-table-column fixed prop="img" label="图片" width="230">
         <template slot-scope="scope">
-          　<img
-            :src="scope.row.materialUrl"
-            class="head_pic"
-          />
+          <img src="@/assets/img/media/01.png" class="head_pic">
         </template>
       </el-table-column>
-      <el-table-column prop="materialTitle" label="内容">
+      <el-table-column prop="materialBrief" label="描述">
         <template slot-scope="scope">
           <dl>
             <dt class="title">{{ scope.row.materialTitle }}</dt>
@@ -40,25 +38,17 @@
           </dl>
         </template>
       </el-table-column>
-      <el-table-column prop="materialCreateTime" label="时间" width="180">
-      </el-table-column>
+      <el-table-column prop="materialCreateTime" label="时间" width="180"></el-table-column>
+      <el-table-column prop="materialTotalTime" label="总时长" width="120"></el-table-column>
       <el-table-column fixed="right" label="操作" width="120">
         <template slot-scope="scope">
-          <el-button
-            @click.native="editRow(scope.$index, scope.row)"
-            type="text"
-            size="small"
-          >
-            编辑
-          </el-button>
+          <el-button @click.native="editRow(scope.$index, scope.row)" type="text" size="small">编辑</el-button>
           <el-button
             @click.native.prevent="deleteRow(scope.$index, scope.row)"
             type="text"
             size="small"
             style="color: #f00"
-          >
-            删除
-          </el-button>
+          >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -72,36 +62,55 @@
       :total="totalNo"
     ></el-pagination>
     <el-drawer
-      title="图片"
+      title="视频"
       :visible.sync="videoEditMaster"
       :before-close="visibleBefore"
+      :wrapperClosable="false"
       direction="rtl"
       size="50%"
     >
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
-        <el-form-item label="图片标题" prop="materialTitle">
+        <el-form-item label="视频标题" prop="materialTitle">
           <el-input v-model="form.materialTitle"></el-input>
         </el-form-item>
-        <el-form-item label="图片介绍" prop="materialBrief">
-          <el-input
-            type="textarea"
-            maxlength="100"
-            v-model="form.materialBrief"
-          ></el-input>
+        <el-form-item label="视频介绍" prop="materialBrief">
+          <el-input type="textarea" maxlength="100" v-model="form.materialBrief"></el-input>
         </el-form-item>
-        <el-form-item label="上传图片" v-if="otype == 'add'">
-          <el-upload
+        <el-form-item label="选择视频文件" v-if="otype == 'add'">
+          <!-- <el-upload
             class="video-uploader"
-            action="https://jsonplaceholder.typicode.com/posts/"
-            :auto-upload="false"
+            action="/sqfc/material/uploadVideo"
+           
             :limit="1"
-            :file-list="fileList"
-            :on-change="beforeUpload"
-            accept=".bmp,.jpeg,.png,.jpg" 
+            v-model="form.video"
+            v-if="!videoUrl"
+            :on-change="beforeVideoUpload"
+            :on-success="handleVideoSuccess"
+            :on-progress="uploadVideoProcess"
             list-type="picture-card"
+            accept=".mp4"
           >
             <i class="el-icon-plus avatar-uploader-icon"></i>
-          </el-upload>
+          </el-upload>-->
+          <input type="file" accept="video/*" @change="getvideo($event)">
+          <div class="up_video_box">
+            <div class="remove" @click="videoRemove" v-if="videoUrl">
+              <span class="el-icon-delete"></span>
+            </div>
+            <video
+              v-if="videoUrl"
+              :src="videoUrl"
+              class="videoClass"
+              controls="controls"
+            >您的浏览器不支持视频播放</video>
+            <!-- <el-progress
+               
+                type="circle"
+                :percentage="videoUploadPercent"
+                
+                style="margin-top: 30px"
+            ></el-progress>-->
+          </div>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitForm('form')">确定</el-button>
@@ -111,8 +120,13 @@
   </div>
 </template>
 <script>
-import { getPList, upLoad, upDate, getRemove } from "@/api/media/mediaPic.js";
-import { getEditBefore } from "@/api/media/index.js";
+import {
+  getVideoList,
+  videoUpLoad,
+  videoUpDate,
+  getEditBefore,
+  getRemove,
+} from "@/api/media/index.js";
 export default {
   data() {
     return {
@@ -121,23 +135,24 @@ export default {
       form: {},
       rules: {
         materialTitle: [
-          { required: true, message: "请输入图片标题", trigger: "blur" },
+          { required: true, message: "请输入视频标题", trigger: "blur" },
         ],
         materialBrief: [
-          { required: true, message: "请输入图片简介", trigger: "change" },
+          { required: true, message: "请输入视频简介", trigger: "change" },
         ],
-        img: [{ required: true, message: "请选择上传图片", trigger: "change" }],
+        img: [{ required: true, message: "请选择封面", trigger: "change" }],
       },
       videoUrl: "", //上传视频显示地址
       videoUploadPercent: 0, //进度条
       videoEditMaster: false,
       searchVal: "", //搜索
-      fileList: [], //上传列表
+      duration: "", //视频总时长
+      fileList: {}, //上传视频列表
       tableData: [],
       currentPage: 1,
       pageSize: 10,
       totalNo: 0,
-      loading:true
+      loading: true,
     };
   },
   mounted() {
@@ -148,9 +163,39 @@ export default {
     _this.getList(_this.currentPage, _this.pageSize);
   },
   methods: {
+    getvideo(e) {
+      let that = this;
+      let files = e.target.files[0];
+      this.fileList=e.target.files;
+      var formData = new FormData();
+      // if (!e || !window.FileReader) return; // 看支持不支持FileReader
+      console.log("files",e.target.files)
+ 
+      var link = that.getObjectURL(files); //获取本地视频的地址在页面显示
+ 
+      console.log(link);
+    },
+    // 图片转成本地路径
+    getObjectURL(file) {
+      var url = null;
+      // 下面函数执行的效果是一样的，只是需要针对不同的浏览器执行不同的 js 函数而已
+      if (window.createObjectURL != undefined) {
+        // basic
+        url = window.createObjectURL(file);
+      } else if (window.URL != undefined) {
+        // mozilla(firefox)
+        url = window.URL.createObjectURL(file);
+      } else if (window.webkitURL != undefined) {
+        // webkit or chrome
+        url = window.webkitURL.createObjectURL(file);
+      }
+      return url;
+    },
     visibleBefore() {
       //   遮罩关闭前
+      this.videoUrl = "";
       this.fileList = [];
+      this.duration = "";
       this.videoEditMaster = false;
     },
     videoSearch() {
@@ -183,13 +228,14 @@ export default {
         pageSize: pageSize,
         title: this.searchVal,
       };
-      getPList(odata)
+      getVideoList(odata)
         .then((res) => {
           if (res.data.code == 200) {
             this.tableData = res.data.data.list;
             this.totalNo = res.data.data.total;
-            // 顶部总数
-            this.$emit('getTopTotal')
+
+            this.$emit("getTopTotal");
+
             //取消加载
             this.loading=false;
           } else {
@@ -202,6 +248,7 @@ export default {
         });
     },
     editRow(index, row) {
+      console.log(row);
       if (index || row) {
         this.otype = "edit";
         //获取编辑信息
@@ -221,28 +268,50 @@ export default {
         }
       });
     },
-    beforeUpload(file, fileList) {
-      console.log(file);
-      console.log(fileList)
-      const IMG_ALLOWD = ["jpeg", "jpg", "png","bmp"];
-      const imgType = file.raw.type.split("/")[1];
-      const imgSize = file.size / 1024 / 1024;
-
-      if (IMG_ALLOWD.indexOf(imgType) === -1) {
-        this.$message.warning("上传图片格式错误");
-        //不匹配不展示
-        fileList.splice(-1, 1);
-        return false;
-      } else if (imgSize >= 400) {
-        // 判断图片大小
-        this.$message.warning("图片大小大于5M");
+    beforeVideoUpload(file, fileList) {
+      console.log("fileList",file)
+      this.videoUploadPercent = 0;
+      // 视频上传前校验
+      if (
+        [
+          "video/mp4",
+          "video/ogg",
+          "video/flv",
+          "video/avi",
+          "video/wmv",
+          "video/rmvb",
+        ].indexOf(file.raw.type) == -1
+      ) {
+        this.$message.error("请上传正确的视频格式");
         //不匹配不展示
         fileList.splice(-1, 1);
         return false;
       } else {
-        this.fileList = fileList;
+        this.videoUrl = file.url;
+        this.fileList = file;
+
+        //获取视频的长度
+        //获取到视频的时长,高度,宽度
+        this.getVideoMsg(file.raw).then((videoinfo) => {
+          const { duration, height, width } = videoinfo;
+          //视频总时长
+          this.duration = Math.round(duration * 100) / 100;//保留两位小数
+          console.log("视频时长：",this.duration)
+        });
+
+        //fileList.splice(-1, 1);
         return true;
       }
+    },
+    handleVideoSuccess(res,file){
+      console.log(res)
+      console.log("status",file.status)
+    },
+    uploadVideoProcess(event, file, fileList){
+  
+      console.log("进度条",file.percentage)
+      console.log(file.percentage.toFixed(0) * 1)
+      console.log(fileList)
     },
     getVideoMsg(file) {
       //获取视频信息
@@ -262,17 +331,17 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (this.otype == "add") {
-            if (this.fileList.length == 0) {
-              this.$message.error("请上传视频");
-              return false;
-            }
+            // if (this.fileList.length == 0) {
+            //   this.$message.error("请上传视频");
+            //   return false;
+            // }
             //添加上传
             let formData = new FormData(); //  用FormData存放上传文件
-            formData.append("file", this.fileList[0].raw);
+            formData.append("file", this.fileList[0]);
             formData.append("materialBrief", this.form.materialBrief);
             formData.append("materialTitle", this.form.materialTitle);
             formData.append("materialTotalTime", this.duration);
-            upLoad(formData).then(
+            videoUpLoad(formData).then(
               (res) => {
                 if (res.data.code == 200) {
                   this.$message({
@@ -283,8 +352,9 @@ export default {
                   this.getList(this.currentPage, this.pageSize);
                   // 弹窗消失
                   this.videoEditMaster = false;
-                  //重置表单
-                  this.fileList =[]
+                  //清空上传内容
+                  this.fileList=[];
+                  this.videoUrl="";
                 }
               },
               (err) => {
@@ -296,12 +366,12 @@ export default {
             );
           } else {
             let formData = new FormData(); //  用FormData存放上传文件
-            formData.append("imageId", this.form.materialId);
+            formData.append("videoId", this.form.materialId);
             formData.append("file", "");
             formData.append("materialBrief", this.form.materialBrief);
             formData.append("materialTitle", this.form.materialTitle);
-            formData.append("materialTotalTime", "");
-            upDate(formData).then(
+            formData.append("materialTotalTime", this.form.materialTotalTime);
+            videoUpDate(formData).then(
               (res) => {
                 if (res.data.code == 200) {
                   this.$message({
@@ -312,7 +382,9 @@ export default {
                   this.getList(this.currentPage, this.pageSize);
                   // 弹窗消失
                   this.videoEditMaster = false;
-                  this.fileList =[]
+                  //清空上传内容
+                  this.fileList=[];
+                  this.videoUrl="";
                 }
               },
               (err) => {
@@ -328,6 +400,11 @@ export default {
           return false;
         }
       });
+    },
+    videoRemove() {
+      // 视频移除
+      this.videoUrl = "";
+      this.fileList = [];
     },
     deleteRow(index, row) {
       this.$confirm("确认删除？")
@@ -355,19 +432,10 @@ export default {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  .head_pic{
-      width:184px;
-      height:104px;
-      object-fit: cover;
+  .head_pic {
+    width: 184px;
+    height: 104px;
   }
-}
-.title {
-  font-weight: bold;
-  font-size: 14px;
-}
-.desc {
-  font-size: 12px;
-  color: #999;
 }
 .up_video_box {
   width: 200px;

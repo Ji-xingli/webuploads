@@ -108,9 +108,9 @@
         </el-card>
       </el-col>
     </el-row>
-    <el-row :gutter="10" class="top_bottom" justify="space-around">
+    <el-row class="top_bottom" justify="space-around">
       <el-col :span="24">
-        <div id="chartColumn" style="height: 200px; width: 100%"></div>
+        <div id="chartColumn" style="height: 340px; width: 100%"></div>
       </el-col>
     </el-row>
   </div>
@@ -314,11 +314,11 @@ export default {
 <style lang="scss" scoped>
 .allindex {
   width: 100%;
-  height: 100%;
-  overflow: hidden;
+  min-height: 100%;
+  overflow-y:scroll;
   .top {
     .item {
-      padding: 10px;
+      padding: 25px 10px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -354,6 +354,10 @@ export default {
       }
     }
   }
+    .box-card{
+      // background:#f8c330;
+      height:500px;
+    }
   /deep/ .top_center {
     min-height: 260px;
     overflow: hidden;
@@ -364,8 +368,8 @@ export default {
       width: 80%;
       margin: 20px auto;
       .g_item {
-        height: 70px;
-        line-height: 70px;
+        height: 124px;
+        line-height: 124px;
         border: 1px solid #ddd;
         margin-bottom: 10px;
         text-align: center;
@@ -383,7 +387,7 @@ export default {
       overflow: hidden;
       padding: 10px 0 50px;
       .i_item {
-        padding: 30px 0 0;
+        padding: 70px 0 0;
       }
       .goLink {
         width: 100%;
@@ -392,15 +396,15 @@ export default {
   }
   .top_bottom {
     overflow: hidden;
-    height: 200px;
+    height: 340px;
     background: #fff;
     margin-top: 10px;
-    padding: 20px 0;
+    padding: 20px;
   }
   .no_list{
     height:290px;
     img{
-      margin:0 auto;
+      margin:88px auto 0;
       display:block;
     }
   }
