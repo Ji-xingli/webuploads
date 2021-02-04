@@ -85,10 +85,11 @@
       :before-close="visibleBefore"
       :wrapperClosable="false"
       direction="rtl"
+      v-loading="isLoadingSuccess" element-loading-text="努力上传中..."
       size="50%"
       
     >
-      <el-form ref="form" :model="form" :rules="rules" label-width="120px"  v-loading="isLoadingSuccess" element-loading-text="努力上传中...">
+      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="视频标题" prop="materialTitle">
           <el-input v-model="form.materialTitle"></el-input>
         </el-form-item>
