@@ -85,6 +85,7 @@
     <el-drawer
       title="文本"
       :visible.sync="videoEditMaster"
+      :wrapperClosable="false"
       direction="rtl"
       size="50%"
     >

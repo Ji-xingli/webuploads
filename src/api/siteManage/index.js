@@ -9,6 +9,16 @@ export const addWebsite = (website) => {
         data:website
     })
 }
+
+
+export const updateWebsite = (row) => {
+    return request({
+        url: '/sqfc/website/updateWebsiteById',
+        method: 'post',
+        data: row
+    })
+}
+
 // 删除站点
 export const deleteWebsite = (websiteId) => {
     return request({

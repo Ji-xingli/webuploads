@@ -103,14 +103,16 @@
         <el-form-item label="选择视频文件" v-if="otype == 'add'">
           <el-upload
             class="video-uploader"
+            ref="upload"
             action=""
             :limit="1"
             v-model="form.video"
-            v-if="!videoUrl"
+            v-show="!videoUrl"
             :on-change="beforeVideoUpload"
             :on-success="handleVideoSuccess"
             :on-progress="uploadVideoProcess"
             list-type="picture-card"
+            :file-list="fileList"
             accept=".mp4"
           >
             <i class="el-icon-plus avatar-uploader-icon"></i>
@@ -160,7 +162,7 @@ export default {
           { required: true, message: "请输入视频标题", trigger: "blur" },
         ],
         materialBrief: [
-          { required: true, message: "请输入视频简介", trigger: "change" },
+          { required: true, message: "请输入视频介绍", trigger: "change" },
         ],
         img: [{ required: true, message: "请选择封面", trigger: "change" }],
       },
@@ -188,6 +190,12 @@ export default {
   methods: {
     visibleBefore() {
       //   遮罩关闭前
+
+      // 视频移除
+      this.videoUploadPercent='';
+      //取消上传
+      this.$refs.upload.abort();
+
       this.videoUrl = "";
       this.fileList = [];
       this.duration = "";
@@ -280,7 +288,7 @@ export default {
         return false;
       } else {
         this.videoUrl = file.url;
-        this.fileList = file;
+        this.fileList = fileList;
         //获取视频的长度
         //获取到视频的时长,高度,宽度
         this.getVideoMsg(file.raw).then((videoinfo) => {
@@ -329,7 +337,7 @@ export default {
             //添加上传
             this.isLoadingSuccess=true;
             let formData = new FormData(); //  用FormData存放上传文件
-            formData.append("file", this.fileList.raw);
+            formData.append("file", this.fileList[0].raw);
             formData.append("materialBrief", this.form.materialBrief);
             formData.append("materialTitle", this.form.materialTitle);
             formData.append("materialTotalTime", this.duration);
@@ -395,9 +403,14 @@ export default {
       });
     },
     videoRemove() {
+      
       // 视频移除
+      this.videoUploadPercent='';
       this.videoUrl = "";
       this.fileList = [];
+
+      //取消上传
+      this.$refs.upload.abort();
     },
     deleteRow(index, row) {
       this.$confirm("确认删除？")

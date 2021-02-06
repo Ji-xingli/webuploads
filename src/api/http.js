@@ -25,9 +25,9 @@ axios.interceptors.request.use(config => {
   // const isToken = meta.isToken === false;
 
   //让每个请求携带token
-  // if (getToken() && !isToken) {
-  //   config.headers[website.tokenHeader] = 'bearer ' + getToken()
-  // }
+  if (localStorage.getItem('Token')) {
+    config.headers.Token = localStorage.getItem('Token');
+  }
 
   //headers中配置text请求
   if (config.text === true) {
@@ -49,7 +49,7 @@ axios.interceptors.response.use(res => {
   //获取状态码
   const status = res.data.code || res.status;
   const message = res.data.data || res.data.msg || '未知错误';
-
+console.log("res",res)
   //如果是401则跳转到登录页面
   if (status === 401){
     router.push({

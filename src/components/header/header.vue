@@ -86,6 +86,7 @@ export default {
     outlogin() {
       loginout().then(res=>{
         if(res.data.code==200){
+          localStorage.removeItem('Token')
           this.$router.push({
             name:"login"
           })

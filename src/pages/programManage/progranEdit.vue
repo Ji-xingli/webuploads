@@ -63,6 +63,7 @@
                 <el-radio :label="1">循环播放</el-radio>
                 <el-radio :label="0">不重复播放</el-radio>
               </el-radio-group>
+               <el-button type="success" style="margin-left:30px;" v-if="listData.length!=0" @click="cleanList">清空节目单</el-button>
             </div>
           </el-col>
           <el-col>
@@ -281,6 +282,18 @@ export default {
     this.searchProgram();
   },
   methods: {
+    cleanList(){
+      // 清空节目单
+      this.$confirm("确认清空节目单？")
+        .then((res) => {
+          // 确认清空
+          this.listData=[];
+          
+        })
+        .catch((err) => {
+          //   console.log(err)
+        });
+    },
     searchList(){
       // 编辑搜索
       this.searchProgram();

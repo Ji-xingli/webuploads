@@ -75,6 +75,7 @@
       title="图片"
       :visible.sync="videoEditMaster"
       :before-close="visibleBefore"
+      :wrapperClosable="false"
       direction="rtl"
       size="50%"
     >

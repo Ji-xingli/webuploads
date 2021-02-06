@@ -62,7 +62,12 @@
         ></el-table-column>
         <el-table-column fixed="right" label="操作" width="120">
           <template slot-scope="scope">
-            <el-button @click.native="showVisible(scope.row)" type="text" size="small">编辑</el-button>
+            <el-button
+              @click.native="showVisible(scope.row)"
+              type="text"
+              size="small"
+              >编辑</el-button
+            >
             <el-button
               @click.native.prevent="rewDel(scope.row.websiteId)"
               type="text"
@@ -88,10 +93,13 @@
         :title="visibleTitle"
         :visible.sync="isVisible"
         :before-close="visibleBefore('form')"
+        :wrapperClosable="false"
         direction="rtl"
         class="visibleClass"
         style="overflow-y: scroll"
         size="50%"
+        v-loading="maskloading"
+        element-loading-text="数据提交中..."
       >
         <el-form
           ref="form"
@@ -120,11 +128,14 @@
             <el-input v-model="form.websiteSalesName"></el-input>
           </el-form-item>
           <el-form-item label="分组" prop="websiteGroupId">
-            <el-radio-group v-model="form.websiteGroupId" v-if="groups.length!=1&&groups.length!=0">
+            <el-radio-group
+              v-model="form.websiteGroupId"
+              v-if="groups.length != 1 && groups.length != 0"
+            >
               <el-radio
                 :label="item.group.groupId"
                 v-for="item in groups"
-                v-show="item.group.groupId!=999"
+                v-show="item.group.groupId != 999"
                 :key="item.group.groupId"
                 >{{ item.group.groupName }}</el-radio
               >
@@ -160,7 +171,10 @@ import {
   queryWebsite,
   deleteWebsite,
   deleteWebsiteByIds,
+  updateWebsite, //更新
 } from "@/api/siteManage/index.js";
+
+
 import {
   queryGroup, //查询组列表
 } from "@/api/personalCenter/index.js";
@@ -253,6 +267,7 @@ export default {
       selectionList: [], //批量选择列表
       tableData: [],
       loading: true,
+      maskloading:true
     };
   },
   computed: {
@@ -297,6 +312,7 @@ export default {
     visibleBefore(formName) {
       // 遮罩关闭前
       // this.$refs[formName].resetFields();
+      // this.form={}  
     },
     //点击上一页获取数据
     getPrev(val) {
@@ -328,7 +344,7 @@ export default {
       // 当前页数赋值
       this.currentPage = currentPage;
       var odata = {
-        groupId:  this.$store.state.groupId,
+        groupId: this.$store.state.groupId,
         pageNum: this.currentPage,
         pageSize: this.pageSize,
         websiteNumber: this.searchVal,
@@ -351,6 +367,18 @@ export default {
           var odata;
           // 1:编辑    2:新增
           if (this.type == 1) {
+            odata = this.form;
+
+            updateWebsite(odata).then((res) => {
+              if (res.data.code == 200) {
+                this.$message.success("添加成功");
+                // 重置表单
+                this.$refs[formName].resetFields();
+                this.getList(1);
+                // 弹窗消失
+                this.isVisible = false;
+              }
+            });
           } else {
             odata = {
               websiteAddress: this.form.websiteAddress,
@@ -370,6 +398,7 @@ export default {
                 this.$message.success("添加成功");
                 // 重置表单
                 this.$refs[formName].resetFields();
+                this.maskloading=false;
                 this.getList(1);
                 // 弹窗消失
                 this.isVisible = false;
@@ -389,7 +418,7 @@ export default {
         this.visibleTitle = "编辑";
         // 赋值
         console.log(row);
-        this.form = row;
+        this.form = JSON.parse(JSON.stringify(row));
       } else {
         this.type = 2;
         this.visibleTitle = "新增";

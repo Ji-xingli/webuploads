@@ -80,7 +80,7 @@ export default {
           .then(res => {
             if (res.data.code == "200") {
               
-              // localStorage.setItem("token", res.body.token);
+              localStorage.setItem("Token", res.data.data.Token);
 
               //验证判断是否记住密码
               if(this.flg==1){
