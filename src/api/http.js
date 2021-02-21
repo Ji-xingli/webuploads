@@ -7,7 +7,7 @@ import router from '../router/index'
 import {Message} from 'element-ui';
 
 //默认超时时间
-axios.defaults.timeout = 120000;
+axios.defaults.timeout = 300000;
 //返回其他状态码
 axios.defaults.validateStatus = function (status) {
   return status >= 200 && status <= 500;

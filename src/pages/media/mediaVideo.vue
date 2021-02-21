@@ -28,13 +28,16 @@
       </el-row>
     </div>
     <!-- 列表 -->
-    <el-table :data="tableData" style="width: 100%" :height="screenHeight" v-loading="loading"  element-loading-text="正在努力加载中...">
+    <el-table
+      :data="tableData"
+      style="width: 100%"
+      :height="screenHeight"
+      v-loading="loading"
+      element-loading-text="正在努力加载中..."
+    >
       <el-table-column fixed prop="img" label="图片" width="230">
         <template slot-scope="scope">
-          　　　　<img
-            src="@/assets/img/media/01.png"
-            class="head_pic"
-          />
+          　　　　<img src="@/assets/img/media/01.png" class="head_pic" />
           　　</template
         >
       </el-table-column>
@@ -85,9 +88,9 @@
       :before-close="visibleBefore"
       :wrapperClosable="false"
       direction="rtl"
-      v-loading="isLoadingSuccess" element-loading-text="努力上传中..."
+      v-loading="isLoadingSuccess"
+      element-loading-text="努力上传中..."
       size="50%"
-      
     >
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="视频标题" prop="materialTitle">
@@ -108,13 +111,15 @@
             :limit="1"
             v-model="form.video"
             v-show="!videoUrl"
-            :on-change="beforeVideoUpload"
             :on-success="handleVideoSuccess"
             :on-progress="uploadVideoProcess"
+            :on-change="beforeVideoUpload"
+            withCredentials:false
             list-type="picture-card"
             :file-list="fileList"
             accept=".mp4"
           >
+           <!-- :on-change="beforeVideoUpload" -->
             <i class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
           <div class="up_video_box">
@@ -130,10 +135,11 @@
               您的浏览器不支持视频播放
             </video>
             <el-progress
-                :percentage="videoUploadPercent"
-                style="margin-top: -10px"
-                v-if="videoUploadPercent!=100&&videoUploadPercent!=0"
-              >{{videoUploadPercent}}</el-progress>
+              :percentage="videoUploadPercent"
+              style="margin-top: -10px"
+              v-if="videoUploadPercent != 100 && videoUploadPercent != 0"
+              >{{ videoUploadPercent }}</el-progress
+            >
           </div>
         </el-form-item>
         <el-form-item>
@@ -177,7 +183,7 @@ export default {
       pageSize: 10,
       totalNo: 0,
       loading: true,
-      isLoadingSuccess:false//上传大文件加载
+      isLoadingSuccess: false, //上传大文件加载
     };
   },
   mounted() {
@@ -190,9 +196,8 @@ export default {
   methods: {
     visibleBefore() {
       //   遮罩关闭前
-
       // 视频移除
-      this.videoUploadPercent='';
+      this.videoUploadPercent = "";
       //取消上传
       this.$refs.upload.abort();
 
@@ -237,7 +242,7 @@ export default {
             this.totalNo = res.data.data.total;
             this.$emit("getTopTotal");
             //取消加载
-            this.loading=false;
+            this.loading = false;
           } else {
             this.$message.error(res.msg);
           }
@@ -288,29 +293,30 @@ export default {
         return false;
       } else {
         this.videoUrl = file.url;
-        this.fileList = fileList;
+        this.fileList=[];
+        this.fileList.push(file);
+        console.log("now", this.fileList);
         //获取视频的长度
         //获取到视频的时长,高度,宽度
         this.getVideoMsg(file.raw).then((videoinfo) => {
           const { duration, height, width } = videoinfo;
           //视频总时长
-          this.duration = Math.round(duration * 100) / 100;//保留两位小数
-          console.log("视频时长：",this.duration)
+          this.duration = Math.round(duration * 100) / 100; //保留两位小数
+          console.log("视频时长：", this.duration);
         });
         //fileList.splice(-1, 1);
         return true;
       }
     },
-    handleVideoSuccess(res,file){
-      console.log(res)
-      console.log("status",file.status)
+    handleVideoSuccess(res, file) {
+      console.log(res);
+      console.log("status", file.status);
     },
-    uploadVideoProcess(event, file, fileList){
-  
-      console.log("进度条",fileList)
-      console.log(file.percentage.toFixed(0) * 1)
-      console.log(fileList)
-      this.videoUploadPercent=file.percentage.toFixed(0) * 1
+    uploadVideoProcess(event, file, fileList) {
+      console.log("进度条", file);
+      console.log(file.percentage.toFixed(0) * 1);
+      console.log(fileList);
+      this.videoUploadPercent = file.percentage.toFixed(0) * 1;
     },
     getVideoMsg(file) {
       //获取视频信息
@@ -330,12 +336,13 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (this.otype == "add") {
+            console.log(this.fileList);
             if (this.fileList.length == 0) {
               this.$message.error("请上传视频");
               return false;
             }
             //添加上传
-            this.isLoadingSuccess=true;
+            this.isLoadingSuccess = true;
             let formData = new FormData(); //  用FormData存放上传文件
             formData.append("file", this.fileList[0].raw);
             formData.append("materialBrief", this.form.materialBrief);
@@ -344,7 +351,7 @@ export default {
             videoUpLoad(formData).then(
               (res) => {
                 if (res.data.code == 200) {
-                  this.isLoadingSuccess=false;
+                  this.isLoadingSuccess = false;
                   this.$message({
                     type: "success",
                     message: "上传成功!",
@@ -354,8 +361,8 @@ export default {
                   // 弹窗消失
                   this.videoEditMaster = false;
                   //清空上传内容
-                  this.fileList=[];
-                  this.videoUrl="";
+                  this.fileList = [];
+                  this.videoUrl = "";
                 }
               },
               (err) => {
@@ -384,8 +391,8 @@ export default {
                   // 弹窗消失
                   this.videoEditMaster = false;
                   //清空上传内容
-                  this.fileList=[];
-                  this.videoUrl="";
+                  this.fileList = [];
+                  this.videoUrl = "";
                 }
               },
               (err) => {
@@ -403,9 +410,8 @@ export default {
       });
     },
     videoRemove() {
-      
       // 视频移除
-      this.videoUploadPercent='';
+      this.videoUploadPercent = "";
       this.videoUrl = "";
       this.fileList = [];
 
@@ -438,9 +444,9 @@ export default {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  .head_pic{
-      width:184px;
-      height:104px;
+  .head_pic {
+    width: 184px;
+    height: 104px;
   }
 }
 .up_video_box {
