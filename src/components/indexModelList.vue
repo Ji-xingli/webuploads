@@ -1,6 +1,6 @@
 <template>
   <div class="wrap_i">
-    <div class="text_group">
+    <div class="text_group" v-loading="loading"  element-loading-text="正在努力加载中...">
       <div class="t_item" v-for="(item,index) in listData" :key="index">
         <div class="icon el-icon-video-camera-solid" style="color:#f83e73" v-if="item.materialType==0"></div>
         <div class="pic" v-else-if="item.materialType==1"><img :src="item.materialUrl" alt=""></div>
@@ -33,6 +33,7 @@ export default {
       totalNo: 0, //-分页,总条数
       totalPage: 0, //分页-总页数
       listData: [],
+      loading:true
     };
   },
   mounted() {
@@ -59,6 +60,9 @@ export default {
 
             //总页数
             this.totalPage = Math.ceil(this.totalNo / this.pageSize);
+
+            //取消加载
+            this.loading=false;
           }
         }
       });
