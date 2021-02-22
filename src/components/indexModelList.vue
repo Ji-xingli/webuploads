@@ -39,6 +39,17 @@ export default {
   mounted() {
     this.getTemplateList();
   },
+  watch:{
+    '$store.state.groupId':function(){
+      this.loading=true;
+      this.currentPage=1;
+      this.totalNo=0;
+      this.totalPage=0;
+      this.listData=[];
+      //监听组选择变化
+      this.getTemplateList();
+    }
+  },
   methods: {
     getTemplateList() {
       var odata = {

@@ -111,7 +111,7 @@
             :limit="1"
             v-model="form.video"
             v-show="!videoUrl"
-            :on-success="handleVideoSuccess"
+            :on-error="handleVideoError"
             :on-progress="uploadVideoProcess"
             :on-change="beforeVideoUpload"
             withCredentials:false
@@ -143,7 +143,7 @@
           </div>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="submitForm('form')">确定</el-button>
+          <el-button type="primary" @click="submitForm('form')" :disabled="isClick?false:true">确定</el-button>
         </el-form-item>
       </el-form>
     </el-drawer>
@@ -184,6 +184,7 @@ export default {
       totalNo: 0,
       loading: true,
       isLoadingSuccess: false, //上传大文件加载
+      isClick:false//表示确定按钮是否可以点击
     };
   },
   mounted() {
@@ -307,9 +308,10 @@ export default {
         return true;
       }
     },
-    handleVideoSuccess(res, file) {
+    handleVideoError(res, file) {
       console.log(res);
       console.log("status", file.status);
+      this.isClick=true;
     },
     uploadVideoProcess(event, file, fileList) {
       console.log("进度条", file);
@@ -436,6 +438,10 @@ export default {
         });
     },
   },
+  beforeDestroy(){
+    //取消上传
+    this.$refs.upload.abort();
+  }
 };
 </script>
 <style lang="scss" scoped>

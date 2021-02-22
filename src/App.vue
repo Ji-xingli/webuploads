@@ -110,4 +110,7 @@ export default {
 .el-radio__input.is-checked+.el-radio__label{
   color:#333;
 }
+.el-button--primary.is-disabled, .el-button--primary.is-disabled:active, .el-button--primary.is-disabled:focus, .el-button--primary.is-disabled:hover{
+      background-color: #b8b8b8;
+}
 </style>
