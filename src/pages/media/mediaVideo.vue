@@ -253,7 +253,6 @@ export default {
         });
     },
     editRow(index, row) {
-      console.log(row);
       if (index || row) {
         this.otype = "edit";
         //获取编辑信息
@@ -295,7 +294,7 @@ export default {
         this.videoUrl = file.url;
         this.fileList=[];
         this.fileList.push(file);
-        console.log("now", this.fileList);
+       
         //获取视频的长度
         //获取到视频的时长,高度,宽度
         this.getVideoMsg(file.raw).then((videoinfo) => {
@@ -315,7 +314,7 @@ export default {
     uploadVideoProcess(event, file, fileList) {
       console.log("进度条", file);
       console.log(file.percentage.toFixed(0) * 1);
-      console.log(fileList);
+
       this.videoUploadPercent = file.percentage.toFixed(0) * 1;
     },
     getVideoMsg(file) {
