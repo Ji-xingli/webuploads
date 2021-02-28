@@ -6,19 +6,20 @@ import axios from 'axios';
 import router from '../router/index'
 import {Message} from 'element-ui';
 
-//默认超时时间
-axios.defaults.timeout = 300000;
+//默认超时时间--30分钟
+axios.defaults.timeout = 1800000;
 //返回其他状态码
 axios.defaults.validateStatus = function (status) {
   return status >= 200 && status <= 500;
 };
 //跨域请求，允许保存cookie
-axios.defaults.withCredentials = true;
-// axios.defaults.baseURL ='http://118.31.122.133:9099'//测试
-axios.defaults.baseURL ='http://118.31.122.133:9090'//线上
+axios.defaults.withCredentials = false;
+axios.defaults.baseURL ='http://118.31.122.133:9099'//测试
+// axios.defaults.baseURL ='http://118.31.122.133:9090'//线上
 
 // axios.defaults.baseURL= process.env.BASE_API;// 配置的请求前缀,可以配置不同环境下不同路径
-
+// 用作提示判断
+var flg=true;
 //http request拦截
 axios.interceptors.request.use(config => {
   const meta = (config.meta || {});
@@ -50,12 +51,21 @@ axios.interceptors.response.use(res => {
   //获取状态码
   const status = res.data.code || res.status;
   const message = res.data.data || res.data.msg || '未知错误';
-console.log("res",res)
+ 
   //如果是401则跳转到登录页面
-  if (status === 401){
+  if (status === 401||status === 403){
+    //判断值提示一次-不重复提示
+    if(flg){
+      Message({
+        message: message,
+        type: 'error'
+      });
+      flg=false;
+    }
     router.push({
       path: '/login',
     })
+    return false;
   }
   // 如果请求为非200否者默认统一处理
   if (status !== 200) {
@@ -73,5 +83,6 @@ console.log("res",res)
   });
   return Promise.reject(new Error(error));
 });
+
 
 export default axios;

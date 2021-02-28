@@ -8,30 +8,7 @@
         </el-col>
         
         <el-col :span="8">
-          <div class="right">
-            <div class="date_title">
-              <ul class="ul">
-                <li v-for="(item, index) in titleDate" :key="index">
-                  {{ item }}
-                </li>
-              </ul>
-              <el-button
-                class="button"
-                type="primary"
-                icon="el-icon-download"
-                circle
-              ></el-button>
-            </div>
-            <div class="data_list">
-              <div class="item" v-for="(item, index) in listDataA" :key="index">
-                <div class="icon">
-                  <span class="el-icon-picture-outline-round"></span>
-                </div>
-                <div class="item_text">{{ item.title }}</div>
-                <div class="item_times">{{ item.times }}</div>
-              </div>
-            </div>
-          </div>
+         <program-record :info="info" areaType="A"></program-record>
         </el-col>
       </el-row>
       <!-- B区 -->
@@ -40,30 +17,7 @@
             <program-item :info="info" areaType="B"></program-item>
         </el-col>
         <el-col :span="8">
-          <div class="right">
-            <div class="date_title">
-              <ul class="ul">
-                <li v-for="(item, index) in titleDate" :key="index">
-                  {{ item }}
-                </li>
-              </ul>
-              <el-button
-                class="button"
-                type="primary"
-                icon="el-icon-download"
-                circle
-              ></el-button>
-            </div>
-            <div class="data_list">
-              <div class="item" v-for="(item, index) in listDataA" :key="index">
-                <div class="icon">
-                  <span class="el-icon-picture-outline-round"></span>
-                </div>
-                <div class="item_text">{{ item.title }}</div>
-                <div class="item_times">{{ item.times }}</div>
-              </div>
-            </div>
-          </div>
+         <program-record :info="info" areaType="B"></program-record>
         </el-col>
       </el-row>
       <!-- c区域 -->
@@ -72,30 +26,7 @@
             <program-item :info="info" areaType="C"></program-item>
         </el-col>
         <el-col :span="8">
-          <div class="right">
-            <div class="date_title">
-              <ul class="ul">
-                <li v-for="(item, index) in titleDate" :key="index">
-                  {{ item }}
-                </li>
-              </ul>
-              <el-button
-                class="button"
-                type="primary"
-                icon="el-icon-download"
-                circle
-              ></el-button>
-            </div>
-            <div class="data_list">
-              <div class="item" v-for="(item, index) in listDataA" :key="index">
-                <div class="icon">
-                  <span class="el-icon-picture-outline-round"></span>
-                </div>
-                <div class="item_text">{{ item.title }}</div>
-                <div class="item_times">{{ item.times }}</div>
-              </div>
-            </div>
-          </div>
+          <program-record :info="info" areaType="C"></program-record>
         </el-col>
       </el-row>
       <!-- 文字专区--无论选择哪屏模板都有此区 -->
@@ -104,30 +35,7 @@
             <program-item :info="info" areaType="D"></program-item>
         </el-col>
         <el-col :span="8">
-          <div class="right">
-            <div class="date_title">
-              <ul class="ul">
-                <li v-for="(item, index) in titleDate" :key="index">
-                  {{ item }}
-                </li>
-              </ul>
-              <el-button
-                class="button"
-                type="primary"
-                icon="el-icon-download"
-                circle
-              ></el-button>
-            </div>
-            <div class="data_list">
-              <div class="item" v-for="(item, index) in listDataA" :key="index">
-                <div class="icon">
-                  <span class="el-icon-picture-outline-round"></span>
-                </div>
-                <div class="item_text">{{ item.title }}</div>
-                <div class="item_times">{{ item.times }}</div>
-              </div>
-            </div>
-          </div>
+          <program-record :info="info" areaType="D"></program-record>
         </el-col>
       </el-row>
     </div>
@@ -146,6 +54,7 @@ import {
 } from "@/api/program/index.js";
 
 import programItem from '@/components/programItem'
+import programRecord from '@/components/record'
 export default {
   data() {
     return {
@@ -156,30 +65,6 @@ export default {
       i_minute: "",
       i_second: "",
       readonly: true,
-      titleDate: [
-        "01-01",
-        "01-02",
-        "01-03",
-        "01-04",
-        "01-05",
-        "01-06",
-        "01-07",
-        "01-08",
-        "01-09",
-        "01-10",
-        "01-11",
-        "01-12",
-        "01-13",
-        "01-14",
-        "01-15",
-        "01-16",
-        "01-17",
-        "01-18",
-        "01-19",
-        "01-20",
-        "01-21",
-        "01-22",
-      ],
       listDataA: [],
       listDataB: [],
       listDataC: [],
@@ -189,7 +74,8 @@ export default {
     };
   },
   components:{
-    programItem
+    programItem,
+    programRecord
   },
   watch:{
     '$store.state.groupId': function () {
@@ -362,51 +248,7 @@ export default {
         }
       }
     }
-    .right {
-      background: #fff;
-      overflow: hidden;
-      margin-top: 10px;
-      padding: 10px;
-      .date_title {
-        width: 100%;
-        height: 40px;
-        line-height: 40px;
-        display: flex;
-        overflow: hidden;
-        .ul {
-          display: flex;
-          white-space: nowrap;
-          overflow-x: scroll;
-          overflow-y: hidden;
-          li {
-            padding: 6px;
-          }
-        }
-        .button {
-          margin-left: 10px;
-        }
-      }
-      .data_list {
-        margin-top: 10px;
-        .item {
-          display: flex;
-          justify-content: space-between;
-          height: 40px;
-          align-items: center;
-          .icon {
-            width: 40px;
-            font-size: 30px;
-          }
-          .item_text {
-            margin-left: 10px;
-            flex: 1;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-          }
-        }
-      }
-    }
+   
   }
 }
 </style>

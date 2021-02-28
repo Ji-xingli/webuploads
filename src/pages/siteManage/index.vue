@@ -13,7 +13,7 @@
             icon="el-icon-delete"
             >删除</el-button
           >
-          <!-- <el-button type="info" size="small" @click="handleExport" icon="el-icon-download">导出</el-button> -->
+          <el-button type="success" size="small" @click="handleExport" icon="el-icon-download">导出</el-button>
         </el-col>
         <el-col :span="12">
           <el-input
@@ -172,9 +172,10 @@ import {
   deleteWebsite,
   deleteWebsiteByIds,
   updateWebsite, //更新
+  exportExcel//导出
 } from "@/api/siteManage/index.js";
 
-
+import { downloadFilexlsx } from "@/util/downloadXlsx";
 import {
   queryGroup, //查询组列表
 } from "@/api/personalCenter/index.js";
@@ -487,7 +488,9 @@ export default {
         .then(() => {
           console.log("确认下载");
           // 下载
-          // downloadFile(res);
+          exportExcel().then(res=>{
+            downloadFilexlsx(res,"website");
+          })
         })
         .catch(() => {
           console.log("取消下载");

@@ -45,6 +45,15 @@ export const queryWebsite = (row) => {
     })
 }
 
+// 导出
+export const exportExcel = () => {
+    return request({
+        url: '/sqfc/website/exportExcel',
+        method: 'get',
+        params: {},
+        responseType: "blob"
+    })
+}
 
 // 首页对话
 

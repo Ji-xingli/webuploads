@@ -32,6 +32,7 @@ export const videoUpLoad= (params) => {
     return request({
         url: '/sqfc/material/uploadVideo',
         method: 'post',
+        timeout: 1800000,
         data: params
     })
 }

@@ -119,7 +119,7 @@
             :file-list="fileList"
             accept=".mp4"
           >
-           <!-- :on-change="beforeVideoUpload" -->
+            <!-- :on-change="beforeVideoUpload" -->
             <i class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
           <div class="up_video_box">
@@ -143,7 +143,12 @@
           </div>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="submitForm('form')" :disabled="isClick?false:true">确定</el-button>
+          <el-button
+            type="primary"
+            @click="submitForm('form')"
+            :disabled="isClick ? false : true"
+            >确定</el-button
+          >
         </el-form-item>
       </el-form>
     </el-drawer>
@@ -184,7 +189,7 @@ export default {
       totalNo: 0,
       loading: true,
       isLoadingSuccess: false, //上传大文件加载
-      isClick:false//表示确定按钮是否可以点击
+      isClick: false, //表示确定按钮是否可以点击
     };
   },
   mounted() {
@@ -293,9 +298,9 @@ export default {
         return false;
       } else {
         this.videoUrl = file.url;
-        this.fileList=[];
+        this.fileList = [];
         this.fileList.push(file);
-       
+
         //获取视频的长度
         //获取到视频的时长,高度,宽度
         this.getVideoMsg(file.raw).then((videoinfo) => {
@@ -311,7 +316,7 @@ export default {
     handleVideoError(res, file) {
       console.log(res);
       console.log("status", file.status);
-      this.isClick=true;
+      this.isClick = true;
     },
     uploadVideoProcess(event, file, fileList) {
       console.log("进度条", file);
@@ -365,14 +370,13 @@ export default {
                   this.fileList = [];
                   this.videoUrl = "";
                 }
-              },
-              (err) => {
+              }).catch(err=>{
                 this.$message({
                   type: "error",
-                  message: "操作失败!",
+                  message: "请求超时!",
                 });
-              }
-            );
+              })
+            
           } else {
             let formData = new FormData(); //  用FormData存放上传文件
             formData.append("videoId", this.form.materialId);
@@ -380,8 +384,8 @@ export default {
             formData.append("materialBrief", this.form.materialBrief);
             formData.append("materialTitle", this.form.materialTitle);
             formData.append("materialTotalTime", this.form.materialTotalTime);
-            videoUpDate(formData).then(
-              (res) => {
+            videoUpDate(formData)
+              .then((res) => {
                 if (res.data.code == 200) {
                   this.$message({
                     type: "success",
@@ -395,14 +399,13 @@ export default {
                   this.fileList = [];
                   this.videoUrl = "";
                 }
-              },
-              (err) => {
+              })
+              .catch((err) => {
                 this.$message({
                   type: "error",
-                  message: "操作失败!",
+                  message: "请求超时!",
                 });
-              }
-            );
+              });
           }
         } else {
           console.log("error submit!!");
@@ -438,10 +441,10 @@ export default {
         });
     },
   },
-  beforeDestroy(){
+  beforeDestroy() {
     //取消上传
     this.$refs.upload.abort();
-  }
+  },
 };
 </script>
 <style lang="scss" scoped>

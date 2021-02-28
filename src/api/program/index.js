@@ -55,3 +55,14 @@ export const addProgram = (materialProgramRelation) => {
 }
 
 
+// 导出
+export const programExportExcel = (row) => {
+    return request({
+        url: '/sqfc/program/exportExcelProgram',
+        method: 'get',
+        params: row,
+        responseType: "blob"
+    })
+}
+
+

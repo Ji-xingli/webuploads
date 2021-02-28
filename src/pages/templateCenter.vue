@@ -2,12 +2,30 @@
   <div class="wrap">
     <div class="box">
       <div class="item_box" v-for="(item, index) in templateList" :key="index">
+          <!-- v-if="item.modelId!=3&&item.modelId!=1" -->
       <dl
-        v-if="item.modelId!=3&&item.modelId!=1"
         :class="active=== item.modelId ? 'cur' : ''"
-        @click="handleClickItem(item.modelId)"
+       
       >
         <dt>
+          <img v-if="item.modelId == 1" src="@/assets/template1.jpg" alt="">
+            <img  @click="handleClickItem(item.modelId)" v-if="item.modelId == 2" src="@/assets/template2.jpg" alt="">
+          <img v-if="item.modelId == 3" src="@/assets/template3.jpg" alt="">
+          <!-- <div class="item"></div>
+          <div class="item" v-if="item.modelId == 2 || item.modelId == 3"></div>
+          <div class="item" v-if="item.modelId == 3"></div> -->
+        </dt>
+        <!-- <dd>
+          {{ item.text
+          }}<span class="nowTemplate" v-if="active === item.modelId"
+            ></span
+          >
+        </dd> -->
+      </dl>
+      <!-- <dl
+      >
+        <dt>
+         
           <div class="item"></div>
           <div class="item" v-if="item.modelId == 2 || item.modelId == 3"></div>
           <div class="item" v-if="item.modelId == 3"></div>
@@ -18,25 +36,8 @@
             ></span
           >
         </dd>
-      </dl>
-      <dl
-        v-else
-      >
-        <dt>
-          <div class="item"></div>
-          <div class="item" v-if="item.modelId == 2 || item.modelId == 3"></div>
-          <div class="item" v-if="item.modelId == 3"></div>
-        </dt>
-        <dd>
-          {{ item.text
-          }}<span class="nowTemplate" v-if="active === item.modelId"
-            ></span
-          >
-        </dd>
-      </dl>
-
+      </dl> -->
       </div>
-
     </div>
     <div class="bottom_btn">
       <!-- <el-button type="primary" v-if="list.length != 0">重置模板</el-button> -->
@@ -145,22 +146,31 @@ export default {
   overflow: hidden;
   background: #fff;
   margin-top: 10px;
+  padding-bottom:4rem;
   .box {
-    height: 300px;
+    // height: 300px;
     display: flex;
     justify-content: space-between;
     text-align: center;
+    overflow:hidden;
     .item_box{
-      flex:1;
+      // flex:1;
+      img{
+        width:100%;
+        height:30rem;
+        
+      }
     }
     dl.cur {
-      border: 1px solid #f00;
+      border: 3px solid rgb(30, 255, 0);
     }
     dl {
+      width:70%;
       margin: 10px;
       flex: 1;
       border: 1px solid #ddd;
       line-height: 30px;
+      margin:0 auto;
       // &:hover {
       //   border: 1px solid #f00;
       //   cursor: pointer;
@@ -168,7 +178,7 @@ export default {
       dt {
         display: flex;
         flex-flow: column;
-        height: 250px;
+        // height: 250px;
         .item {
           flex: 1;
           background: #efefef;

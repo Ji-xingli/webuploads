@@ -1,16 +1,16 @@
 <template>
   <div class="manage_box">
     <div class="block_title">
-      <el-row :gutter="20" class="title_box">
-        <el-col :span="6">
+      <el-row :gutter="20" class="title_box" v-if="obj[areaType]">
+        <el-col :span="4">
           <div class="title">{{ areaType == "D" ? "文字专" : areaType }}区节目播放</div>
         </el-col>
         <el-col :span="8" v-if="areaType&&obj[areaType].programBroastStatus==1">
           <div class="title">直播播放起始时间:{{obj[areaType].programBroastStartTime}}</div>
         </el-col>
-        <el-col :span="10" :offset="info.length!=0&&obj[areaType].programBroastStatus==1?0:8" >
+        <el-col :span="12" :offset="info.length!=0&&obj[areaType].programBroastStatus==1?0:8" >
           <div class="search">
-            <el-button type="primary" @click="gotoEdit(areaType)">编辑节目单</el-button>
+            <el-button type="primary" size="mini" @click="gotoEdit(areaType)" style="margin-right:10px;">编辑节目单</el-button>
             <el-input
               placeholder="请输入名称搜索"
               prefix-icon="el-icon-search"
