@@ -180,10 +180,12 @@ export default {
           // 下载
           var odata = {
             groupId: this.$store.state.groupId,
-            endTime: this.titleDate[0],
+            // endTime: this.titleDate[0],
             modelId: this.info[0].modelId,
             partionId: this.areaType,
-            startTime: this.titleDate[this.titleDate.length - 1],
+            // startTime: this.titleDate[this.titleDate.length - 1],
+            startTime: this.startDate+" 00:00:00", //右侧数据展示，传入的月日时间-开始时间
+            endTime: this.nowDate+" 24:00:00", //右侧数据展示，传入的月日时间-结束时间
           };
           programExportExcel(odata).then((res) => {
             downloadFilexlsx(res, "program");

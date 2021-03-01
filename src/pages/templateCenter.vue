@@ -15,12 +15,12 @@
           <div class="item" v-if="item.modelId == 2 || item.modelId == 3"></div>
           <div class="item" v-if="item.modelId == 3"></div> -->
         </dt>
-        <!-- <dd>
+        <dd>
           {{ item.text
           }}<span class="nowTemplate" v-if="active === item.modelId"
             ></span
           >
-        </dd> -->
+        </dd>
       </dl>
       <!-- <dl
       >

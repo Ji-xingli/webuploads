@@ -13,7 +13,7 @@ axios.defaults.validateStatus = function (status) {
   return status >= 200 && status <= 500;
 };
 //跨域请求，允许保存cookie
-axios.defaults.withCredentials = false;
+axios.defaults.withCredentials = true;
 axios.defaults.baseURL ='http://118.31.122.133:9099'//测试
 // axios.defaults.baseURL ='http://118.31.122.133:9090'//线上
 
@@ -54,6 +54,7 @@ axios.interceptors.response.use(res => {
  
   //如果是401则跳转到登录页面
   if (status === 401||status === 403){
+    localStorage.removeItem('Token');
     //判断值提示一次-不重复提示
     if(flg){
       Message({
@@ -65,6 +66,7 @@ axios.interceptors.response.use(res => {
     router.push({
       path: '/login',
     })
+    flg=true;
     return false;
   }
   // 如果请求为非200否者默认统一处理
