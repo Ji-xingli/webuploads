@@ -128,8 +128,8 @@ export default {
     },
     getTemplateList() {
       var odata = {
-        startTime: this.startDate, //右侧数据展示，传入的月日时间-开始时间
-        endTime: this.nowDate, //右侧数据展示，传入的月日时间-结束时间
+        startTime: this.startDate+" 00:00:00", //右侧数据展示，传入的月日时间-开始时间
+        endTime: this.nowDate+" 24:00:00", //右侧数据展示，传入的月日时间-结束时间
         groupId: this.$store.state.groupId,
         pageNum: this.pageNo,
         pageSize: this.pageSize,
