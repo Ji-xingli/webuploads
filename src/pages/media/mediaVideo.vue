@@ -117,7 +117,7 @@
             withCredentials:false
             list-type="picture-card"
             :file-list="fileList"
-            accept=".mp4,.avi"
+            accept=".mp4"
           >
             <!-- :on-change="beforeVideoUpload" -->
             <i class="el-icon-plus avatar-uploader-icon"></i>
