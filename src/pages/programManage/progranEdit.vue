@@ -146,9 +146,9 @@
                   </el-popover>
                 </p>
                 <div class="play_times" v-if="item.materialType != 0">
-                  <el-input v-model="item.hour" placeholder="时"></el-input>:
-                  <el-input v-model="item.minute" placeholder="分"></el-input>:
-                  <el-input v-model="item.second" placeholder="秒"></el-input>
+                  <el-input v-model="item.hour" type="number" min=0 placeholder="时"></el-input>:
+                  <el-input v-model="item.minute" type="number" min=0 placeholder="分"></el-input>:
+                  <el-input v-model="item.second" type="number" min=0 placeholder="秒"></el-input>
                 </div>
               </div>
             </dt>
@@ -521,12 +521,12 @@ export default {
         this.listData.forEach((item) => {
           // !1：视频  2：图片  3：文字
           if (item.materialType != 0) {
+            console.log("zhelibutonguo")
+            console.log(item.hour+item.minute+item.second==0)
+            console.log(reg.test(item.minute))
+            console.log(reg.test(item.second))
             // 判断不通过提示
-            if (
-              isH.test(item.hour) &&
-              reg.test(item.minute) &&
-              reg.test(item.second)
-            ) {
+            if (item.hour+item.minute+item.second==0) {
               flg = false;
             } else {
               selArr.push({

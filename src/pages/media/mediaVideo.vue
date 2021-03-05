@@ -117,7 +117,7 @@
             withCredentials:false
             list-type="picture-card"
             :file-list="fileList"
-            accept=".mp4"
+            accept=".mp4,.avi"
           >
             <!-- :on-change="beforeVideoUpload" -->
             <i class="el-icon-plus avatar-uploader-icon"></i>
@@ -279,35 +279,34 @@ export default {
       });
     },
     beforeVideoUpload(file, fileList) {
+      console.log("panduanpanduan",file)
       //进度百分百
       this.videoUploadPercent = 100;
       // 视频上传前校验
       if (
         [
-          "video/mp4",
-          "video/ogg",
-          "video/flv",
-          "video/avi",
-          "video/wmv",
-          "video/rmvb",
+          "video/mp4"
         ].indexOf(file.raw.type) == -1
       ) {
-        this.$message.error("请上传正确的视频格式");
+        this.$message.error("请上传.mp4格式文件");
+        
         //不匹配不展示
         fileList.splice(-1, 1);
         return false;
       } else {
+        console.log("aaa=--")
         this.videoUrl = file.url;
         this.fileList = [];
         this.fileList.push(file);
-
+        
         //获取视频的长度
         //获取到视频的时长,高度,宽度
         this.getVideoMsg(file.raw).then((videoinfo) => {
           const { duration, height, width } = videoinfo;
           //视频总时长
           this.duration = Math.round(duration * 100) / 100; //保留两位小数
-          console.log("视频时长：", this.duration);
+        }).catch(err=>{
+          console.log("cuow",err)
         });
         //fileList.splice(-1, 1);
         return true;
@@ -319,10 +318,10 @@ export default {
       this.isClick = true;
     },
     uploadVideoProcess(event, file, fileList) {
-      console.log("进度条", file);
-      console.log(file.percentage.toFixed(0) * 1);
+      if(file){
+        this.videoUploadPercent = file.percentage.toFixed(0) * 1;
+      }
 
-      this.videoUploadPercent = file.percentage.toFixed(0) * 1;
     },
     getVideoMsg(file) {
       //获取视频信息
