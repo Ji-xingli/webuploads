@@ -66,9 +66,9 @@ axios.interceptors.response.use(res => {
     router.push({
       path: '/login',
     })
-    flg=true;
     return false;
   }
+  flg=true;
   // 如果请求为非200否者默认统一处理
   if (status !== 200) {
     Message({
