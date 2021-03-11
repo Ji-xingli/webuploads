@@ -267,6 +267,7 @@ export default {
       readonly: false,
       liveBroadcast: "", //直播内容/判断是否可以插入直播，有内容：无法插入   无内容：可以插入直播
       listData: [], //列表
+      list:[],
       pickerBeginDateBefore: {
         //今日以前的日期都不能选择
         disabledDate(time) {
@@ -395,18 +396,20 @@ export default {
       queryProgramList(odata)
         .then((res) => {
           if (res.data.code == 200) {
-            var list = res.data.data.programList;
+            // var list = res.data.data.programList;
+            this.list=this.list.concat(res.data.data.programList);
+            console.log("list",this.list)
             this.totalNo = res.data.data.programTotal;
             // 如果是选择返回跳转进入
             if (this.isSel) {
               // 后来新增添加的数据
               var newList = JSON.parse(localStorage.getItem("addSelList"));
-              list = this.unique([...list, ...newList]);
+              this.list = this.unique([...this.list, ...newList]);
             }
             // else {
             //   this.infoList.concat(res.data.data.programList);
             // }
-            list.forEach((item) => {
+            this.list.forEach((item) => {
               if (item.materialType != 0) {
                 // console.log(item.materialTotalTime == null)
                 if (
@@ -429,7 +432,7 @@ export default {
             //总页数
             this.totalPage = Math.ceil(this.totalNo / this.pageSize);
 
-            this.listData = list;
+            this.listData = this.list;
           } else {
             this.$message.error(res.msg);
           }
