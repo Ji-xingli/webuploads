@@ -66,3 +66,25 @@ export const programExportExcel = (row) => {
 }
 
 
+// 记录获取头部时间
+export const queryProgramTopList = (row) => {
+    return request({
+        url: '/sqfc/program/queryProgramUpdateTime',
+        method: 'get',
+        params:{
+            ...row
+        }
+    })
+}
+
+// 记录列表
+export const queryProgramRecordList = (row) => {
+    return request({
+        url: '/sqfc/program/queryProgramHistoryList',
+        method: 'get',
+        params:{
+            ...row
+        }
+    })
+}
+

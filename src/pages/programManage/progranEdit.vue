@@ -37,7 +37,7 @@
                     >添加文字</el-dropdown-item
                   >
                   <el-dropdown-item
-                    v-if="areaType != 'D'&&info.programBroastStatus!=1"
+                    v-if="areaType != 'D' && info.programBroastStatus != 1"
                     @click.native="handleLiveBroadcast"
                     >插入直播</el-dropdown-item
                   >
@@ -63,7 +63,13 @@
                 <el-radio :label="1">循环播放</el-radio>
                 <el-radio :label="0">不重复播放</el-radio>
               </el-radio-group>
-               <el-button type="success" style="margin-left:30px;" v-if="listData.length!=0" @click="cleanList">清空节目单</el-button>
+              <el-button
+                type="success"
+                style="margin-left: 30px"
+                v-if="listData.length != 0"
+                @click="cleanList"
+                >清空节目单</el-button
+              >
             </div>
           </el-col>
           <el-col>
@@ -79,8 +85,15 @@
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"-->
               </el-time-picker>
-              <span v-if="form.startTimes" style="margin-left:20px;font-size:14px;">直播播放起始时间：{{form.startTimes}}</span>
-              <el-button type="primary" @click="getBroadcastStop" v-if="info.programBroastStatus==1"
+              <span
+                v-if="form.startTimes"
+                style="margin-left: 20px; font-size: 14px"
+                >直播播放起始时间：{{ form.startTimes }}</span
+              >
+              <el-button
+                type="primary"
+                @click="getBroadcastStop"
+                v-if="info.programBroastStatus == 1"
                 >结束直播</el-button
               >
             </div>
@@ -146,9 +159,26 @@
                   </el-popover>
                 </p>
                 <div class="play_times" v-if="item.materialType != 0">
-                  <el-input v-model="item.hour" type="number" min=0 placeholder="时"></el-input>:
-                  <el-input v-model="item.minute" type="number" min=0 placeholder="分"></el-input>:
-                  <el-input v-model="item.second" type="number" min=0 placeholder="秒"></el-input>
+                  <el-input
+                    v-model="item.hour"
+                    type="number"
+                    :min="0"
+                    placeholder="时"
+                  ></el-input
+                  >:
+                  <el-input
+                    v-model="item.minute"
+                    type="number"
+                    :min="0"
+                    placeholder="分"
+                  ></el-input
+                  >:
+                  <el-input
+                    v-model="item.second"
+                    type="number"
+                    :min="1"
+                    placeholder="秒"
+                  ></el-input>
                 </div>
               </div>
             </dt>
@@ -166,7 +196,9 @@
               <!-- <textarea class="textarea" maxlength="100" v-model="item.materialBrief"></textarea> -->
             </dd>
           </dl>
-          <div class="no_list" v-if="listData.length == 0"><img src="@/assets/img/no_bg.png" alt=""></div>
+          <div class="no_list" v-if="listData.length == 0">
+            <img src="@/assets/img/no_bg.png" alt="" />
+          </div>
         </div>
       </div>
       <!-- 点击加载更多 -->
@@ -175,7 +207,9 @@
       </div>
       <div class="bottom_btn">
         <el-button type="primary" @click="gotoSel">完成</el-button>
-        <el-button type="default" class="cancle" @click="goBack">取消</el-button>
+        <el-button type="default" class="cancle" @click="goBack"
+          >取消</el-button
+        >
       </div>
     </div>
 
@@ -194,10 +228,7 @@
             placeholder="请输入播放起始时间"
           ></el-date-picker>
         </el-form-item>
-        <div
-          class="bottom_btn"
-          style="text-align: center"
-        >
+        <div class="bottom_btn" style="text-align: center">
           <el-button @click.native="handleLiveBroadcast">取消</el-button>
           <el-button type="primary" @click="liveSure">确定</el-button>
         </div>
@@ -219,7 +250,8 @@ import { formatSeconds, timeEvent } from "@/assets/util/util.js";
 export default {
   data() {
     return {
-      form: {//直播时间，地址信息
+      form: {
+        //直播时间，地址信息
         url: "",
         startTimes: "",
       },
@@ -234,7 +266,7 @@ export default {
       totalNo: 0, //-分页,总条数
       totalPage: 0, //分页-总页数
       isPopover: true, //弹出窗显示隐藏
-      isBroastStatus:"",//是否显示直播按钮   0：显示  1：不显示
+      isBroastStatus: "", //是否显示直播按钮   0：显示  1：不显示
       isLoop: "", //设置是否循环播放  1:循环   0：非循环
       playStartEnd: "", //播放起始时间设置
       eidtLayerList: [
@@ -267,7 +299,7 @@ export default {
       readonly: false,
       liveBroadcast: "", //直播内容/判断是否可以插入直播，有内容：无法插入   无内容：可以插入直播
       listData: [], //列表
-      list:[],
+      list: [],
       pickerBeginDateBefore: {
         //今日以前的日期都不能选择
         disabledDate(time) {
@@ -283,19 +315,18 @@ export default {
     this.searchProgram();
   },
   methods: {
-    cleanList(){
+    cleanList() {
       // 清空节目单
       this.$confirm("确认清空节目单？")
         .then((res) => {
           // 确认清空
-          this.listData=[];
-          
+          this.listData = [];
         })
         .catch((err) => {
           //   console.log(err)
         });
     },
-    searchList(){
+    searchList() {
       // 编辑搜索
       this.searchProgram();
     },
@@ -303,7 +334,7 @@ export default {
       // 查询分组是否有模板
       var odata = {
         groupId: this.$store.state.groupId,
-        partion:this.areaType
+        partion: this.areaType,
       };
       queryProgram(odata).then((res) => {
         if (res.data.code == 200) {
@@ -318,20 +349,17 @@ export default {
           // !是否循环
           this.isLoop = Number(this.info.programType);
 
-
           //!直播--起始时间、地址
-          if(this.info.programBroastStatus==1){
-            this.form.url=this.info.programBroastUrl;
-            this.form.startTimes=this.info.programBroastStartTime;
+          if (this.info.programBroastStatus == 1) {
+            this.form.url = this.info.programBroastUrl;
+            this.form.startTimes = this.info.programBroastStartTime;
           }
 
           //设置直播状态
           //  this.isBroastStatus=this.info.programBroastStatus;
-          
 
           // 获取编辑组的列表
           this.getList(this.currentPage, this.pageSize);
-
         }
       });
     },
@@ -363,8 +391,8 @@ export default {
           // 结束直播
           updateBroadcastStatus(this.programId).then((res) => {
             if (res.data.code == 200) {
-              this.form.url="";
-              this.form.startTimes="";
+              this.form.url = "";
+              this.form.startTimes = "";
               this.searchProgram();
             }
           });
@@ -372,7 +400,6 @@ export default {
         .catch((err) => {
           //   console.log(err)
         });
-      
     },
     loadMore() {
       // 点击加载更多
@@ -384,8 +411,8 @@ export default {
       // 编辑前调用--获取分组列表
       this.currentPage = pageNo;
       var odata = {
-        startTime:"",//右侧数据展示，传入的月日时间-开始时间
-        endTime:"",//右侧数据展示，传入的月日时间-结束时间
+        startTime: "", //右侧数据展示，传入的月日时间-开始时间
+        endTime: "", //右侧数据展示，传入的月日时间-结束时间
         pageNum: pageNo,
         pageSize: pageSize,
         groupId: this.$store.state.groupId,
@@ -397,19 +424,28 @@ export default {
         .then((res) => {
           if (res.data.code == 200) {
             // var list = res.data.data.programList;
-            this.list=this.list.concat(res.data.data.programList);
-            console.log("list",this.list)
+            if (res.data.data.programList.length != 0) {
+              this.list = this.list.concat(res.data.data.programList);
+            } else {
+              this.list = [];
+            }
+
             this.totalNo = res.data.data.programTotal;
             // 如果是选择返回跳转进入
             if (this.isSel) {
               // 后来新增添加的数据
               var newList = JSON.parse(localStorage.getItem("addSelList"));
-              this.list = this.unique([...this.list, ...newList]);
+              // console.log("555",this.list.concat(...newList))
+              //合并两个数组-不去重
+              this.list = [...this.list, ...newList];
+              //合并两个数组去重
+              // this.list = this.unique([...this.list, ...newList]);
+              // this.list=this.list.concat(...newList);
             }
             // else {
             //   this.infoList.concat(res.data.data.programList);
             // }
-            this.list.forEach((item) => {
+            this.list.forEach((item, index) => {
               if (item.materialType != 0) {
                 // console.log(item.materialTotalTime == null)
                 if (
@@ -417,18 +453,33 @@ export default {
                   item.programMaterialTotalTime == "" ||
                   typeof item.programMaterialTotalTime == "undefined"
                 ) {
-                  //没有值，同意为0
-                  item.hour = "00";
-                  item.minute = "00";
-                  item.second = "00";
+                  //没有值，统一为0
+                  console.log("item", item);
+                  if (item.hour) {
+                    console.log("222");
+                    this.$set(this.list[index], "hour", item.hour);
+                    this.$set(this.list[index], "minute", item.minute);
+                    this.$set(this.list[index], "second", item.second);
+                  } else {
+                    this.$set(this.list[index], "hour", 0);
+                    this.$set(this.list[index], "minute", 0);
+                    this.$set(this.list[index], "second", 1);
+                  }
+                  // this.$set(this.list[index],t)
+                  console.log("***", this.list);
                 } else {
                   // 否则赋值
-                  item.hour = formatSeconds(item.programMaterialTotalTime)[0];
-                  item.minute = formatSeconds(item.programMaterialTotalTime)[1];
-                  item.second = formatSeconds(item.programMaterialTotalTime)[2];
+                  // item.hour = formatSeconds(item.programMaterialTotalTime)[0];
+                  // item.minute = formatSeconds(item.programMaterialTotalTime)[1];
+                  // item.second = formatSeconds(item.programMaterialTotalTime)[2];
+
+                  this.$set(this.list[index], "hour", formatSeconds(item.programMaterialTotalTime)[0]);
+                  this.$set(this.list[index], "minute", formatSeconds(item.programMaterialTotalTime)[1]);
+                  this.$set(this.list[index], "second",formatSeconds(item.programMaterialTotalTime)[2]);
                 }
               }
             });
+            console.log("this.list====");
             //总页数
             this.totalPage = Math.ceil(this.totalNo / this.pageSize);
 
@@ -504,12 +555,12 @@ export default {
     },
     gotoSel() {
       //完成--去保存
-      
-      if(this.isLoop==""&&this.isLoop!=0){
+
+      if (this.isLoop == "" && this.isLoop != 0) {
         this.$message.warning("请选择播放方式");
         return false;
       }
-      if(this.playStartEnd==""){
+      if (this.playStartEnd == "") {
         this.$message.warning("请选择播放起始时间");
         return false;
       }
@@ -518,18 +569,18 @@ export default {
       var flg = true; //判断分秒校验是否通过
       var selArr = [];
       //处理选中的列表
-      if(this.listData.length==0){
+      if (this.listData.length == 0) {
         selArr = [];
-      }else{
+      } else {
         this.listData.forEach((item) => {
           // !1：视频  2：图片  3：文字
           if (item.materialType != 0) {
-            console.log("zhelibutonguo")
-            console.log(item.hour+item.minute+item.second==0)
-            console.log(reg.test(item.minute))
-            console.log(reg.test(item.second))
+            console.log("zhelibutonguo");
+            console.log(item.hour + item.minute + item.second == 0);
+            console.log(reg.test(item.minute));
+            console.log(reg.test(item.second));
             // 判断不通过提示
-            if (item.hour+item.minute+item.second==0) {
+            if (item.hour + item.minute + item.second == 0) {
               flg = false;
             } else {
               selArr.push({
@@ -556,13 +607,13 @@ export default {
       console.log(selArr);
 
       // 视频+图片总播放时长不能超过24 小时
-      if(selArr.length!=0){
-        var len=0
-        selArr.forEach(item=>{
-          len+=item.totalTime
-        })
+      if (selArr.length != 0) {
+        var len = 0;
+        selArr.forEach((item) => {
+          len += item.totalTime;
+        });
 
-        if(len>24*60*60){
+        if (len > 24 * 60 * 60) {
           this.$message.error("视频+图片总播放时长不能超过24小时");
           return false;
         }
@@ -573,7 +624,7 @@ export default {
           programBroadcast: "",
           programBroastStartTime: this.form.startTimes, //直播起始时间
           programBroastStatus: "",
-          programBroastUrl: this.form.url,//直播url
+          programBroastUrl: this.form.url, //直播url
           programCreateTime: "",
           programGroupId: Number(this.$store.state.groupId),
           programId: Number(this.programId),
@@ -587,16 +638,18 @@ export default {
       console.log(selArr);
       console.log(odata);
 
-      updateProgram(odata).then((res) => {
-        if (res.data.code == 200) {
-          this.$router.push({
-            name: "programManage",
-          });
-        }
-      }).catch(error=>{
-        console.log("error",error)
-        this.$message.warning(error.data.data);
-      });
+      updateProgram(odata)
+        .then((res) => {
+          if (res.data.code == 200) {
+            this.$router.push({
+              name: "programManage",
+            });
+          }
+        })
+        .catch((error) => {
+          console.log("error", error);
+          this.$message.warning(error.data.data);
+        });
     },
     goBack() {
       //返回上-层
@@ -794,10 +847,10 @@ export default {
           line-height: 200px;
           width: 100%;
           color: palevioletred;
-          img{
-          width:300px;
-          margin-top:80px;
-        }
+          img {
+            width: 300px;
+            margin-top: 80px;
+          }
         }
       }
       .top_label {

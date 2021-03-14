@@ -5,7 +5,7 @@
         <li
           v-for="(item, index) in titleDate"
           :key="index"
-          :class="item == nowDate ? 'active' : ''"
+          :class="item == indexTimes ? 'active' : ''"
           @click="getNowData(item)"
         >
           {{ item }}
@@ -55,7 +55,8 @@
 </template>
 <script>
 import {
-  queryProgramList, //查询组列表数据
+  queryProgramTopList,//获取top 时间列表
+  queryProgramRecordList, //查询组列表数据
   programExportExcel, //导出
 } from "@/api/program/index.js";
 import { downloadFilexlsx } from "@/util/downloadXlsx";
@@ -72,6 +73,7 @@ export default {
       index: 0, //当前选中日期索引  0,1,2,3
       titleDate: [], //日期数组
       listData: [], //列表数据
+      indexTimes:"",//默认选中
     };
   },
   //   computed: {
@@ -88,6 +90,28 @@ export default {
     this.getMouthDate();
   },
   methods: {
+    getTopTimeList(){
+      // 获取头部时间列表
+       var odata = {
+        startTime: this.startDate , //右侧数据展示，传入的月日时间-开始时间
+        endTime: this.nowDate, //右侧数据展示，传入的月日时间-结束时间
+        groupId: this.$store.state.groupId,
+        modelId: this.info[0].modelId,
+         partionId: this.areaType
+      };
+      queryProgramTopList(odata).then(res=>{
+        if (res.status == 200) {
+          this.titleDate =res.data;
+          if( this.titleDate.length!=0){
+            //默认选中第一个
+            this.indexTimes=this.titleDate[0]
+          }else{
+             this.indexTimes=""
+          }
+          this.getTemplateList()
+        }
+      })
+    },
     getMouthDate() {
       // 默认当前日期选中
       // this.nowDate = new Date().toLocaleDateString();
@@ -103,18 +127,18 @@ export default {
 
       // 获取当前-前30天日期
 
+
       var dateTime = Date.parse(new Date()) / 1000; //获取当前日期
-      this.titleDate = [];
-      for (var i = 29; i >= 0; i--) {
-        this.titleDate.push(this.timestampToTime(dateTime));
-        dateTime = dateTime - 86400;
-      }
+      // for (var i = 29; i >= 0; i--) {
+      //   this.titleDate.push(this.timestampToTime(dateTime));
+      //   dateTime = dateTime - 86400;
+      // }
       // 当前时间
-      this.nowDate = this.titleDate[0];
+      this.nowDate = this.timestampToTime(dateTime);
       // 开始时间
-      this.startDate = this.titleDate[this.titleDate.length-1];
+      this.startDate = this.timestampToTime(dateTime - 86400*29)
       //获取当前列表数据
-      this.getTemplateList();
+      this.getTopTimeList();
     },
     timestampToTime(timestamp) {
       var date = new Date(timestamp * 1000); //时间戳为10位需*1000，时间戳为13位的话不需乘1000
@@ -124,21 +148,23 @@ export default {
           ? "0" + (date.getMonth() + 1)
           : date.getMonth() + 1) + "-";
       var D = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
-      return Y + M + D;
+      var hour = date.getHours()< 10 ? "0" + date.getHours() : date.getHours();
+      var minutes = date.getMinutes()< 10 ? "0" + date.getMinutes() : date.getMinutes();
+      var seconds = date.getSeconds()< 10 ? "0" + date.getSeconds() : date.getSeconds();
+      return Y + M + D +" "+hour+":"+minutes+":"+seconds;
     },
     getTemplateList() {
       var odata = {
-        startTime: this.startDate+" 00:00:00", //右侧数据展示，传入的月日时间-开始时间
-        endTime: this.nowDate+" 24:00:00", //右侧数据展示，传入的月日时间-结束时间
         groupId: this.$store.state.groupId,
         pageNum: this.pageNo,
         pageSize: this.pageSize,
         modelId: this.info[0].modelId,
         partionId: this.areaType,
-        title: "",
+        time:this.indexTimes,
+        title:"",
       };
       //获取模板列表
-      queryProgramList(odata).then((res) => {
+      queryProgramRecordList(odata).then((res) => {
         if (res.data.code == 200) {
           if (res.data.data.length != 0) {
             this.listData = this.listData.concat(res.data.data.programList);
@@ -154,8 +180,8 @@ export default {
       });
     },
     getNowData(index) {
-      // 点击当前的日期(结束时间)
-      this.nowDate = index;
+      // 结束时间
+      this.indexTimes = index;
       // 开始时间计算--前30天
       var dateTime = Date.parse(index) / 1000 - 86400 * 29;
       this.startDate = this.timestampToTime(dateTime);
@@ -184,8 +210,8 @@ export default {
             modelId: this.info[0].modelId,
             partionId: this.areaType,
             // startTime: this.titleDate[this.titleDate.length - 1],
-            startTime: this.startDate+" 00:00:00", //右侧数据展示，传入的月日时间-开始时间
-            endTime: this.nowDate+" 24:00:00", //右侧数据展示，传入的月日时间-结束时间
+            startTime: this.startDate, //右侧数据展示，传入的月日时间-开始时间
+            endTime: this.indexTimes, //右侧数据展示，传入的月日时间-结束时间
           };
           programExportExcel(odata).then((res) => {
             downloadFilexlsx(res, "program");
@@ -215,6 +241,7 @@ export default {
       white-space: nowrap;
       overflow-x: scroll;
       overflow-y: hidden;
+      flex:1;
       li {
         padding: 6px;
         cursor: pointer;
