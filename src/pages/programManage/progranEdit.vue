@@ -357,7 +357,7 @@ export default {
 
           //设置直播状态
           //  this.isBroastStatus=this.info.programBroastStatus;
-
+          this.list=[];
           // 获取编辑组的列表
           this.getList(this.currentPage, this.pageSize);
         }
