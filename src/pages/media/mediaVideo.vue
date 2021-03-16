@@ -202,15 +202,15 @@ export default {
   methods: {
     visibleBefore() {
       //   遮罩关闭前
-      // 视频移除
       this.videoUploadPercent = "";
-      //取消上传
-      this.$refs.upload.abort();
-
+    
       this.videoUrl = "";
       this.fileList = [];
       this.duration = "";
       this.videoEditMaster = false;
+      // 视频移除
+      //取消上传
+      this.$refs.upload.abort();
     },
     videoSearch() {
       this.getList(1, this.pageSize);
@@ -261,10 +261,12 @@ export default {
     editRow(index, row) {
       if (index || row) {
         this.otype = "edit";
+        this.isClick=true;
         //获取编辑信息
         this.beforeEdit(row.materialId);
       } else {
         this.otype = "add";
+        this.isClick=false;
         this.form = {};
       }
       //   行编辑

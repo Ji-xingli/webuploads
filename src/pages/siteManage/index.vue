@@ -85,6 +85,7 @@
         @next-click="getNext"
         @current-change="handleCurrentChange"
         :page-size="pageSize"
+        :current-page.sync="currentPage"
         :total="totalNo"
       ></el-pagination>
 
@@ -375,7 +376,7 @@ export default {
                 this.$message.success("添加成功");
                 // 重置表单
                 this.$refs[formName].resetFields();
-                this.getList(1);
+                this.getList(this.currentPage);
                 // 弹窗消失
                 this.isVisible = false;
               }
