@@ -208,9 +208,11 @@ export default {
       this.fileList = [];
       this.duration = "";
       this.videoEditMaster = false;
-      // 视频移除
-      //取消上传
-      this.$refs.upload.abort();
+      if(this.otype=="add"){
+        // 视频移除
+        //取消上传
+        this.$refs.upload.abort();
+      }
     },
     videoSearch() {
       this.getList(1, this.pageSize);
